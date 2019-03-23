@@ -121,9 +121,11 @@ class EventTypeForm extends EntityForm {
         $form['#attached']['library'][] = 'rng/rng.admin';
         $form['entity_type'] = [
           '#type' => 'radios',
-          '#options' => [],
+          '#options' => NULL,
           '#title' => $this->t('Event entity type'),
           '#required' => TRUE,
+          // Kills \Drupal\Core\Render\Element\Radios::processRadios.
+          '#process' => [],
         ];
         $form['entity_type']['node']['radio'] = [
           '#type' => 'radio',
