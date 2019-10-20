@@ -103,6 +103,35 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
       if (!$event->isAccessAllowed()) {
         return $fail;
       }
+      $event_meta = $this->eventManager->getMeta($event);
+
+      // $entity_bundle is omitted for registration type list at
+      // $event_path/register
+      if ($entity_bundle && ($registration_type = RegistrationType::load($entity_bundle))) {
+        if (!$event_meta->registrationTypeIsValid($registration_type)) {
+          return $fail;
+        }
+      }
+      // There are no registration types configured.
+      elseif (!$event_meta->getRegistrationTypeIds()) {
+        return $fail;
+      }
+
+      if (!$event_meta->isAcceptingRegistrations()) {
+        return $fail;
+      }
+
+      if ($event_meta->remainingRegistrantCapacity() == 0) {
+        return $fail;
+      }
+
+      if ($event_meta->remainingRegistrationCapacity() == 0) {
+        return $fail;
+      }
+
+      if (!$event_meta->canRegisterProxyIdentities()) {
+        return $fail;
+      }
 
       $result = parent::createAccess($entity_bundle, $account, $context, TRUE);
       if ($result->isForbidden()) {
