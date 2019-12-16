@@ -1,5 +1,5 @@
 {
-  "name": "freelock/rng",
+  "name": "drupal/rng",
   "description": "Provides ability to create and manage events and registrations.",
   "type": "drupal-module",
   "homepage": "http://drupal.org/project/rng",
