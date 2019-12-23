@@ -228,8 +228,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setSetting('exclude_entity_types', 'true')
       ->setSetting('entity_type_ids', array('registrant', 'registration'))
       ->setDescription(t('The relationship between this registration and an event.'))
-      // @todo: change to false when https://www.drupal.org/node/2300101 gets in.
-      ->setRevisionable(TRUE)
+      ->setRevisionable(FALSE)
       ->setReadOnly(TRUE);
 
     $fields['groups'] = BaseFieldDefinition::create('entity_reference')
