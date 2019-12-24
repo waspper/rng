@@ -64,6 +64,36 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   public function getRegistrants();
 
   /**
+   * Get the number of registrants assigned to this registration, whether
+   * occupied or not.
+   *
+   * @return integer
+   *   The value of the RegistrantQty field.
+   */
+  public function getRegistrantQty();
+
+  /**
+   * Set the RegistrantQty field. This is the maximum number of registrants
+   * allowed to be attached to this registration, or 0 if unlimited.
+   *
+   * @param int $qty
+   *
+   * @return \Drupal\rng\RegistrationInterface
+   *   Returns registration for chaining.
+   *
+   * @throws \Drupal\rng\Exception\MaxRegistrantsExceededException
+   */
+  public function setRegistrantQty($qty);
+
+  /**
+   * Check to determine whether all registrants have been set on a registration.
+   *
+   * @return bool
+   *   Whether a registration can add new registrants.
+   */
+  public function canAddRegistrants();
+
+  /**
    * Searches registrants on this registration for an identity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $identity

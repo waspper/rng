@@ -2,6 +2,7 @@
 
 namespace Drupal\rng\Entity;
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\rng\Exception\MaxRegistrantsExceededException;
 use Drupal\rng\RegistrationInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -11,6 +12,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\rng\GroupInterface;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Tests\text\Functional\TextRequiredSummaryUpdateTest;
 
 /**
  * Defines the registration entity class.
@@ -153,6 +155,9 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       // Identity already exists on this registration.
       throw new \Exception('Duplicate identity on registration');
     }
+    if (!$this->canAddRegistrants()) {
+      throw new MaxRegistrantsExceededException('Cannot add another registrant to this registration.');
+    }
     $this->identities_unsaved[] = $identity;
     return $this;
   }
@@ -228,7 +233,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setSetting('exclude_entity_types', 'true')
       ->setSetting('entity_type_ids', array('registrant', 'registration'))
       ->setDescription(t('The relationship between this registration and an event.'))
-      ->setRevisionable(FALSE)
+      ->setRevisionable(TRUE)
       ->setReadOnly(TRUE);
 
     $fields['groups'] = BaseFieldDefinition::create('entity_reference')
@@ -250,6 +255,18 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
+    /**
+     * Optional registrant qty field, used for rendering the registrant form. If
+     * set and not zero, users cannot add more than this number of registrants
+     * to the registration.
+     */
+    $fields['registrant_qty'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Registrant Qty'))
+      ->setDescription(t('Number of registrants on this registration'))
+      ->setDefaultValue(0)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
+
     return $fields;
   }
 
@@ -260,6 +277,11 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
     parent::preSave($storage);
     if (!$this->getEvent() instanceof ContentEntityBase) {
       throw new EntityMalformedException('Invalid or missing event on registration.');
+    }
+    $registrants = $this->getRegistrantIds();
+    $count = $this->getRegistrantQty();
+    if (!empty($count) && $count < count($registrants)) {
+      throw new MaxRegistrantsExceededException('Too many registrants on this registration.');
     }
 
     // Add group defaults event settings.
@@ -313,4 +335,48 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
     parent::preDelete($storage, $entities);
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getRegistrantQty() {
+    return $this->get('registrant_qty')->value;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setRegistrantQty($qty) {
+    $registrants = $this->getRegistrantIds();
+    if ($qty > 0) {
+      if (count($registrants) > $qty) {
+        throw new MaxRegistrantsExceededException('Cannot set registrant qty below number of current registrants.');
+      }
+      /* @var $event_manager \Drupal\rng\EventManagerInterface */
+      $event_manager = \Drupal::service('rng.event_manager');
+      /** @var \Drupal\rng\EventMeta $event */
+      $event_meta = $event_manager->getMeta($this->getEvent());
+      $max = $event_meta->getRegistrantsMaximum();
+      $min = $event_meta->getRegistrantsMinimum();
+      if (!empty($max) && $max > -1 && $qty > $max) {
+        throw new MaxRegistrantsExceededException('Cannot set registrations above event maximum');
+      }
+      if (!empty($min) && $qty < $min) {
+        throw new MaxRegistrantsExceededException('Cannot set registrations below event minimum');
+      }
+    }
+    $this->set('registrant_qty', $qty);
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function canAddRegistrants() {
+    $registrants = $this->getRegistrantIds();
+    $qty = $this->getRegistrantQty();
+    if ($qty) {
+      return $qty > count($registrants);
+    }
+    return TRUE;
+  }
 }

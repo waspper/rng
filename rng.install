@@ -7,6 +7,7 @@
 
 use Drupal\rng\Entity\EventType;
 use Drupal\rng\Entity\EventTypeRule;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Add default rules to event types.
@@ -223,4 +224,20 @@ function rng_update_8004(&$sandbox) {
   if (!empty($old_event_type)) {
     $updateManager->uninstallEntityType($old_event_type);
   }
+}
+
+/**
+ * Add a registrant_qty field to registrations
+ */
+function rng_update_8201() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $registrant_qty_field = BaseFieldDefinition::create('integer')
+    ->setLabel(t('Registrant Qty'))
+    ->setDescription(t('Number of registrants on this registration'))
+    ->setDefaultValue(0)
+    ->setTranslatable(TRUE)
+    ->setRevisionable(TRUE);
+
+  $definition_manager->installFieldStorageDefinition('registrant_qty', 'registration', 'registration', $registrant_qty_field);
 }
