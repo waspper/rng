@@ -12,7 +12,7 @@ interface RuleScheduleInterface extends ContentEntityInterface {
   /**
    * Get associated rule component.
    *
-   * @return \Drupal\rng\RuleComponentInterface
+   * @return \Drupal\rng\Entity\RuleComponentInterface
    *   A rule component entity.
    */
   public function getComponent();
@@ -31,7 +31,7 @@ interface RuleScheduleInterface extends ContentEntityInterface {
    * @param int $date
    *   A unix timestamp for when to execute the rule.
    *
-   * @return \Drupal\rng\RuleScheduleInterface
+   * @return \Drupal\rng\Entity\RuleScheduleInterface
    *   Returns rule schedule for chaining.
    */
   public function setDate($date);
@@ -50,7 +50,7 @@ interface RuleScheduleInterface extends ContentEntityInterface {
    * @param bool $in_queue
    *   Whether the rule has been added to the queue for execution.
    *
-   * @return \Drupal\rng\RuleScheduleInterface
+   * @return \Drupal\rng\Entity\RuleScheduleInterface
    *   Returns rule schedule for chaining.
    */
   public function setInQueue($in_queue);
@@ -71,7 +71,7 @@ interface RuleScheduleInterface extends ContentEntityInterface {
    *
    * Attempt count is incremented before rule execution.
    *
-   * @return \Drupal\rng\RuleScheduleInterface
+   * @return \Drupal\rng\Entity\RuleScheduleInterface
    *   Returns rule schedule for chaining.
    */
   public function incrementAttempts();

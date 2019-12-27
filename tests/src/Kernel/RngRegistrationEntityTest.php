@@ -34,7 +34,7 @@ class RngRegistrationEntityTest extends RngKernelTestBase {
   protected $eventManager;
 
   /**
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   protected $registrationType;
 

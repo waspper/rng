@@ -59,7 +59,7 @@ class RngCron {
       ->condition('attempts', RuleSchedule::ATTEMPTS_MAX, '<=')
       ->execute();
 
-    /** @var \Drupal\rng\RuleScheduleInterface[] $rule_schedules */
+    /** @var \Drupal\rng\Entity\RuleScheduleInterface[] $rule_schedules */
     $rule_schedules = $this->ruleSchedulerStorage->loadMultiple($ids);
 
     foreach ($rule_schedules as $rule_schedule) {
@@ -86,7 +86,7 @@ class RngCron {
       ->condition('attempts', RuleSchedule::ATTEMPTS_MAX, '>')
       ->execute();
 
-    /** @var \Drupal\rng\RuleScheduleInterface[] $rule_schedules */
+    /** @var \Drupal\rng\Entity\RuleScheduleInterface[] $rule_schedules */
     $rule_schedules = $this->ruleSchedulerStorage->loadMultiple($ids);
 
     $this->ruleSchedulerStorage->delete($rule_schedules);

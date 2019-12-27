@@ -30,7 +30,7 @@ class RngEventMetaTest extends RngKernelTestBase {
   /**
    * An event type for testing.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   protected $eventType;
 

@@ -16,7 +16,7 @@ use Drupal\rng\EventMetaInterface;
 class RegistrationForm extends ContentEntityForm {
 
   /**
-   * @var \Drupal\rng\RegistrationInterface
+   * @var \Drupal\rng\Entity\RegistrationInterface
    */
   protected $entity;
 
@@ -54,7 +54,7 @@ class RegistrationForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrationInterface $registration */
+    /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
     $registration = $this->getEntity();
     $current_user = $this->currentUser();
 
@@ -144,12 +144,12 @@ class RegistrationForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrationInterface $registration */
+    /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
     $registration = parent::validateForm($form, $form_state);
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants_before */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants_before */
     $registrants_before = $form_state->getValue('registrants_before');
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants_after */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants_after */
     $registrants_after = $form_state->getValue(['people', 'registrants']);
 
     // Registrants.
@@ -200,14 +200,14 @@ class RegistrationForm extends ContentEntityForm {
       drupal_set_message($this->t('Registration was updated.', $t_args));
     }
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants */
     $registrants = $form_state->get('registrants_after');
     foreach ($registrants as $registrant) {
       $registrant->setRegistration($registration);
       $registrant->save();
     }
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants_delete */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants_delete */
     $registrants_delete = $form_state->get('registrants_delete');
     foreach ($registrants_delete as $registrant) {
       $registrant->delete();

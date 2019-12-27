@@ -4,7 +4,7 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\EventTypeInterface;
+use Drupal\rng\Entity\EventTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -15,7 +15,7 @@ class EventTypeDefaultMessagesAddForm extends FormBase {
   /**
    * The event type object.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   public $eventType;
 

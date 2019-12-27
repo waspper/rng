@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\courier\Entity\CourierContext;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\Entity\EntityFormMode;
-use Drupal\rng\RegistrantTypeInterface;
 
 /**
  * Defines the event type entity.

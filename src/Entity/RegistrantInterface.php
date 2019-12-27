@@ -12,7 +12,7 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Get associated registration.
    *
-   * @return \Drupal\rng\RegistrationInterface|NULL
+   * @return \Drupal\rng\Entity\RegistrationInterface|NULL
    *   The parent registration, or NULL if it does not exist.
    */
   public function getRegistration();
@@ -20,10 +20,10 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Set associated registration.
    *
-   * @param \Drupal\rng\RegistrationInterface $registration
+   * @param \Drupal\rng\Entity\RegistrationInterface $registration
    *   The new associated registration.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   Returns registrant for chaining.
    */
   public function setRegistration(RegistrationInterface $registration);
@@ -51,7 +51,7 @@ interface RegistrantInterface extends ContentEntityInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The identity to set.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   Returns registrant for chaining.
    */
   public function setIdentity(EntityInterface $entity);
@@ -59,7 +59,7 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Removes identity associated with this registrant.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   Returns registrant for chaining.
    */
   public function clearIdentity();

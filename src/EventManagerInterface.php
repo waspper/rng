@@ -3,6 +3,7 @@
 namespace Drupal\rng;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\rng\Entity\EventTypeInterface;
 
 /**
  * Event manager for RNG.
@@ -119,7 +120,7 @@ interface EventManagerInterface {
    * @param string $bundle
    *   A bundle ID.
    *
-   * @return \Drupal\rng\EventTypeInterface|null
+   * @return \Drupal\rng\Entity\EventTypeInterface|null
    */
   function eventType($entity_type, $bundle);
 
@@ -129,7 +130,7 @@ interface EventManagerInterface {
    * @param string $entity_type
    *   An entity type ID.
    *
-   * @return \Drupal\rng\EventTypeInterface[]
+   * @return \Drupal\rng\Entity\EventTypeInterface[]
    *   An array of event type config entities
    */
   function eventTypeWithEntityType($entity_type);
@@ -150,7 +151,7 @@ interface EventManagerInterface {
   /**
    * Invalidate cache for an event type.
    *
-   * @param \Drupal\rng\EventTypeInterface $event_type
+   * @param \Drupal\rng\Entity\EventTypeInterface $event_type
    *   An event type.
    */
   function invalidateEventType(EventTypeInterface $event_type);

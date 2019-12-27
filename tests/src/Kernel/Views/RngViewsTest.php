@@ -42,7 +42,7 @@ class RngViewsTest extends ViewsKernelTestBase {
   /**
    * A registration type for testing.
    *
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   protected $registrationType;
 

@@ -113,7 +113,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   /**
    * Get registrants for the registration.
    *
-   * @return \Drupal\rng\RegistrantInterface[]
+   * @return \Drupal\rng\Entity\RegistrantInterface[]
    *   An array of registrant entities.
    */
   public function getRegistrants();
@@ -133,7 +133,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    *
    * @param int $qty
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
    *
    * @throws \Drupal\rng\Exception\MaxRegistrantsExceededException
@@ -167,7 +167,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * @param \Drupal\Core\Entity\EntityInterface $identity
    *   The identity to add.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
    */
   public function addIdentity(EntityInterface $identity);
@@ -175,7 +175,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   /**
    * Get groups for the registration.
    *
-   * @return \Drupal\rng\GroupInterface[]
+   * @return \Drupal\rng\Entity\GroupInterface[]
    *   An array of registration_group entities.
    */
   public function getGroups();
@@ -183,10 +183,10 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   /**
    * Add a group to the registration.
    *
-   * @param \Drupal\rng\GroupInterface $group
+   * @param \Drupal\rng\Entity\GroupInterface $group
    *   The group to add.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
    */
   public function addGroup(GroupInterface $group);
@@ -197,7 +197,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * @param int $group_id
    *   The ID of a registration_group entity.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
    */
   public function removeGroup($group_id);

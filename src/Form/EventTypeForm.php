@@ -95,7 +95,7 @@ class EventTypeForm extends EntityForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     if (!$event_type->isNew()) {
@@ -179,7 +179,7 @@ class EventTypeForm extends EntityForm {
 
     $registrant_types = [];
     foreach (RegistrantType::loadMultiple() as $registrant_type) {
-      /** @var \Drupal\rng\RegistrantTypeInterface $registrant_type */
+      /** @var \Drupal\rng\Entity\RegistrantTypeInterface $registrant_type */
       $registrant_types[$registrant_type->id()] = $registrant_type->label();
     }
 
@@ -291,7 +291,7 @@ class EventTypeForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->getEntity();
 
     if ($event_type->isNew()) {

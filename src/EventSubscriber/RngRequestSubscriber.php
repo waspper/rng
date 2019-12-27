@@ -61,7 +61,7 @@ class RngRequestSubscriber implements EventSubscriberInterface {
     $operation_records = $this->rngEntityModel->getOperationRecords();
     foreach ($operation_records as $operation_record) {
       if ($operation_record->getEntityTypeId() == 'registration') {
-        /** @var \Drupal\rng\RegistrationInterface $registration */
+        /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
         $registration = $this->entityTypeManager
           ->getStorage('registration')
           ->load($operation_record->getEntityId());

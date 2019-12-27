@@ -4,8 +4,8 @@ namespace Drupal\rng\Tests;
 
 use Drupal\rng\Entity\RegistrationType;
 use Drupal\entity_test\Entity\EntityTest;
-use Drupal\rng\RegistrationTypeInterface;
-use Drupal\rng\Entity\EventType;
+use Drupal\rng\Entity\RegistrationTypeInterface;
+use Drupal\rng\Entity\RngEventType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Entity\Registration;
 use Drupal\rng\EventManagerInterface;
@@ -16,7 +16,7 @@ trait RngTestTrait {
   /**
    * Create and save a registration type entity.
    *
-   * @return \Drupal\rng\RegistrationTypeInterface
+   * @return \Drupal\rng\Entity\RegistrationTypeInterface
    *   A registration type entity
    */
   protected function createRegistrationType() {
@@ -39,11 +39,11 @@ trait RngTestTrait {
    * @param array $values
    *   Optional values for the event type.
    *
-   * @return \Drupal\rng\EventTypeInterface
+   * @return \Drupal\rng\Entity\EventTypeInterface
    *   An event type config.
    */
   protected function createEventType($entity_type_id, $bundle, $values = []) {
-    $event_type = EventType::create($values + [
+    $event_type = RngEventType::create($values + [
       'label' => 'Event Type A',
       'entity_type' => $entity_type_id,
       'bundle' => $bundle,
@@ -75,12 +75,12 @@ trait RngTestTrait {
    *
    * @param \Drupal\Core\Entity\EntityInterface $event
    *   An event entity
-   * @param \Drupal\rng\RegistrationTypeInterface $registration_type
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   A registration type.
    * @param \Drupal\Core\Entity\EntityInterface[] $identities
    *   An array of identities.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   A saved registration
    */
   protected function createRegistration(EntityInterface $event, RegistrationTypeInterface $registration_type, array $identities) {

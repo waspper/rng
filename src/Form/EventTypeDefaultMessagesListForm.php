@@ -10,9 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rng\EventManagerInterface;
-use Drupal\rng\RNGConditionInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Url;
 
 /**
  * Form for event type default message.
@@ -57,7 +55,7 @@ class EventTypeDefaultMessagesListForm extends EntityForm {
   /**
    * Rules for the event type.
    *
-   * @var \Drupal\rng\EventTypeRuleInterface[]
+   * @var \Drupal\rng\Entity\EventTypeRuleInterface[]
    */
   protected $rules;
 
@@ -101,7 +99,7 @@ class EventTypeDefaultMessagesListForm extends EntityForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
     /** @var array $default_messages */
     $default_messages = $form_state->get('default_messages');
@@ -209,7 +207,7 @@ class EventTypeDefaultMessagesListForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
     /** @var array $default_messages */
     $default_messages = $form_state->getValue('messages');

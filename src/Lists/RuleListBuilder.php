@@ -116,7 +116,7 @@ class RuleListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\RuleInterface $entity
+   * @param \Drupal\rng\Entity\RuleInterface $entity
    *   A rule entity.
    */
   public function buildRow(EntityInterface $entity) {

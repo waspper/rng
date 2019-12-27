@@ -4,7 +4,7 @@ namespace Drupal\rng\Tests;
 
 use Drupal\simpletest\WebTestBase;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\rng\Entity\EventType;
+use Drupal\rng\Entity\RngEventType;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\rng\Entity\Registration;
 

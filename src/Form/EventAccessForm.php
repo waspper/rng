@@ -229,7 +229,7 @@ class EventAccessForm extends FormBase {
 
       // Actions.
       foreach ($rule->getActions() as $action_storage) {
-        /** @var \Drupal\rng\RuleComponentInterface $action_storage */
+        /** @var \Drupal\rng\Entity\RuleComponentInterface $action_storage */
 
         $row = [];
         $row[] = [

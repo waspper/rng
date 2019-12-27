@@ -6,7 +6,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rng\EventManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Render\Element;
 use Drupal\user\Entity\Role;
 use Drupal\Core\Session\AccountInterface;
 

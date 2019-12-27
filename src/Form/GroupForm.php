@@ -4,7 +4,7 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\GroupInterface;
+use Drupal\rng\Entity\GroupInterface;
 
 /**
  * Form controller for registration groups.
@@ -12,7 +12,7 @@ use Drupal\rng\GroupInterface;
 class GroupForm extends ContentEntityForm {
 
   /**
-   * @var \Drupal\rng\GroupInterface
+   * @var \Drupal\rng\Entity\GroupInterface
    */
   protected $entity;
 

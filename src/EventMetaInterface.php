@@ -2,6 +2,7 @@
 
 namespace Drupal\rng;
 
+use Drupal\rng\Entity\RegistrationTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityInterface;
 
@@ -39,7 +40,7 @@ interface EventMetaInterface {
   /**
    * Get the event type for the event.
    *
-   * @return \Drupal\rng\EventTypeInterface
+   * @return \Drupal\rng\Entity\EventTypeInterface
    *   The event type for the event.
    */
   public function getEventType();
@@ -81,7 +82,7 @@ interface EventMetaInterface {
   /**
    * Gets a list of registration types allowed for this event.
    *
-   * @return \Drupal\rng\RegistrationTypeInterface[]
+   * @return \Drupal\rng\Entity\RegistrationTypeInterface[]
    *   An array of registration_type entities.
    */
   public function getRegistrationTypes();
@@ -89,7 +90,7 @@ interface EventMetaInterface {
   /**
    * Checks if a registration type is allowed to be used on an event.
    *
-   * @param \Drupal\rng\RegistrationTypeInterface
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface
    *   A registration type entity.
    *
    * @return boolean
@@ -182,7 +183,7 @@ interface EventMetaInterface {
   /**
    * Get groups that should be added to all new registrations.
    *
-   * @return \Drupal\rng\GroupInterface[]
+   * @return \Drupal\rng\Entity\GroupInterface[]
    *   An array of group entities.
    */
   function getDefaultGroups();
@@ -222,7 +223,7 @@ interface EventMetaInterface {
   /**
    * Get all registrations for this event.
    *
-   * @return \Drupal\rng\RegistrationInterface[]
+   * @return \Drupal\rng\Entity\RegistrationInterface[]
    *   An array of registration entities.
    */
   function getRegistrations();
@@ -253,7 +254,7 @@ interface EventMetaInterface {
    * @param bool $is_active
    *   The status of the rules, or set to NULL for any status.
    *
-   * @return \Drupal\rng\RuleInterface[]
+   * @return \Drupal\rng\Entity\RuleInterface[]
    *   An array of rng_rule entities keyed by rule ID.
    */
   function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE);
@@ -264,7 +265,7 @@ interface EventMetaInterface {
    * @param string $trigger
    *   The trigger ID for the rules.
    *
-   * @return \Drupal\rng\RuleInterface[]
+   * @return \Drupal\rng\Entity\RuleInterface[]
    *   An array of rng_rule entities.
    */
   public function getDefaultRules($trigger = NULL);
@@ -304,7 +305,7 @@ interface EventMetaInterface {
   /**
    * Get all groups for this event.
    *
-   * @return \Drupal\rng\GroupInterface[]
+   * @return \Drupal\rng\Entity\GroupInterface[]
    *   An array of registration_group entities.
    */
   function getGroups();
@@ -327,7 +328,7 @@ interface EventMetaInterface {
    * @param string $entity_type_id
    *   The registrant entity type, or NULL to get all.
    *
-   * @return \Drupal\rng\RegistrantInterface[]
+   * @return \Drupal\rng\Entity\RegistrantInterface[]
    *   An array of registrant entities.
    */
   public function getRegistrants($entity_type_id = NULL);

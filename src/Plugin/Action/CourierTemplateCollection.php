@@ -144,7 +144,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
     if ($collection_original = $this->getTemplateCollection()) {
       foreach ($context['registrations'] as $registration) {
         $options = [];
-        /** @var \Drupal\rng\RegistrationInterface $registration */
+        /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
         if (($event = $registration->getEvent()) instanceof EntityInterface) {
           $event_meta = $this->eventManager->getMeta($event);
           $options['channels']['courier_email']['reply_to'] = $event_meta->getReplyTo();

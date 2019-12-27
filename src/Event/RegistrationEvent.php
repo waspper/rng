@@ -2,7 +2,7 @@
 
 namespace Drupal\rng\Event;
 
-use Drupal\rng\RegistrationInterface;
+use Drupal\rng\Entity\RegistrationInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -15,14 +15,14 @@ class RegistrationEvent extends Event {
   /**
    * The registration.
    *
-   * @var \Drupal\rng\RegistrationInterface
+   * @var \Drupal\rng\Entity\RegistrationInterface
    */
   protected $registration;
 
   /**
    * RegistrationEvent constructor.
    *
-   * @param \Drupal\rng\RegistrationInterface $registration
+   * @param \Drupal\rng\Entity\RegistrationInterface $registration
    *   The registration.
    */
   public function __construct(RegistrationInterface $registration) {
@@ -32,7 +32,7 @@ class RegistrationEvent extends Event {
   /**
    * Get the registration.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   The registration.
    */
   public function getRegistration() {

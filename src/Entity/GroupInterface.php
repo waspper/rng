@@ -22,7 +22,7 @@ interface GroupInterface extends ContentEntityInterface {
    *
    * @param ContentEntityInterface $entity
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns group for chaining.
    */
   public function setEvent(ContentEntityInterface $entity);
@@ -49,7 +49,7 @@ interface GroupInterface extends ContentEntityInterface {
    * @param string $module
    *   Name of a module.
    *
-   * @return \Drupal\rng\GroupInterface
+   * @return \Drupal\rng\Entity\GroupInterface
    *   Returns group for chaining.
    */
   public function setSource($module);
@@ -68,7 +68,7 @@ interface GroupInterface extends ContentEntityInterface {
    * @param string $description
    *   The description.
    *
-   * @return \Drupal\rng\GroupInterface
+   * @return \Drupal\rng\Entity\GroupInterface
    *   Returns group for chaining.
    */
   public function setDescription($description);
@@ -78,7 +78,7 @@ interface GroupInterface extends ContentEntityInterface {
    *
    * Groups required for this group to be added to a registration.
    *
-   * @return \Drupal\rng\GroupInterface[]
+   * @return \Drupal\rng\Entity\GroupInterface[]
    *   Groups required for this group.
    */
   public function getDependentGroups();
@@ -89,7 +89,7 @@ interface GroupInterface extends ContentEntityInterface {
    * Groups which cannot exist on a registration for this for this group to be
    * added.
    *
-   * @return \Drupal\rng\GroupInterface[]
+   * @return \Drupal\rng\Entity\GroupInterface[]
    *   Groups that conflict with this group.
    */
   public function getConflictingGroups();

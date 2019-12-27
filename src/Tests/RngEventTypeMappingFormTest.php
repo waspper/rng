@@ -20,7 +20,7 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
   /**
    * The event type for testing.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   var $eventType;
 

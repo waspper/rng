@@ -25,21 +25,21 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * The registration type for testing.
    *
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   var $registrationType;
 
   /**
    * The event type for testing.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   var $eventType;
 
   /**
    * The registrant for testing.
    *
-   * @var \Drupal\rng\RegistrantInterface
+   * @var \Drupal\rng\Entity\RegistrantInterface
    */
   var $registrant;
 

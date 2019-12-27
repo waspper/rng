@@ -4,7 +4,7 @@ namespace Drupal\rng\Form\Entity;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\RegistrantTypeInterface;
+use Drupal\rng\Entity\RegistrantTypeInterface;
 use Drupal\rng\Entity\RegistrantType;
 
 /**

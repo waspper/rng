@@ -2,6 +2,8 @@
 
 namespace Drupal\rng;
 
+use Drupal\rng\Entity\EventTypeInterface;
+use Drupal\rng\Entity\RngEventType;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -100,7 +102,7 @@ class EventManager implements EventManagerInterface {
    * {@inheritdoc}
    */
   function getEventTypes() {
-    /** @var \Drupal\rng\EventTypeInterface[] $event_types */
+    /** @var \Drupal\rng\Entity\EventTypeInterface[] $event_types */
     $entity_type_bundles = [];
     foreach ($this->eventTypeStorage->loadMultiple() as $entity) {
       $entity_type_bundles[$entity->getEventEntityTypeId()][$entity->getEventBundle()] = $entity;
@@ -115,7 +117,7 @@ class EventManager implements EventManagerInterface {
     $event_types = $this->getEventTypes();
     foreach ($event_types as $i => $bundles) {
       foreach ($bundles as $b => $event_type) {
-        /** @var \Drupal\rng\EventTypeInterface $event_type */
+        /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
         $this->invalidateEventType($event_type);
       }
     }

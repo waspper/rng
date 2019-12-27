@@ -8,7 +8,7 @@ use Drupal\rng\EventManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Drupal\rng\RegistrationTypeInterface;
+use Drupal\rng\Entity\RegistrationTypeInterface;
 use Drupal\rng\Entity\Registration;
 
 /**
@@ -107,7 +107,7 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
    * @param string $event
    *   The parameter to find the event entity.
    *
-   * @param \Drupal\rng\RegistrationTypeInterface $registration_type
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   The type of registration.
    *
    * @return array A registration form.
@@ -124,7 +124,7 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
   /**
    * Title callback for registration.event.*.register.
    *
-   * @param \Drupal\rng\RegistrationTypeInterface
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface
    *   The registration type.
    *
    * @return string

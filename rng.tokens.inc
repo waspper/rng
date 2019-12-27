@@ -5,7 +5,7 @@
  * Builds tokens for RNG.
  */
 
-use Drupal\rng\RegistrationInterface;
+use Drupal\rng\Entity\RegistrationInterface;
 
 /**
  * Implements hook_token_info().

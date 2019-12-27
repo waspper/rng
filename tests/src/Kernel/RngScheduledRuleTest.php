@@ -21,28 +21,28 @@ class RngScheduledRuleTest extends RngKernelTestBase {
   /**
    * A rule entity for testing.
    *
-   * @var \Drupal\rng\RuleInterface
+   * @var \Drupal\rng\Entity\RuleInterface
    */
   protected $rule;
 
   /**
    * A rule component entity for testing.
    *
-   * @var \Drupal\rng\RuleComponentInterface
+   * @var \Drupal\rng\Entity\RuleComponentInterface
    */
   protected $condition;
 
   /**
    * A registration type for testing.
    *
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   protected $registrationType;
 
   /**
    * The event type for testing.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   protected $eventType;
 

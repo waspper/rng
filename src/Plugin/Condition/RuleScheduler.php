@@ -6,7 +6,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\RuleInterface;
+use Drupal\rng\Entity\RuleInterface;
 use Drupal\rng\Entity\RuleSchedule;
 use Drupal\rng\Entity\RuleComponent;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -79,7 +79,7 @@ class RuleScheduler extends CurrentTime implements ContainerFactoryPluginInterfa
   /**
    * Gets the rule scheduler entity.
    *
-   * @return \Drupal\rng\RuleScheduleInterface
+   * @return \Drupal\rng\Entity\RuleScheduleInterface
    */
   public function getRuleScheduler() {
     if (isset($this->configuration['rng_rule_scheduler'])) {

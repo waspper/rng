@@ -113,7 +113,7 @@ class RegistrationListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\RegistrationInterface $entity
+   * @param \Drupal\rng\Entity\RegistrationInterface $entity
    *   A registration entity.
    */
   public function buildRow(EntityInterface $entity) {

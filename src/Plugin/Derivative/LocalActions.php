@@ -65,7 +65,7 @@ class LocalActions extends DeriverBase implements ContainerDeriverInterface {
   public function getDerivativeDefinitions($base_plugin_definition) {
     $this->derivatives = [];
 
-    /** @var \Drupal\rng\Entity\EventType[] $event_types */
+    /** @var \Drupal\rng\Entity\RngEventType[] $event_types */
     foreach ($this->eventManager->getEventTypes() as $entity_type => $event_types) {
       $cache_tags = $this->entityManager
         ->getDefinition($entity_type)

@@ -4,7 +4,7 @@ namespace Drupal\rng\Form\Entity;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\RegistrantInterface;
+use Drupal\rng\Entity\RegistrantInterface;
 
 /**
  * Form controller for registrants.

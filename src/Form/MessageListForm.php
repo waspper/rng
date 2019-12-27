@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\rng\Plugin\Condition\CurrentTime;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\rng\RuleInterface;
+use Drupal\rng\Entity\RuleInterface;
 
 /**
  * Creates message list form.
@@ -67,7 +67,7 @@ class MessageListForm extends FormBase {
    * @param \Drupal\Core\Entity\EntityInterface $event
    *   An event entity.
    *
-   * @return \Drupal\rng\RuleInterface[]
+   * @return \Drupal\rng\Entity\RuleInterface[]
    *   An array of rng_rule entities keyed by rule ID.
    */
   protected function getCommunicationRules(EntityInterface $event) {
@@ -204,7 +204,7 @@ class MessageListForm extends FormBase {
   /**
    * Gets the template collection from an action on the rule.
    *
-   * @param \Drupal\rng\RuleInterface $rule
+   * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
    * @return \Drupal\courier\TemplateCollectionInterface|NULL
@@ -225,10 +225,10 @@ class MessageListForm extends FormBase {
   /**
    * Gets the condition containing a date instance.
    *
-   * @param \Drupal\rng\RuleInterface $rule
+   * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
-   * @return \Drupal\rng\RuleComponentInterface|NULL
+   * @return \Drupal\rng\Entity\RuleComponentInterface|NULL
    *   A rule component entity, or NULL if no date condition is associated.
    */
   protected function getDateCondition(RuleInterface $rule) {
@@ -244,7 +244,7 @@ class MessageListForm extends FormBase {
   /**
    * Gets operations for a rule.
    *
-   * @param \Drupal\rng\RuleInterface $rule
+   * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
    * @return array

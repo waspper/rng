@@ -5,11 +5,10 @@ namespace Drupal\rng\Form;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
-use Drupal\rng\EventTypeInterface;
+use Drupal\rng\Entity\EventTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Cache\Cache;
 
 /**
  * Form controller to delete all custom rules for an event type.
@@ -19,7 +18,7 @@ class EventTypeRuleDeleteAll extends ConfirmFormBase {
   /**
    * The event type entity.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   protected $eventType;
 
@@ -109,7 +108,7 @@ class EventTypeRuleDeleteAll extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RuleInterface[] $rules */
+    /** @var \Drupal\rng\Entity\RuleInterface[] $rules */
     $rules = $this->ruleStorage
       ->loadByProperties([
         'event__target_type' => $this->eventType->getEventEntityTypeId(),

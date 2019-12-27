@@ -2,6 +2,7 @@
 
 namespace Drupal\rng;
 
+use Drupal\rng\Entity\RegistrationTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;

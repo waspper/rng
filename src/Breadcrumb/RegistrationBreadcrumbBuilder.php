@@ -5,7 +5,7 @@ namespace Drupal\rng\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\rng\RegistrationInterface;
+use Drupal\rng\Entity\RegistrationInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 

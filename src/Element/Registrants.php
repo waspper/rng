@@ -111,7 +111,7 @@ class Registrants extends FormElement {
     $element['#prefix'] = '<div id="' . $ajax_wrapper_id_root . '">';
     $element['#suffix'] = '</div>';
 
-    /** @var \Drupal\rng\RegistrantInterface[] $people */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $people */
     $people = $element['#value'];
 
     $values = NestedArray::getValue($form_state->getUserInput(), $parents);
@@ -653,7 +653,7 @@ class Registrants extends FormElement {
       $utility->addWhitelistExisting($identity);
     }
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants */
     $registrants = $element['#value'];
     $whitelisted = $utility->getWhitelistExisting();
 
@@ -689,7 +689,7 @@ class Registrants extends FormElement {
    * Validate whether there are sufficient quantity of registrants.
    */
   public static function validateRegistrantCount(&$element, FormStateInterface $form_state, &$complete_form) {
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants */
     $registrants = $element['#value'];
     $count = count($registrants);
 
@@ -875,7 +875,7 @@ class Registrants extends FormElement {
     $element = RegistrantsElement::findElement($form, $form_state);
     $utility = new RegistrantsElement($element, $form_state);
 
-    /** @var \Drupal\rng\RegistrantInterface[] $people */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $people */
     $people = $element['#value'];
 
     $new_arity = $trigger['#value'];

@@ -12,17 +12,17 @@ abstract class RngSiteTestBase extends RngWebTestBase {
   public static $modules = array('rng', 'node');
 
   /**
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   var $registration_type;
 
   /**
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   var $event_bundle;
 
   /**
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   var $event_type;
 

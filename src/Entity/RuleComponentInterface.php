@@ -20,7 +20,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
   /**
    * Sets the rule for the component.
    *
-   * @return \Drupal\rng\RuleComponentInterface
+   * @return \Drupal\rng\Entity\RuleComponentInterface
    *   Return this object for chaining.
    */
   public function setRule(RuleInterface $rule);
@@ -39,7 +39,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
    * @param string $type
    *   The type of component: 'action' or 'condition'.
    *
-   * @return \Drupal\rng\RuleComponentInterface
+   * @return \Drupal\rng\Entity\RuleComponentInterface
    *   Return this object for chaining.
    */
   public function setType($type);
@@ -58,7 +58,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
    * @param string $plugin_id
    *   The plugin ID.
    *
-   * @return \Drupal\rng\RuleComponentInterface
+   * @return \Drupal\rng\Entity\RuleComponentInterface
    *   Return this object for chaining.
    */
   public function setPluginId($plugin_id);
@@ -77,7 +77,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
    * @param array $configuration
    *   Mixed configuration
    *
-   * @return \Drupal\rng\RuleComponentInterface
+   * @return \Drupal\rng\Entity\RuleComponentInterface
    *   Return this object for chaining.
    */
   public function setConfiguration(array $configuration);

@@ -45,7 +45,7 @@ class RegistrantTypeDeleteForm extends EntityDeleteForm  {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrantTypeInterface $registrant_type */
+    /** @var \Drupal\rng\Entity\RegistrantTypeInterface $registrant_type */
     $registrant_type = &$this->entity;
 
     $count = $this->entityTypeManager

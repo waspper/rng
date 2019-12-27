@@ -26,12 +26,12 @@ class RngEventAccessTest extends RngWebTestBase {
   protected $eventManager;
 
   /**
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   var $registration_type;
 
   /**
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
   var $event_type;
 

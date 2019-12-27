@@ -4,6 +4,7 @@ namespace Drupal\rng\AccessControl;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\rng\Entity\RegistrationType;
 use Drupal\rng\Event\RegistrationAccessEvent;
 use Drupal\rng\Event\RegistrationEvents;
 use Drupal\rng\RuleGrantsOperationTrait;
@@ -47,7 +48,7 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\RegistrationInterface $entity
+   * @param \Drupal\rng\Entity\RegistrationInterface $entity
    *   A registration entity.
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {

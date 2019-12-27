@@ -2,7 +2,7 @@
 
 namespace Drupal\rng\Tests;
 
-use Drupal\rng\Entity\EventType;
+use Drupal\rng\Entity\RngEventType;
 use Drupal\courier\Entity\CourierContext;
 use Drupal\node\Entity\NodeType;
 use Drupal\Core\Url;
@@ -70,7 +70,7 @@ class RngEventTypeTest extends RngWebTestBase {
     /** @var \Drupal\node\NodeTypeInterface $node_type */
     $node_type = NodeType::load('event');
 
-    $this->assertEqual(1, count(EventType::loadMultiple()), 'Event type exists in database.');
+    $this->assertEqual(1, count(RngEventType::loadMultiple()), 'Event type exists in database.');
 
     $this->assertRaw(t('The content type <a href=":url">%label</a> has been added.', [
       '%label' => $node_type->label(),

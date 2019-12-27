@@ -34,7 +34,7 @@ class EventTypeFieldMappingForm extends EntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     $form = parent::buildForm($form, $form_state);
@@ -88,7 +88,7 @@ class EventTypeFieldMappingForm extends EntityForm {
    *   The current state of the form.
    */
   public static function createField(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $form_state->getFormObject()->getEntity();
 
     $trigger = $form_state->getTriggeringElement();

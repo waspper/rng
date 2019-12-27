@@ -5,6 +5,9 @@ namespace Drupal\rng;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\Entity\Registrant;
+use Drupal\rng\Entity\RegistrationInterface;
+use Drupal\rng\Entity\RuleComponentInterface;
+use Drupal\rng\Entity\RuleInterface;
 use Drupal\rng\Plugin\Action\CourierTemplateCollection;
 use Drupal\courier\Service\IdentityChannelManagerInterface;
 
@@ -151,7 +154,7 @@ class RngEntityModel implements RngEntityModelInterface {
     // Remove registrant references to this identity.
     $registrant_ids = Registrant::getRegistrantsIdsForIdentity($entity);
     foreach ($this->registrantStorage->loadMultiple($registrant_ids) as $registrant) {
-      /** @var \Drupal\rng\RegistrantInterface $registrant */
+      /** @var \Drupal\rng\Entity\RegistrantInterface $registrant */
       $registrant->clearIdentity();
       $registrant->save();
     }
@@ -187,7 +190,7 @@ class RngEntityModel implements RngEntityModelInterface {
   /**
    * Update rule scheduler after a rule entity is saved.
    *
-   * @param \Drupal\rng\RuleInterface $entity
+   * @param \Drupal\rng\Entity\RuleInterface $entity
    *   An RNG rule entity.
    */
   protected function postSaveRngRule(RuleInterface $entity) {
@@ -216,7 +219,7 @@ class RngEntityModel implements RngEntityModelInterface {
   /**
    * Delete related entities when a rule component entity is deleted.
    *
-   * @param \Drupal\rng\RuleComponentInterface $entity
+   * @param \Drupal\rng\Entity\RuleComponentInterface $entity
    *   An RNG rule component entity.
    */
   protected function deleteRngRuleComponent(RuleComponentInterface $entity) {

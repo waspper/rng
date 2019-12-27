@@ -5,7 +5,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\rng\EventTypeInterface;
+use Drupal\rng\Entity\EventTypeInterface;
 use Drupal\Core\Render\Element;
 
 /**

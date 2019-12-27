@@ -57,7 +57,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
   /**
    * Rules for the event type.
    *
-   * @var \Drupal\rng\EventTypeRuleInterface[]
+   * @var \Drupal\rng\Entity\EventTypeRuleInterface[]
    */
   protected $rules;
 
@@ -107,7 +107,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
       '#empty' => $this->t('No access rules.'),
     ];
 
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     $trigger = 'rng_event.register';
@@ -285,7 +285,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
     $registration_operations = $form_state->getValue(['actions', 'operations']);
 
@@ -317,7 +317,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
    * Remove delete element since it is confusing on non CRUD forms.
    */
   protected function actions(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     $actions = parent::actions($form, $form_state);

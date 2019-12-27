@@ -7,7 +7,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Breadcrumb\Breadcrumb;
-use Drupal\rng\RegistrantInterface;
+use Drupal\rng\Entity\RegistrantInterface;
 
 /**
  * Provides a breadcrumb builder for registrants.
@@ -30,7 +30,7 @@ class RegistrantBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   public function build(RouteMatchInterface $route_match) {
     $links[] = Link::createFromRoute($this->t('Home'), '<front>');
 
-    /** @var \Drupal\rng\RegistrantInterface $registrant */
+    /** @var \Drupal\rng\Entity\RegistrantInterface $registrant */
     $registrant = $route_match->getParameter('registrant');
 
     if ($registration = $registrant->getRegistration()) {

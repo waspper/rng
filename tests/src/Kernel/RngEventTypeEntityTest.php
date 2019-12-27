@@ -3,13 +3,13 @@
 namespace Drupal\Tests\rng\Kernel;
 
 use Drupal\simpletest\UserCreationTrait;
-use Drupal\rng\Entity\EventType;
+use Drupal\rng\Entity\RngEventType;
 
 /**
  * Tests event type entities.
  *
  * @group rng
- * @coversDefaultClass \Drupal\rng\Entity\EventType
+ * @coversDefaultClass \Drupal\rng\Entity\RngEventType
  */
 class RngEventTypeEntityTest extends RngKernelTestBase {
 
@@ -113,11 +113,11 @@ class RngEventTypeEntityTest extends RngKernelTestBase {
    * @param array $values
    *   Default values to use when creating the event type.
    *
-   * @return \Drupal\rng\EventTypeInterface
+   * @return \Drupal\rng\Entity\EventTypeInterface
    *   An new event type entity.
    */
   protected function createEventTypeBase($values = []) {
-    $event_type = EventType::create($values + [
+    $event_type = RngEventType::create($values + [
       'id' => $this->randomMachineName(),
       'label' => $this->randomMachineName(),
       'entity_type' => 'entity_test',

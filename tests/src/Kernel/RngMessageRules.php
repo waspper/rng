@@ -29,7 +29,7 @@ class RngMessageRules extends RngKernelTestBase {
   protected $eventMeta;
 
   /**
-   * @var \Drupal\rng\RuleInterface
+   * @var \Drupal\rng\Entity\RuleInterface
    */
   protected $rule;
 

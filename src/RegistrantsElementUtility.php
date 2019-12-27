@@ -5,6 +5,7 @@ namespace Drupal\rng;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rng\Entity\RegistrantInterface;
 use Drupal\user\Entity\User;
 
 class RegistrantsElementUtility {
@@ -100,7 +101,7 @@ class RegistrantsElementUtility {
   /**
    * Gets registrant from form state.
    *
-   * @return \Drupal\rng\RegistrantInterface[]
+   * @return \Drupal\rng\Entity\RegistrantInterface[]
    *   An array of registrants.
    */
   public function getRegistrants() {
@@ -110,7 +111,7 @@ class RegistrantsElementUtility {
   /**
    * Sets registrants in form state.
    *
-   * @param \Drupal\rng\RegistrantInterface[] $registrants
+   * @param \Drupal\rng\Entity\RegistrantInterface[] $registrants
    *   An array of registrants.
    */
   public function setRegistrants(array $registrants) {
@@ -244,7 +245,7 @@ class RegistrantsElementUtility {
    * @param bool $validate
    *   Optionally validate the form.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    * A registrant entity with updated properties.
    */
   public function buildRegistrant($validate = FALSE) {
@@ -269,7 +270,7 @@ class RegistrantsElementUtility {
    * Load first registrant into form inputs.
    */
   public function setForBundleAsFirstRegistrant() {
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants */
     $registrants = $this->element['#value'];
 
     $registrant = reset($registrants);

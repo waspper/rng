@@ -5,7 +5,6 @@ namespace Drupal\rng\Form;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\field\Entity\FieldConfig;
 
 /**
  * Form controller to delete event configs.

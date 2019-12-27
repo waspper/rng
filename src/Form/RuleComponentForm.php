@@ -18,7 +18,7 @@ class RuleComponentForm extends ContentEntityForm {
   /**
    * The action entity.
    *
-   * @var \Drupal\rng\RuleComponentInterface
+   * @var \Drupal\rng\Entity\RuleComponentInterface
    */
   protected $entity;
 
@@ -116,7 +116,7 @@ class RuleComponentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RuleComponentInterface $component */
+    /** @var \Drupal\rng\Entity\RuleComponentInterface $component */
     $component = $this->getEntity();
     $is_new = $component->isNew();
     $plugin_configuration = $this->plugin->getConfiguration();

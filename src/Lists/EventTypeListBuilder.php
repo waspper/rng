@@ -50,7 +50,7 @@ class EventTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function getDefaultOperations(EntityInterface $entity) {
-    /** @var \Drupal\rng\EventTypeInterface $entity **/
+    /** @var \Drupal\rng\Entity\EventTypeInterface $entity **/
     $operations = parent::getDefaultOperations($entity);
 
     if ($this->moduleHandler->moduleExists('field_ui')) {
@@ -85,7 +85,7 @@ class EventTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /** @var \Drupal\rng\EventTypeInterface $entity **/
+    /** @var \Drupal\rng\Entity\EventTypeInterface $entity **/
 
     $entity_type = $this->entityManager
       ->getDefinition($entity->getEventEntityTypeId());
