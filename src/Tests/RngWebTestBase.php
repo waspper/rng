@@ -2,15 +2,15 @@
 
 namespace Drupal\rng\Tests;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\rng\Entity\Registration;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Sets up page and article content types.
  */
-abstract class RngWebTestBase extends WebTestBase {
+abstract class RngWebTestBase extends BrowserTestBase {
 
   use RngTestTrait {
     RngTestTrait::createEventType as traitCreateEventType;

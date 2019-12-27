@@ -55,7 +55,7 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
     $this->assertLinkByHref(Url::fromRoute('rng.registration_type.overview')->toString());
 
     $this->drupalGet('admin/structure/rng/registration_types');
-    $this->assertRaw('No registration types found.', 'Registration type list is empty');
+    $this->assertSession()->responseContains('No registration types found.');
     $this->assertEqual(0, count(RegistrationType::loadMultiple()));
 
     // Local action.
@@ -68,8 +68,8 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
     $this->assertEqual(1, count(RegistrationType::loadMultiple()));
 
     // Registration type list.
-    $this->assertUrl(Url::fromRoute('rng.registration_type.overview', [], ['absolute' => TRUE])->toString(), []);
-    $this->assertRaw('<td>Foobar1</td>', 'New registration type shows in list.');
+    $this->assertSession()->addressEquals(Url::fromRoute('rng.registration_type.overview', [], ['absolute' => TRUE])->toString());
+    $this->assertSession()->responseContains('<td>Foobar1</td>');
 
     // Edit.
     $edit = ['label' => 'Foobar2'];
