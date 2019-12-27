@@ -103,7 +103,7 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
       if (!$event->isAccessAllowed()) {
         return $fail;
       }
-      $event_meta = $this->eventManager->getMeta($event);
+      $event_meta = $this->eventManager->getMeta($context['event']);
 
       // $entity_bundle is omitted for registration type list at
       // $event_path/register

@@ -49,6 +49,60 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   public function setEvent(ContentEntityInterface $entity);
 
   /**
+   * Check to see if this registration is confirmed.
+   *
+   * @return bool
+   *   Whether or not this registration is confirmed.
+   */
+  public function isConfirmed();
+
+  /**
+   * Set the registration to confirmed (or unconfirmed).
+   *
+   * @param bool $confirmed
+   *   Whether to set confirmed or unconfirmed.
+   *
+   * @return \Drupal\rng\Entity\RegistrationInterface
+   *   Returns registration for chaining.
+   */
+  public function setConfirmed($confirmed);
+
+  /**
+   * Get the User object that owns this registration.
+   *
+   * @return UserInterface
+   *   The User object.
+   */
+  public function getOwner();
+
+  /**
+   * Set the owner of the registration to object.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *
+   * @return \Drupal\rng\Entity\RegistrationInterface
+   *   Returns registration for chaining.
+   */
+  public function setOwner(UserInterface $account);
+
+  /**
+   * Get the owner uid of this registration.
+   *
+   * @return int
+   *   The uid for the owner.
+   */
+  public function getOwnerId();
+
+  /**
+   * Set the owner of this registration by UID.
+   *
+   * @param int $uid
+   *
+   * @return \Drupal\rng\Entity\RegistrationInterface
+   *   Returns registration for chaining.
+   */
+  public function setOwnerId($uid);
+  /**
    * Get registrants IDs for the registration.
    *
    * @return integer[]

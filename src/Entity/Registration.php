@@ -29,8 +29,10 @@ use Drupal\user\UserInterface;
  *     "id" = "id",
  *     "revision" = "vid",
  *     "bundle" = "type",
+ *     "published" = "status",
  *     "langcode" = "langcode",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "uid" = "uid"
  *   },
  *   handlers = {
  *     "views_data" = "Drupal\rng\Views\RegistrationViewsData",
@@ -110,6 +112,51 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    */
   public function getChangedTime() {
     return $this->get('changed')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isConfirmed() {
+    return (bool) $this->getEntityKey('published');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfirmed($confirmed) {
+    $this->set('status', (bool) $confirmed);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner() {
+    return $this->get('uid')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('uid', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->getEntityKey('owner');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('uid', $uid);
+    return $this;
   }
 
   /**
@@ -198,6 +245,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Registration ID'))
       ->setDescription(t('The registration ID.'))
@@ -214,6 +262,20 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setDescription(t('The registration revision ID.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
+
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Confirmed'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 90,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
@@ -254,6 +316,20 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
+    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Owner'))
+      ->setDescription(t('The owner of the registration.'))
+      ->setSetting('target_type', 'user')
+      ->setSetting('handler', 'default')
+      ->setDefaultValueCallback('Drupal\rng\Entity\Registration::getCurrentUserId')
+      ->setTranslatable(TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
     /**
      * Optional registrant qty field, used for rendering the registrant form. If
      * set and not zero, users cannot add more than this number of registrants
@@ -263,6 +339,8 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setLabel(t('Registrant Qty'))
       ->setDescription(t('Number of registrants on this registration'))
       ->setDefaultValue(0)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
@@ -377,5 +455,17 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       return $qty > count($registrants);
     }
     return TRUE;
+  }
+
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
   }
 }
