@@ -163,7 +163,7 @@ class RegistrationForm extends ContentEntityForm {
     // Delete old registrants if they are not needed.
     $registrants_delete = [];
     foreach ($registrants_before as $i => $registrant) {
-      if (!$registrant->isNew())  {
+      if (!$registrant->isNew()) {
         if (!in_array($registrant->id(), $registrants_after_ids)) {
           $registrants_delete[] = $registrant;
         }
@@ -175,7 +175,6 @@ class RegistrationForm extends ContentEntityForm {
 
     return $registration;
   }
-
 
   /**
    * {@inheritdoc}

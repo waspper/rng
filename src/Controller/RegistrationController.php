@@ -67,13 +67,13 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
     else {
       $label = \Drupal::entityTypeManager()->getDefinition('registration_type')
         ->getLabel();
-      $render['links'] = array(
+      $render['links'] = [
         '#title' => $this->t('Select @entity_type', [
           '@entity_type' => $label,
         ]),
         '#theme' => 'item_list',
         '#items' => [],
-      );
+      ];
     }
 
     foreach ($registration_types as $registration_type) {
@@ -118,7 +118,7 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
       'type' => $registration_type->id(),
     ]);
     $registration->setEvent($event_entity);
-    return $this->entityFormBuilder()->getForm($registration, 'add', array($event_entity));
+    return $this->entityFormBuilder()->getForm($registration, 'add', [$event_entity]);
   }
 
   /**
@@ -131,7 +131,7 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
    *   The page title.
    */
   public function addPageTitle(RegistrationTypeInterface $registration_type) {
-    return $this->t('Create @label', array('@label' => $registration_type->label()));
+    return $this->t('Create @label', ['@label' => $registration_type->label()]);
   }
 
 }

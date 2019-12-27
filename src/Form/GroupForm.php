@@ -24,9 +24,9 @@ class GroupForm extends ContentEntityForm {
 
     if (!$group->isNew()) {
       $form['#title'] = $this->t('Edit group %label',
-        array(
+        [
           '%label' => $group->label(),
-        )
+        ]
       );
     }
 
@@ -45,7 +45,7 @@ class GroupForm extends ContentEntityForm {
     $is_new = $group->isNew();
     $group->save();
 
-    $t_args = array('%label' => $group->label());
+    $t_args = ['%label' => $group->label()];
     if ($is_new) {
       drupal_set_message(t('Group %label has been created.', $t_args));
     }
@@ -55,7 +55,7 @@ class GroupForm extends ContentEntityForm {
 
     $form_state->setRedirect(
       'rng.event.' . $event->getEntityTypeId() . '.group.list',
-      array($event->getEntityTypeId() => $event->id())
+      [$event->getEntityTypeId() => $event->id()]
     );
   }
 

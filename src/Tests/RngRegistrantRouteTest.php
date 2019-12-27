@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\rng\Tests;
 
 use Drupal\Component\Utility\Unicode;
@@ -8,7 +7,6 @@ use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\rng\Entity\Registrant;
-use Drupal\rng\Entity\Registration;
 
 /**
  * Tests registrant routes.
@@ -27,28 +25,28 @@ class RngRegistrantRouteTest extends RngWebTestBase {
    *
    * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
-  var $registrationType;
+  public $registrationType;
 
   /**
    * The event type for testing.
    *
    * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $eventType;
+  public $eventType;
 
   /**
    * The registrant for testing.
    *
    * @var \Drupal\rng\Entity\RegistrantInterface
    */
-  var $registrant;
+  public $registrant;
 
   /**
    * Name of the test field attached to registrant entity.
    *
    * @var string
    */
-  var $registrantTestField;
+  public $registrantTestField;
 
   /**
    * {@inheritdoc}
@@ -109,7 +107,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access registrant canonical route.
    */
-  function testRegistrantCanonicalRoute() {
+  public function testRegistrantCanonicalRoute() {
     $admin = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($admin);
 
@@ -130,7 +128,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access registrant canonical route.
    */
-  function testRegistrantCanonicalNoAccess() {
+  public function testRegistrantCanonicalNoAccess() {
     $admin = $this->drupalCreateUser();
     $this->drupalLogin($admin);
 
@@ -143,7 +141,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access edit registrant form.
    */
-  function testRegistrantEditRoute() {
+  public function testRegistrantEditRoute() {
     $admin = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($admin);
 
@@ -163,7 +161,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access edit registrant form with no permission.
    */
-  function testRegistrantEditRouteNoAccess() {
+  public function testRegistrantEditRouteNoAccess() {
     $admin = $this->drupalCreateUser();
     $this->drupalLogin($admin);
 
@@ -176,7 +174,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access registrant delete form.
    */
-  function testRegistrantDeleteRoute() {
+  public function testRegistrantDeleteRoute() {
     $admin = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($admin);
 
@@ -196,7 +194,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access delete registrant form with no permission.
    */
-  function testRegistrantDeleteRouteNoAccess() {
+  public function testRegistrantDeleteRouteNoAccess() {
     $admin = $this->drupalCreateUser();
     $this->drupalLogin($admin);
 

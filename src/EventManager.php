@@ -3,7 +3,6 @@
 namespace Drupal\rng;
 
 use Drupal\rng\Entity\EventTypeInterface;
-use Drupal\rng\Entity\RngEventType;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -37,7 +36,7 @@ class EventManager implements EventManagerInterface {
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
    */
-  function __construct(EntityManagerInterface $entity_manager) {
+  public function __construct(EntityManagerInterface $entity_manager) {
     $this->eventTypeStorage = $entity_manager->getStorage('rng_event_type');
   }
 
@@ -69,7 +68,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function eventType($entity_type, $bundle) {
+  public function eventType($entity_type, $bundle) {
     $ids = $this->eventTypeStorage->getQuery()
       ->condition('entity_type', $entity_type, '=')
       ->condition('bundle', $bundle, '=')
@@ -86,7 +85,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function eventTypeWithEntityType($entity_type) {
+  public function eventTypeWithEntityType($entity_type) {
     $ids = $this->eventTypeStorage->getQuery()
       ->condition('entity_type', $entity_type, '=')
       ->execute();
@@ -101,7 +100,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventTypes() {
+  public function getEventTypes() {
     /** @var \Drupal\rng\Entity\EventTypeInterface[] $event_types */
     $entity_type_bundles = [];
     foreach ($this->eventTypeStorage->loadMultiple() as $entity) {
@@ -113,7 +112,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function invalidateEventTypes() {
+  public function invalidateEventTypes() {
     $event_types = $this->getEventTypes();
     foreach ($event_types as $i => $bundles) {
       foreach ($bundles as $b => $event_type) {
@@ -126,7 +125,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function invalidateEventType(EventTypeInterface $event_type) {
+  public function invalidateEventType(EventTypeInterface $event_type) {
     Cache::invalidateTags($event_type->getCacheTags());
   }
 

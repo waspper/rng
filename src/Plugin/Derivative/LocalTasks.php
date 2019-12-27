@@ -81,13 +81,13 @@ class LocalTasks extends DeriverBase implements ContainerDeriverInterface {
       // Only need one set of tasks task per entity type.
       if ($this->routeProvider->getRouteByName("entity.$entity_type.canonical")) {
         $event_default = "rng.event.$entity_type.event.default";
-        $this->derivatives[$event_default] = array(
+        $this->derivatives[$event_default] = [
           'title' => t('Event', [], ['context' => 'rng']),
           'base_route' => "entity.$entity_type.canonical",
           'route_name' => "rng.event.$entity_type.event",
           'weight' => 30,
           'cache_tags' => $cache_tags,
-        );
+        ];
 
         $this->derivatives["rng.event.$entity_type.register.type_list"] = [
           'route_name' => "rng.event.$entity_type.register.type_list",
@@ -105,37 +105,37 @@ class LocalTasks extends DeriverBase implements ContainerDeriverInterface {
           'cache_tags' => $cache_tags,
         ];
 
-        $this->derivatives["rng.event.$entity_type.event.settings"] = array(
+        $this->derivatives["rng.event.$entity_type.event.settings"] = [
           'title' => t('Settings'),
           'route_name' => $this->derivatives[$event_default]['route_name'],
           'parent_id' => 'rng.local_tasks:' . $event_default,
           'weight' => -100,
           'cache_tags' => $cache_tags,
-        );
+        ];
 
-        $this->derivatives["rng.event.$entity_type.event.access"] = array(
+        $this->derivatives["rng.event.$entity_type.event.access"] = [
           'title' => t('Access'),
           'route_name' => "rng.event.$entity_type.access",
           'parent_id' => 'rng.local_tasks:' . $event_default,
           'weight' => -80,
           'cache_tags' => $cache_tags,
-        );
+        ];
 
-        $this->derivatives["rng.event.$entity_type.event.messages"] = array(
+        $this->derivatives["rng.event.$entity_type.event.messages"] = [
           'title' => t('Messages'),
           'route_name' => "rng.event.$entity_type.messages",
           'parent_id' => 'rng.local_tasks:' . $event_default,
           'weight' => 100,
           'cache_tags' => $cache_tags,
-        );
+        ];
 
-        $this->derivatives["rng.event.$entity_type.event.group.list"] = array(
+        $this->derivatives["rng.event.$entity_type.event.group.list"] = [
           'title' => t('Groups', [], ['context' => 'rng']),
           'route_name' => "rng.event.$entity_type.group.list",
           'parent_id' => 'rng.local_tasks:' . $event_default,
           'weight' => 150,
           'cache_tags' => $cache_tags,
-        );
+        ];
       }
     }
 

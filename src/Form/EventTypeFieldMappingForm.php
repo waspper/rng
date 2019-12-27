@@ -17,7 +17,7 @@ class EventTypeFieldMappingForm extends EntityForm {
    *
    * @var array
    */
-  var $fields = [
+  public $fields = [
     EventManagerInterface::FIELD_REGISTRATION_TYPE,
     EventManagerInterface::FIELD_REGISTRATION_GROUPS,
     EventManagerInterface::FIELD_STATUS,

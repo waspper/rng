@@ -37,7 +37,7 @@ class RngEventMetaTest extends RngKernelTestBase {
   /**
    * Constant representing unlimited.
    *
-   * @var \Drupal\rng\EventMetaInterface::CAPACITY_UNLIMITED
+   * @var \Drupal\rng\EventMetaInterfaceCAPACITY_UNLIMITED
    */
   protected $unlimited;
 

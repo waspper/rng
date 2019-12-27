@@ -10,13 +10,14 @@ use Drupal\Core\Form\FormStateInterface;
  * Form controller to delete event configs.
  */
 class EventTypeDeleteForm extends EntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete event type %label?', array(
+    return $this->t('Are you sure you want to delete event type %label?', [
       '%label' => $this->entity->label(),
-    ));
+    ]);
   }
 
   /**
@@ -38,9 +39,9 @@ class EventTypeDeleteForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
-    drupal_set_message(t('Event type %label was deleted.', array(
+    drupal_set_message(t('Event type %label was deleted.', [
       '%label' => $this->entity->label(),
-    )));
+    ]));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

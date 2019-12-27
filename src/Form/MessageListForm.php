@@ -181,7 +181,7 @@ class MessageListForm extends FormBase {
       }
     }
 
-    /** @var RuleInterface $rule */
+    /** @var \Drupal\rng\Entity\RuleInterface $rule */
     foreach ($rules as $rule) {
       if (in_array($operation, ['enable', 'disable'])) {
         $operation_active = $operation == 'enable';
@@ -207,7 +207,7 @@ class MessageListForm extends FormBase {
    * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
-   * @return \Drupal\courier\TemplateCollectionInterface|NULL
+   * @return \Drupal\courier\TemplateCollectionInterface|null
    *   A template collection entity, or NULL if no template collection is
    *   associated.
    */
@@ -228,7 +228,7 @@ class MessageListForm extends FormBase {
    * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
-   * @return \Drupal\rng\Entity\RuleComponentInterface|NULL
+   * @return \Drupal\rng\Entity\RuleComponentInterface|null
    *   A rule component entity, or NULL if no date condition is associated.
    */
   protected function getDateCondition(RuleInterface $rule) {

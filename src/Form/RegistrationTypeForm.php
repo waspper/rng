@@ -38,37 +38,37 @@ class RegistrationTypeForm extends EntityForm {
     $registration_type = $this->entity;
 
     if (!$registration_type->isNew()) {
-      $form['#title'] = $this->t('Edit registration type %label', array(
+      $form['#title'] = $this->t('Edit registration type %label', [
         '%label' => $registration_type->label(),
-      ));
+      ]);
     }
 
     // Build the form.
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $registration_type->label(),
       '#required' => TRUE,
-    );
-    $form['id'] = array(
+    ];
+    $form['id'] = [
       '#type' => 'machine_name',
       '#title' => $this->t('Machine name'),
       '#default_value' => $registration_type->id(),
-      '#machine_name' => array(
-        'exists' => array($this, 'exists'),
+      '#machine_name' => [
+        'exists' => [$this, 'exists'],
         'replace_pattern' => '([^a-z0-9_]+)|(^custom$)',
         'error' => 'The machine-readable name must be unique, and can only contain lowercase letters, numbers, and underscores.',
-      ),
+      ],
       '#disabled' => !$registration_type->isNew(),
-    );
+    ];
 
-    $form['description'] = array(
+    $form['description'] = [
       '#type' => 'textarea',
       '#title' => t('Description'),
       '#default_value' => $registration_type->description,
       '#description' => t('Description will be displayed when a user is choosing which registration type to use for an event.'),
-    );
+    ];
 
     return $form;
   }

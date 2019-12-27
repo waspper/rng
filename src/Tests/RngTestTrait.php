@@ -11,6 +11,9 @@ use Drupal\rng\Entity\Registration;
 use Drupal\rng\EventManagerInterface;
 use Drupal\rng\Entity\EventTypeRule;
 
+/**
+ *
+ */
 trait RngTestTrait {
 
   /**
@@ -33,7 +36,7 @@ trait RngTestTrait {
    * Creates an event type config.
    *
    * @param string $entity_type_id
-   *   An entity type ID
+   *   An entity type ID.
    * @param string $bundle
    *   An entity type bundle.
    * @param array $values
@@ -62,10 +65,10 @@ trait RngTestTrait {
    */
   protected function createEvent($values = []) {
     $event = EntityTest::create($values + [
-        EventManagerInterface::FIELD_REGISTRATION_TYPE => $this->registrationType->id(),
-        EventManagerInterface::FIELD_STATUS => TRUE,
-        EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS => 0,
-      ]);
+      EventManagerInterface::FIELD_REGISTRATION_TYPE => $this->registrationType->id(),
+      EventManagerInterface::FIELD_STATUS => TRUE,
+      EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS => 0,
+    ]);
     $event->save();
     return $this->eventManager->getMeta($event);
   }
@@ -74,7 +77,7 @@ trait RngTestTrait {
    * Create a registration and add an identity as a registrant.
    *
    * @param \Drupal\Core\Entity\EntityInterface $event
-   *   An event entity
+   *   An event entity.
    * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   A registration type.
    * @param \Drupal\Core\Entity\EntityInterface[] $identities

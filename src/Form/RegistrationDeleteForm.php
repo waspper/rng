@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Form for deleting a registration.
  */
 class RegistrationDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */

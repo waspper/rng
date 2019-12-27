@@ -123,30 +123,30 @@ class RuleListBuilder extends EntityListBuilder {
     $row['id'] = $entity->id();
     $row['trigger'] = $entity->getTriggerID();
 
-    $row['conditions']['data'] = array(
+    $row['conditions']['data'] = [
       '#theme' => 'links',
       '#links' => [],
       '#attributes' => ['class' => ['links', 'inline']],
-    );
+    ];
     foreach ($entity->getConditions() as $condition) {
-      $row['conditions']['data']['#links'][] = array(
+      $row['conditions']['data']['#links'][] = [
         'title' => $this->t('Edit', ['@condition_id' => $condition->id(), '@condition' => $condition->getPluginId()]),
         'url' => $condition->urlInfo('edit-form'),
         'query' => $this->redirectDestination->getAsArray(),
-      );
+      ];
     }
 
-    $row['actions']['data'] = array(
+    $row['actions']['data'] = [
       '#theme' => 'links',
       '#links' => [],
       '#attributes' => ['class' => ['links', 'inline']],
-    );
+    ];
     foreach ($entity->getActions() as $action) {
-      $row['actions']['data']['#links'][] = array(
+      $row['actions']['data']['#links'][] = [
         'title' => $this->t('Edit', ['@action_id' => $action->id(), '@action' => $action->getPluginId()]),
         'url' => $action->urlInfo('edit-form'),
         'query' => $this->redirectDestination->getAsArray(),
-      );
+      ];
     }
 
     $row['status'] = $entity->isActive() ? $this->t('Active') : $this->t('Inactive');

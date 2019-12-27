@@ -3,7 +3,7 @@
 namespace Drupal\rng\Exception;
 
 /**
- * Class MaxRegistrantsExceededException
+ * Class MaxRegistrantsExceededException.
  *
  * @package Drupal\rng\Exception
  *

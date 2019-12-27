@@ -22,7 +22,7 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
    *
    * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $eventType;
+  public $eventType;
 
   /**
    * {@inheritdoc}
@@ -37,7 +37,7 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
   /**
    * Test default state of the mapping form with a fresh event type.
    */
-  function testMappingForm() {
+  public function testMappingForm() {
     $this->drupalGet($this->eventType->toUrl('field-mapping'));
     $this->removeWhiteSpace();
     $this->assertRaw('<td>Registration type</td><td>Select which registration types are valid for this event.</td><td>Exists</td>');
@@ -53,8 +53,8 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
   /**
    * Test mapping form when a field does not exist.
    */
-  function testMappingFormDeleted() {
-    // Delete the field since it was added automatically by EventType::postSave
+  public function testMappingFormDeleted() {
+    // Delete the field since it was added automatically by EventType::postSave.
     $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM);
     $field->delete();
 

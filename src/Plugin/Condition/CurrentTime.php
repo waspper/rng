@@ -47,14 +47,14 @@ class CurrentTime extends ConditionPluginBase {
     }
 
     // Add administrative comment publishing options.
-    $form['date'] = array(
+    $form['date'] = [
       '#type' => 'datetime',
       '#date_date_element' => 'date',
       '#title' => $this->t('Date'),
       '#default_value' => $date,
       '#size' => 20,
       '#weight' => 50,
-    );
+    ];
 
     $form['enable'] = [
       '#type' => 'checkbox',
@@ -62,7 +62,7 @@ class CurrentTime extends ConditionPluginBase {
       '#default_value' => $this->getConfiguration()['enable'],
     ];
 
-    $form['negate'] = array(
+    $form['negate'] = [
       '#type' => 'radios',
       '#title' => $this->t('Timing'),
       '#description' => $this->t('Condition will be true if the time when evaluating this condition is before or after the date.'),
@@ -72,7 +72,7 @@ class CurrentTime extends ConditionPluginBase {
       ],
       '#default_value' => (int) $this->isNegated(),
       '#weight' => 100,
-    );
+    ];
 
     return $form;
   }
@@ -108,14 +108,14 @@ class CurrentTime extends ConditionPluginBase {
   /**
    * Gets the date in configuration.
    */
-  function getDate() {
+  public function getDate() {
     return $this->configuration['date'];
   }
 
   /**
    * Formats the date for display.
    */
-  function getDateFormatted() {
+  public function getDateFormatted() {
     return is_numeric($this->getDate()) ? DrupalDateTime::createFromTimestamp($this->getDate()) : $this->t('Not configured');
   }
 

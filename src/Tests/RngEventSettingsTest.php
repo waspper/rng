@@ -111,10 +111,10 @@ class RngEventSettingsTest extends RngSiteTestBase {
     $this->drupalLogin($account);
 
     $this->createEntity($this->event_bundle, [
-      'uid' => \Drupal::currentUser()->id()
+      'uid' => \Drupal::currentUser()->id(),
     ]);
 
-    // Event
+    // Event.
     $base_url = 'node/1';
     $this->drupalGet($base_url . '');
     $this->assertResponse(200);
@@ -124,7 +124,7 @@ class RngEventSettingsTest extends RngSiteTestBase {
     $this->drupalGet($base_url . '/register');
     $this->assertResponse(403);
 
-    // Settings
+    // Settings.
     $edit = [
       'rng_status[value]' => TRUE,
       'rng_registration_type[' . $this->registration_type->id() . ']' => TRUE,

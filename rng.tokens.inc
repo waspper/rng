@@ -57,7 +57,7 @@ function rng_token_info() {
 function rng_tokens($type, $tokens, array $data = [], array $options = []) {
   $replacements = [];
 
-  $url_options = array('absolute' => TRUE);
+  $url_options = ['absolute' => TRUE];
   if (isset($options['langcode'])) {
     $url_options['language'] = \Drupal::languageManager()->getLanguage($options['langcode']);
     $langcode = $options['langcode'];

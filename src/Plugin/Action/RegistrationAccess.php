@@ -32,9 +32,9 @@ class RegistrationAccess extends ConfigurableActionBase implements ContainerFact
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'operations' => [],
-    );
+    ];
   }
 
   /**
@@ -56,13 +56,13 @@ class RegistrationAccess extends ConfigurableActionBase implements ContainerFact
       $values[$operation] = $checked ? $operation : NULL;
     }
 
-    $form['operations'] = array(
+    $form['operations'] = [
       '#title' => $this->t('Operations'),
       '#description' => $this->t('Select which operations to grant.'),
       '#type' => 'checkboxes',
       '#options' => $options,
       '#default_value' => $values,
-    );
+    ];
 
     return $form;
   }

@@ -62,7 +62,7 @@ class RngMessageRules extends RngKernelTestBase {
   }
 
   /**
-   * Create a rule and associated components
+   * Create a rule and associated components.
    *
    * @param $event
    *   An event entity.
@@ -178,7 +178,7 @@ class RngMessageRules extends RngKernelTestBase {
   /**
    * Count number of messages in Courier queue.
    *
-   * @return integer
+   * @return int
    */
   protected function countMessagesInQueue() {
     return \Drupal::entityTypeManager()

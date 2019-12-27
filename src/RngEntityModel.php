@@ -91,7 +91,7 @@ class RngEntityModel implements RngEntityModelInterface {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity object for the entity that is already saved.
-   * @param boolean $update
+   * @param bool $update
    *   Whether this entity is new.
    *
    * @see _rng_entity_postsave();

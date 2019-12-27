@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
  * Builds a list of registration types.
  */
 class RegistrationTypeListBuilder extends ConfigEntityListBuilder {
+
   /**
    * {@inheritdoc}
    */

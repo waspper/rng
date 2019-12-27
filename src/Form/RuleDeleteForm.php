@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Form for deleting a rng rule.
  */
 class RuleDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */

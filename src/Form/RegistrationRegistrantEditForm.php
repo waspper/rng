@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
  * Configure registrant settings.
  */
 class RegistrationRegistrantEditForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */
@@ -24,14 +25,14 @@ class RegistrationRegistrantEditForm extends ContentEntityForm {
   public function buildForm(array $form, FormStateInterface $form_state, RegistrationInterface $registration = NULL) {
     $form['#title'] = $this->t(
       'Edit identities',
-      array('@label' => $registration->label())
+      ['@label' => $registration->label()]
     );
 
     $registrants = $registration->getRegistrants();
 
-    $rows = array();
+    $rows = [];
     foreach ($registrants as $registrant) {
-      $row = array();
+      $row = [];
       $identity = $registrant->getIdentity();
       if ($identity instanceof EntityInterface) {
         $url = $identity->urlInfo();
@@ -44,12 +45,12 @@ class RegistrationRegistrantEditForm extends ContentEntityForm {
       $rows[] = $row;
     }
 
-    $form['registrants'] = array(
+    $form['registrants'] = [
       '#type' => 'table',
-      '#header' => array($this->t('Identity'), $this->t('Registrant ID')),
+      '#header' => [$this->t('Identity'), $this->t('Registrant ID')],
       '#rows' => $rows,
       '#empty' => $this->t('No identities associated with this registration.'),
-    );
+    ];
 
     return $form;
   }

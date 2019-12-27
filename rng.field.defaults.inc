@@ -13,49 +13,52 @@ use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 
+/**
+ *
+ */
 function rng_add_event_field_storage($field_name, $entity_type) {
   if ($field_storage = FieldStorageConfig::loadByName($entity_type, $field_name)) {
     return NULL;
   }
 
-  $definition = array();
+  $definition = [];
   switch ($field_name) {
     case EventManagerInterface::FIELD_REGISTRATION_TYPE:
-      $definition = array(
+      $definition = [
         'type' => 'entity_reference',
-        'settings' => array(
+        'settings' => [
           'target_type' => 'registration_type',
-        ),
+        ],
         'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_GROUPS:
-      $definition = array(
+      $definition = [
         'type' => 'entity_reference',
-        'settings' => array(
+        'settings' => [
           'target_type' => 'registration_group',
-        ),
+        ],
         'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_STATUS:
-      $definition = array(
+      $definition = [
         'type' => 'boolean',
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRANTS_CAPACITY:
-      $definition = array(
+      $definition = [
         'type' => 'integer',
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
-      $definition = array(
+      $definition = [
         'type' => 'integer',
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_WAIT_LIST:
@@ -65,15 +68,15 @@ function rng_add_event_field_storage($field_name, $entity_type) {
       break;
 
     case EventManagerInterface::FIELD_EMAIL_REPLY_TO:
-      $definition = array(
+      $definition = [
         'type' => 'email',
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS:
-      $definition = array(
+      $definition = [
         'type' => 'boolean',
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
@@ -90,63 +93,66 @@ function rng_add_event_field_storage($field_name, $entity_type) {
   }
 
   if (!empty($definition)) {
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = entity_create('field_storage_config', [
       'field_name' => $field_name,
       'entity_type' => $entity_type,
-      ) + $definition
+    ] + $definition
     );
     $field_storage->save();
   }
 }
 
+/**
+ *
+ */
 function rng_event_field_config_definition($field_name) {
-  $definition = array();
+  $definition = [];
 
   switch ($field_name) {
     case EventManagerInterface::FIELD_REGISTRATION_TYPE:
-      $definition = array(
+      $definition = [
         'label' => 'Registration type',
-        'settings' => array('handler' => 'default'),
+        'settings' => ['handler' => 'default'],
         'description' => t('Select which registration types are valid for this event.'),
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_GROUPS:
-      $definition = array(
+      $definition = [
         'label' => 'Registration groups',
-        'settings' => array('handler' => 'default'),
+        'settings' => ['handler' => 'default'],
         'description' => t('New registrations will be added to these groups.'),
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_STATUS:
-      $definition = array(
+      $definition = [
         'label' => 'Accept new registrations',
         'settings' => [
           'on_label' => t('Accepting new registrations'),
           'off_label' => t('Not accepting new registrations'),
         ],
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRANTS_CAPACITY:
-      $definition = array(
+      $definition = [
         'label' => 'Maximum registrants',
         'description' => t('Maximum amount of registrants for this event.'),
-        'settings' => array(
+        'settings' => [
           'min' => 1,
-        ),
-      );
+        ],
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
-      $definition = array(
+      $definition = [
         'label' => 'Maximum registrations',
         'description' => t('Maximum amount of registrations for this event.'),
-        'settings' => array(
+        'settings' => [
           'min' => 1,
-        ),
-      );
+        ],
+      ];
       break;
 
     case EventManagerInterface::FIELD_WAIT_LIST:
@@ -161,47 +167,47 @@ function rng_event_field_config_definition($field_name) {
       break;
 
     case EventManagerInterface::FIELD_EMAIL_REPLY_TO:
-      $definition = array(
+      $definition = [
         'label' => t('Reply-to e-mail address'),
         'description' => t('E-mail address that appears as reply-to when emails are sent from this event. Leave empty to use site default.'),
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS:
-      $definition = array(
+      $definition = [
         'label' => 'Allow duplicate registrants',
         'description' => t('Allows a registrant to create more than one registration for this event.'),
         'settings' => [
           'on_label' => t('Allow duplicate registrants for this event'),
           'off_label' => t('Do not allow duplicate registrants for this event'),
         ],
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
-      $definition = array(
+      $definition = [
         'label' => 'Minimum registrants per registration',
         'description' => t('Minimum number of registrants per registration.'),
         'settings' => [
           'min' => 0,
         ],
         'default_value' => [
-          ['value' => 1]
+          ['value' => 1],
         ],
-      );
+      ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
-      $definition = array(
+      $definition = [
         'label' => 'Maximum registrants per registration',
         'description' => t('Maximum number of registrants per registration.'),
         'settings' => [
           'min' => -1,
         ],
         'default_value' => [
-          ['value' => -1]
+          ['value' => -1],
         ],
-      );
+      ];
       break;
   }
 
@@ -219,11 +225,11 @@ function rng_add_event_field_config($field_name, $entity_type, $bundle = NULL) {
   $definition = rng_event_field_config_definition($field_name);
 
   if (!empty($definition)) {
-    $field = entity_create('field_config', array(
-        'field_name' => $field_name,
-        'entity_type' => $entity_type,
-        'bundle' => $bundle,
-      ) + $definition
+    $field = entity_create('field_config', [
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+    ] + $definition
     );
     $field->save();
   }
@@ -234,12 +240,12 @@ function rng_add_event_field_config($field_name, $entity_type, $bundle = NULL) {
 /**
  * Add field form defaults to a display entity.
  *
- * @param EntityFormDisplayInterface $form_display
+ * @param \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display
  *   A form display.
  * @param string $field_name
  *   The field name.
  *
- * @return EntityFormDisplayInterface
+ * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface
  *   The modified form display.
  */
 function rng_add_event_form_display_defaults(EntityFormDisplayInterface $form_display, $field_name = '') {
@@ -257,21 +263,21 @@ function rng_add_event_form_display_defaults(EntityFormDisplayInterface $form_di
       break;
 
     case EventManagerInterface::FIELD_STATUS:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'boolean_checkbox',
-      ));
+      ]);
       break;
 
     case EventManagerInterface::FIELD_REGISTRANTS_CAPACITY:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'unlimited_number',
-      ));
+      ]);
       break;
 
     case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'unlimited_number',
-      ));
+      ]);
       break;
 
     case EventManagerInterface::FIELD_WAIT_LIST:
@@ -281,40 +287,40 @@ function rng_add_event_form_display_defaults(EntityFormDisplayInterface $form_di
       break;
 
     case EventManagerInterface::FIELD_EMAIL_REPLY_TO:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'email_default',
-        'settings' => array(
+        'settings' => [
           'placeholder' => t('Leave empty to use site default.'),
-        ),
-      ));
+        ],
+      ]);
       break;
 
     case EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'boolean_checkbox',
-      ));
+      ]);
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'unlimited_number',
         'settings' => [
           'value_unlimited' => 0,
           'label_unlimited' => t('No registrants required'),
           'label_number' => t('Minimum'),
         ],
-      ));
+      ]);
       break;
 
     case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
-      $form_display->setComponent($field_name, array(
+      $form_display->setComponent($field_name, [
         'type' => 'unlimited_number',
         'settings' => [
           'value_unlimited' => -1,
           'label_unlimited' => t('No maximum'),
           'label_number' => t('Maximum'),
         ],
-      ));
+      ]);
       break;
   }
   return $form_display;

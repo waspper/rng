@@ -99,9 +99,9 @@ class EventTypeForm extends EntityForm {
     $event_type = $this->entity;
 
     if (!$event_type->isNew()) {
-      $form['#title'] = $this->t('Edit event type %label configuration', array(
+      $form['#title'] = $this->t('Edit event type %label configuration', [
         '%label' => $event_type->label(),
-      ));
+      ]);
     }
 
     if ($event_type->isNew()) {
@@ -132,7 +132,7 @@ class EventTypeForm extends EntityForm {
           '#title' => $this->t('Create a new content type'),
           '#description' => $this->t('Create a content type to use as an event type.'),
           '#return_value' => "node",
-          '#parents' => array('entity_type'),
+          '#parents' => ['entity_type'],
           '#default_value' => 'node',
         ];
 
@@ -141,7 +141,7 @@ class EventTypeForm extends EntityForm {
           '#title' => $this->t('Use existing bundle'),
           '#description' => $this->t('Use an existing entity/bundle combination.'),
           '#return_value' => "existing",
-          '#parents' => array('entity_type'),
+          '#parents' => ['entity_type'],
           '#default_value' => '',
         ];
 
@@ -153,29 +153,29 @@ class EventTypeForm extends EntityForm {
         ];
       }
 
-      $form['entity_type']['existing']['container']['bundle'] = array(
+      $form['entity_type']['existing']['container']['bundle'] = [
         '#type' => 'select',
         '#title' => $this->t('Bundle'),
         '#options' => $bundle_options,
         '#default_value' => $event_type->id(),
         '#disabled' => !$event_type->isNew(),
         '#empty_option' => $bundle_options ? NULL : t('No Bundles Available'),
-      );
+      ];
     }
 
-    $form['settings'] = array(
+    $form['settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Settings'),
-    );
+    ];
 
     // Mirror permission.
-    $form['access']['mirror_update'] = array(
+    $form['access']['mirror_update'] = [
       '#group' => 'settings',
       '#type' => 'checkbox',
       '#title' => t('Mirror manage registrations with update permission'),
       '#description' => t('Allow users to <strong>manage registrations</strong> if they have <strong>update</strong> permission on an event entity.'),
       '#default_value' => (boolean) (($event_type->getEventManageOperation() !== NULL) ? $event_type->getEventManageOperation() : TRUE),
-    );
+    ];
 
     $registrant_types = [];
     foreach (RegistrantType::loadMultiple() as $registrant_type) {
@@ -376,8 +376,8 @@ class EventTypeForm extends EntityForm {
    * @param $bundle
    *   A bundle ID.
    */
-  static function createDefaultRules($entity_type_id, $bundle) {
-    // User Role
+  public static function createDefaultRules($entity_type_id, $bundle) {
+    // User Role.
     /** @var \Drupal\rng\Entity\EventTypeRuleInterface $rule */
     $rule = EventTypeRule::create([
       'trigger' => 'rng_event.register',
@@ -399,7 +399,7 @@ class EventTypeForm extends EntityForm {
     ]);
     $rule->save();
 
-    // Registrant
+    // Registrant.
     $rule = EventTypeRule::create([
       'trigger' => 'rng_event.register',
       'entity_type' => $entity_type_id,

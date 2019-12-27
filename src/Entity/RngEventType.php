@@ -87,7 +87,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * Allow event managers to customize default rules.
    *
-   * @var boolean
+   * @var bool
    */
   public $custom_rules = TRUE;
 
@@ -117,7 +117,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
    *
    * @var array
    */
-  var $fields = [
+  public $fields = [
     EventManagerInterface::FIELD_REGISTRATION_TYPE,
     EventManagerInterface::FIELD_REGISTRATION_GROUPS,
     EventManagerInterface::FIELD_STATUS,
@@ -133,14 +133,14 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventEntityTypeId() {
+  public function getEventEntityTypeId() {
     return $this->entity_type;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setEventEntityTypeId($entity_type) {
+  public function setEventEntityTypeId($entity_type) {
     $this->entity_type = $entity_type;
     return $this;
   }
@@ -148,14 +148,14 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventBundle() {
+  public function getEventBundle() {
     return $this->bundle;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setEventBundle($bundle) {
+  public function setEventBundle($bundle) {
     $this->bundle = $bundle;
     return $this;
   }
@@ -163,14 +163,14 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventManageOperation() {
+  public function getEventManageOperation() {
     return $this->mirror_operation_to_event_manage;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setEventManageOperation($permission) {
+  public function setEventManageOperation($permission) {
     $this->mirror_operation_to_event_manage = $permission;
     return $this;
   }
@@ -178,14 +178,14 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getAllowCustomRules() {
+  public function getAllowCustomRules() {
     return $this->custom_rules;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setAllowCustomRules($allow) {
+  public function setAllowCustomRules($allow) {
     $this->custom_rules = $allow;
     return $this;
   }
@@ -193,21 +193,21 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getDefaultRegistrantType() {
+  public function getDefaultRegistrantType() {
     return $this->default_registrant;
   }
 
   /**
    * {@inheritdoc}
    */
-  function getDefaultMessages() {
+  public function getDefaultMessages() {
     return $this->default_messages;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setDefaultMessages($messages) {
+  public function setDefaultMessages($messages) {
     $this->default_messages = $messages;
     return $this;
   }
@@ -287,10 +287,10 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
    *   The identity entity type ID.
    * @param string $bundle
    *   The identity bundle.
-   * @param boolean $create_key
+   * @param bool $create_key
    *   Will initialise the array key.
    *
-   * @return int|FALSE
+   * @return int|false
    *   The array key, or FALSE if it does not exist.
    */
   protected function getIdentityTypeKey($entity_type, $bundle, $create_key = TRUE) {
@@ -319,7 +319,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function setDefaultRegistrantType($registrant_type_id) {
+  public function setDefaultRegistrantType($registrant_type_id) {
     $this->default_registrant = $registrant_type_id;
     return $this;
   }
@@ -334,7 +334,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  static function courierContextCC($entity_type, $operation) {
+  public static function courierContextCC($entity_type, $operation) {
     $event_types = \Drupal::service('rng.event_manager')
       ->eventTypeWithEntityType($entity_type);
 
@@ -352,7 +352,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
           $courier_context = CourierContext::create([
             'label' => t('Event (@entity_type): Registration', ['@entity_type' => $entity_type_info->getLabel()]),
             'id' => 'rng_registration_' . $entity_type,
-            'tokens' => [$entity_type, 'registration']
+            'tokens' => [$entity_type, 'registration'],
           ]);
           $courier_context->save();
         }

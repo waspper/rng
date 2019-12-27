@@ -90,9 +90,9 @@ class RuleComponentForm extends ContentEntityForm {
 
     if (!$action->isNew()) {
       $form['#title'] = $this->t('Edit @type',
-        array(
+        [
           '@type' => $action->getType(),
-        )
+        ]
       );
     }
     $form = $this->plugin->buildConfigurationForm($form, $form_state);

@@ -71,17 +71,17 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
    * {@inheritdoc}
    */
   public function getIdentityId() {
-    return array(
+    return [
       'entity_type' => $this->get('identity')->target_type,
       'entity_id' => $this->get('identity')->target_id,
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function setIdentity(EntityInterface $entity) {
-    $this->set('identity', array('entity' => $entity));
+    $this->set('identity', ['entity' => $entity]);
     return $this;
   }
 
@@ -135,7 +135,7 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
       ->setLabel(t('Identity'))
       ->setDescription(t('The person associated with this registrant.'))
       ->setSetting('exclude_entity_types', 'true')
-      ->setSetting('entity_type_ids', array('registrant', 'registration'))
+      ->setSetting('entity_type_ids', ['registrant', 'registration'])
       ->setCardinality(1)
       ->setReadOnly(TRUE);
 

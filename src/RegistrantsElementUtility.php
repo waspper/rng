@@ -8,6 +8,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\rng\Entity\RegistrantInterface;
 use Drupal\user\Entity\User;
 
+/**
+ *
+ */
 class RegistrantsElementUtility {
 
   /**
@@ -41,7 +44,7 @@ class RegistrantsElementUtility {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
-   * @return array|NULL
+   * @return array|null
    *   The element, or NULL if the element is not found.
    */
   public static function findElement(array $form, FormStateInterface $form_state) {
@@ -62,7 +65,7 @@ class RegistrantsElementUtility {
    *   Traverse up until finding an element with the properties with these keys
    *   and values.
    *
-   * @return array|NULL
+   * @return array|null
    *   The requested element, or NULL if the element is not found.
    */
   protected static function findElementWithProperties(array $form, FormStateInterface $form_state, array $element_properties) {
@@ -81,12 +84,18 @@ class RegistrantsElementUtility {
     return $element;
   }
 
+  /**
+   *
+   */
   public function addRegistrant(RegistrantInterface $registrant) {
     $registrants = $this->getRegistrants();
     $registrants[] = $registrant;
     $this->setRegistrants($registrants);
   }
 
+  /**
+   *
+   */
   public function replaceFirstRegistrant(RegistrantInterface $registrant) {
     $registrants = $this->getRegistrants();
 
@@ -136,7 +145,7 @@ class RegistrantsElementUtility {
    * permit usage of the 'existing' subform.
    *
    * @param \Drupal\Core\Entity\EntityInterface $identity
-   *   An identity to whitelist from re-validation
+   *   An identity to whitelist from re-validation.
    */
   public function addWhitelistExisting(EntityInterface $identity) {
     $whitelisted = $this->getWhitelistExisting();
@@ -147,7 +156,7 @@ class RegistrantsElementUtility {
   /**
    * Get form state for change_it.
    *
-   * @return boolean
+   * @return bool
    *   The current value for change_it.
    */
   public function getChangeIt() {
@@ -183,7 +192,7 @@ class RegistrantsElementUtility {
         if ($minimum && $minimum > 1) {
           $arity = 'multiple';
         }
-        else if ($maximum && $maximum == 1) {
+        elseif ($maximum && $maximum == 1) {
           $arity = 'single';
         }
         else {
@@ -200,7 +209,6 @@ class RegistrantsElementUtility {
    *
    * Arity needs to persist in case the user has multiple registrants, then
    * selects 'Single', then selects 'Change' again.
-   *
    */
   public function setArity($arity) {
     $this->formState->set(array_merge($this->element['#parents'], ['for_arity']), $arity);
@@ -209,7 +217,7 @@ class RegistrantsElementUtility {
   /**
    * Get form state for opening the create-an-entity sub-form.
    *
-   * @return boolean
+   * @return bool
    *   Wther the create-an-entity sub-form is open.
    */
   public function getShowCreateEntitySubform() {
@@ -229,7 +237,7 @@ class RegistrantsElementUtility {
    * Clear user input from people sub-forms.
    */
   public function clearPeopleFormInput() {
-    $autocomplete_tree = array_merge($this->element['#parents'], ['entities', 'person', 'existing','existing_autocomplete']);
+    $autocomplete_tree = array_merge($this->element['#parents'], ['entities', 'person', 'existing', 'existing_autocomplete']);
     NestedArray::unsetValue($this->formState->getUserInput(), $autocomplete_tree);
 
     $registrant_tree = array_merge($this->element['#parents'], ['entities', 'person', 'registrant']);
@@ -240,13 +248,13 @@ class RegistrantsElementUtility {
   }
 
   /**
-   * Copies form values to registrant entity properties
+   * Copies form values to registrant entity properties.
    *
    * @param bool $validate
    *   Optionally validate the form.
    *
    * @return \Drupal\rng\Entity\RegistrantInterface
-   * A registrant entity with updated properties.
+   *   A registrant entity with updated properties.
    */
   public function buildRegistrant($validate = FALSE) {
     $value = $this->formState->getTemporaryValue(array_merge(['_registrants_values'], $this->element['#parents']));
@@ -291,7 +299,7 @@ class RegistrantsElementUtility {
    * @param \Drupal\Core\Entity\EntityInterface $identity
    *   An identity to check.
    *
-   * @return boolean
+   * @return bool
    *   Whether the identity is already used.
    */
   public function identityExists(EntityInterface $identity) {
@@ -410,9 +418,9 @@ class RegistrantsElementUtility {
    * @param string $entity_type_id
    *   A entity type ID.
    * @param string $bundle
-   *   An entity bundle
+   *   An entity bundle.
    *
-   * @return boolean
+   * @return bool
    *   Whether the current user can create new entities.
    */
   public static function entityCreateAccess($entity_type_id, $bundle) {
@@ -420,7 +428,7 @@ class RegistrantsElementUtility {
     $entity_type = $entity_type_manager->getDefinition($entity_type_id);
     $access_control = $entity_type_manager->getAccessControlHandler($entity_type_id);
 
-    // If entity type has bundles
+    // If entity type has bundles.
     $entity_bundle = ($entity_type->getBundleEntityType() !== NULL) ? $bundle : NULL;
 
     return $access_control->createAccess($entity_bundle);

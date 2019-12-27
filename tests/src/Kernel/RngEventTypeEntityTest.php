@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\rng\Kernel;
 
-use Drupal\simpletest\UserCreationTrait;
 use Drupal\rng\Entity\RngEventType;
 
 /**
@@ -78,7 +77,7 @@ class RngEventTypeEntityTest extends RngKernelTestBase {
     ];
     $event_type = $this->createEventTypeBase($values);
     $result = $event_type->getIdentityTypeEntityFormModes();
-    $this->assertEquals([] , $result);
+    $this->assertEquals([], $result);
   }
 
   /**

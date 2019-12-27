@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\rng\Entity;
+
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\rng\Exception\MaxRegistrantsExceededException;
@@ -81,7 +82,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public function setEvent(ContentEntityInterface $entity) {
-    $this->set('event', array('entity' => $entity));
+    $this->set('event', ['entity' => $entity]);
     return $this;
   }
 
@@ -89,7 +90,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public function label() {
-    return !empty($this->id->value) ? t('Registration @id', array('@id' => $this->id->value)) : t('New registration');
+    return !empty($this->id->value) ? t('Registration @id', ['@id' => $this->id->value]) : t('New registration');
   }
 
   /**
@@ -292,7 +293,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setLabel(t('Event'))
       ->setDescription(t('The event for the registration.'))
       ->setSetting('exclude_entity_types', 'true')
-      ->setSetting('entity_type_ids', array('registrant', 'registration'))
+      ->setSetting('entity_type_ids', ['registrant', 'registration'])
       ->setDescription(t('The relationship between this registration and an event.'))
       ->setRevisionable(TRUE)
       ->setReadOnly(TRUE);
@@ -468,4 +469,5 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
   public static function getCurrentUserId() {
     return [\Drupal::currentUser()->id()];
   }
+
 }

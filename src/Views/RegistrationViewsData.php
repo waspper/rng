@@ -24,7 +24,7 @@ class RegistrationViewsData extends EntityViewsData {
       '@target_label' => $group_definition->getLabel(),
     ];
 
-    $data['registration__groups']['table']['group']  = $group_definition->getLabel();
+    $data['registration__groups']['table']['group'] = $group_definition->getLabel();
     $data['registration__groups']['table']['join']['registration_field_data'] = [
       'left_field' => 'id',
       'field' => 'entity_id',

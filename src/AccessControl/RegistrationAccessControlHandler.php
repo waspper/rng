@@ -83,10 +83,9 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = array(), $return_as_object = FALSE) {
+  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = [], $return_as_object = FALSE) {
     // $entity_bundle: A registration type, or NULL if it is a registration type
     // listing.
-
     if (!isset($context['event'])) {
       throw new AccessException('Requires event context.');
     }

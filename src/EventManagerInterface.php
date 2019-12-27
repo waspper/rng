@@ -91,7 +91,7 @@ interface EventManagerInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An event entity.
    *
-   * @return \Drupal\rng\EventMetaInterface|NULL
+   * @return \Drupal\rng\EventMetaInterface|null
    *   An event meta object.
    *
    * @throws \Drupal\rng\Exception\InvalidEventException
@@ -105,7 +105,7 @@ interface EventManagerInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An event entity.
    *
-   * @return boolean
+   * @return bool
    *   Whether the entity is an event.
    */
   public function isEvent(EntityInterface $entity);
@@ -122,7 +122,7 @@ interface EventManagerInterface {
    *
    * @return \Drupal\rng\Entity\EventTypeInterface|null
    */
-  function eventType($entity_type, $bundle);
+  public function eventType($entity_type, $bundle);
 
   /**
    * Gets all event types associated with an entity type.
@@ -133,7 +133,7 @@ interface EventManagerInterface {
    * @return \Drupal\rng\Entity\EventTypeInterface[]
    *   An array of event type config entities
    */
-  function eventTypeWithEntityType($entity_type);
+  public function eventTypeWithEntityType($entity_type);
 
   /**
    * Get all event types configuration entities.
@@ -141,12 +141,12 @@ interface EventManagerInterface {
    * @return array
    *   A multidimensional array: [event_entity_type][event_bundle] = $event_type
    */
-  function getEventTypes();
+  public function getEventTypes();
 
   /**
    * Invalidate cache for events types.
    */
-  function invalidateEventTypes();
+  public function invalidateEventTypes();
 
   /**
    * Invalidate cache for an event type.
@@ -154,5 +154,6 @@ interface EventManagerInterface {
    * @param \Drupal\rng\Entity\EventTypeInterface $event_type
    *   An event type.
    */
-  function invalidateEventType(EventTypeInterface $event_type);
+  public function invalidateEventType(EventTypeInterface $event_type);
+
 }

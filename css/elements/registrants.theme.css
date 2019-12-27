@@ -1,5 +1,4 @@
-@charset "UTF-8";
-.registrants-element .for_arity legend {
+@charset "UTF-8"; .registrants-element .for_arity legend {
   /* browsers cannot change legend from block to inline */
   float: left;
 }

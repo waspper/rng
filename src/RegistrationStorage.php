@@ -21,6 +21,9 @@ class RegistrationStorage extends SqlContentEntityStorage {
    */
   protected $eventDispatcher;
 
+  /**
+   *
+   */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     $instance = parent::createInstance($container, $entity_type);
     $instance->setDispatcher($container->get('event_dispatcher'));

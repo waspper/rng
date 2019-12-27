@@ -49,14 +49,14 @@ class RngRegistrationAccessTest extends RngKernelTestBase {
     $this->installEntitySchema('rng_rule_component');
     $this->installEntitySchema('user');
     $this->installConfig('rng');
-    $this->installSchema('system', array('sequences'));
+    $this->installSchema('system', ['sequences']);
 
     $this->registrationType = $this->createRegistrationType();
     $this->createEventType('entity_test', 'entity_test');
   }
 
   /**
-   * Test register self
+   * Test register self.
    */
   public function testRegisterSelf() {
     $event_meta = $this->createEvent();
@@ -102,7 +102,7 @@ class RngRegistrationAccessTest extends RngKernelTestBase {
   }
 
   /**
-   * Test register self no permission
+   * Test register self no permission.
    */
   public function testRegisterSelfNoPermission() {
     $event_meta = $this->createEvent();
@@ -131,7 +131,7 @@ class RngRegistrationAccessTest extends RngKernelTestBase {
   }
 
   /**
-   * Test register self duplicates allowed
+   * Test register self duplicates allowed.
    */
   public function testRegisterSelfWithDuplicates() {
     $event_meta = $this->createEvent([

@@ -22,7 +22,7 @@ class RngRouteEnhancer implements RouteEnhancerInterface {
    * {@inheritdoc}
    */
   public function enhance(array $defaults, Request $request) {
-    if(!empty($defaults['event'])){
+    if (!empty($defaults['event'])) {
       $event_entity_type = $defaults['event'];
       if (isset($defaults[$event_entity_type])) {
         $rng_event = $defaults[$event_entity_type];

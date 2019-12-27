@@ -28,12 +28,12 @@ class RngEventAccessTest extends RngWebTestBase {
   /**
    * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
-  var $registration_type;
+  public $registration_type;
 
   /**
    * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $event_type;
+  public $event_type;
 
   /**
    * {@inheritdoc}
@@ -52,7 +52,7 @@ class RngEventAccessTest extends RngWebTestBase {
    *
    * Ensure if these rules change they invalidate caches.
    */
-  function testComponentAccessCache() {
+  public function testComponentAccessCache() {
     $event = EntityTest::create([
       EventManagerInterface::FIELD_REGISTRATION_TYPE => $this->registration_type->id(),
       EventManagerInterface::FIELD_STATUS => TRUE,
@@ -127,7 +127,7 @@ class RngEventAccessTest extends RngWebTestBase {
    *
    * Ensure if these rules change they invalidate caches.
    */
-  function testComponentAccessDefaultsCache() {
+  public function testComponentAccessDefaultsCache() {
     // Create a rule as a baseline.
     $rule = EventTypeRule::create([
       'trigger' => 'rng_event.register',

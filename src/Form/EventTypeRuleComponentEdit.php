@@ -41,21 +41,21 @@ class EventTypeRuleComponentEdit extends FormBase {
    *
    * @var \Drupal\rng\Entity\EventTypeRuleInterface
    */
-  var $eventTypeRule;
+  public $eventTypeRule;
 
   /**
    * The component type. 'action' or 'condition'.
    *
    * @var string
    */
-  var $componentType;
+  public $componentType;
 
   /**
    * The component key from the event type rule.
    *
    * @var string
    */
-  var $componentId;
+  public $componentId;
 
   /**
    * The plugin instance.
@@ -113,7 +113,7 @@ class EventTypeRuleComponentEdit extends FormBase {
       $plugin_id = $configuration['id'];
       unset($configuration['id']);
     }
-    else if ($this->componentType == 'action') {
+    elseif ($this->componentType == 'action') {
       $manager = 'actionManager';
       $components = $this->eventTypeRule->getActions();
       $plugin_id = $components[$this->componentId]['id'];
@@ -149,7 +149,7 @@ class EventTypeRuleComponentEdit extends FormBase {
       $this->eventTypeRule
         ->setCondition($this->componentId, $configuration);
     }
-    else if ($this->componentType == 'action') {
+    elseif ($this->componentType == 'action') {
       $this->eventTypeRule
         ->setAction($this->componentId, $configuration);
     }

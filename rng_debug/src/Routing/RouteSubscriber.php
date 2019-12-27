@@ -59,11 +59,11 @@ class RouteSubscriber extends RouteSubscriberBase {
         // Rules.
         $route = new Route(
           $canonical_path . '/event/rules',
-          array(
+          [
             '_controller' => '\Drupal\rng_debug\Controller\DebugController::listing',
             '_title' => 'Rules',
             'event' => $entity_type,
-          ),
+          ],
           $manage_requirements,
           $options
         );

@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\rng\Entity;
+
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -14,7 +15,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   /**
    * Get associated event.
    *
-   * @return \Drupal\Core\Entity\ContentEntityInterface|NULL
+   * @return \Drupal\Core\Entity\ContentEntityInterface|null
    *   An entity, or NULL if the event does not exist.
    */
   public function getEvent();
@@ -70,7 +71,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   /**
    * Get the User object that owns this registration.
    *
-   * @return UserInterface
+   * @return \Drupal\user\UserInterface
    *   The User object.
    */
   public function getOwner();
@@ -102,6 +103,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    *   Returns registration for chaining.
    */
   public function setOwnerId($uid);
+
   /**
    * Get registrants IDs for the registration.
    *
@@ -122,7 +124,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * Get the number of registrants assigned to this registration, whether
    * occupied or not.
    *
-   * @return integer
+   * @return int
    *   The value of the RegistrantQty field.
    */
   public function getRegistrantQty();
@@ -154,7 +156,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * @param \Drupal\Core\Entity\EntityInterface $identity
    *   The identity to search.
    *
-   * @return boolean
+   * @return bool
    *   Whether the identity is a registrant.
    */
   public function hasIdentity(EntityInterface $identity);

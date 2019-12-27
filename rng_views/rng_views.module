@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ */
+
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\views\Entity\View;
@@ -9,9 +14,9 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  *
- * rng_event_type_edit_form
+ * Rng_event_type_edit_form.
  */
-function rng_views_form_rng_event_type_form_alter(&$form, \Drupal\Core\Form\FormStateInterface &$form_state) {
+function rng_views_form_rng_event_type_form_alter(&$form, FormStateInterface &$form_state) {
   /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
   $form_object = $form_state->getFormObject();
   // This hook users BASE_ID, so this hook will be called for
@@ -30,16 +35,16 @@ function rng_views_form_rng_event_type_form_alter(&$form, \Drupal\Core\Form\Form
       ->getDefinition($event_type->getEventEntityTypeId());
   }
 
-  $form['views'] = array(
+  $form['views'] = [
     '#type' => 'fieldset',
     '#title' => t('Views'),
     '#tree' => TRUE,
     '#weight' => 20,
-  );
+  ];
 
   $title = t('Create registration list');
   if ($entity_type && $view = View::load('rng_registrations_' . $entity_type->id())) {
-    /** @var View $view */
+    /** @var \Drupal\views\Entity\View $view */
     if ($view->hasLinkTemplate('edit-form')) {
       $title = t('Create registration list (<a href="@view_link">view already exists</a>)', [
         '@view_link' => $view->urlInfo()->toString(),
@@ -60,7 +65,7 @@ function rng_views_form_rng_event_type_form_alter(&$form, \Drupal\Core\Form\Form
 /**
  * Form submission handler.
  *
- * @see rng_views_form_rng_event_type_form_alter().
+ * @see rng_views_form_rng_event_type_form_alter()
  */
 function rng_views_form_event_type_form_alter_submit($form, FormStateInterface $form_state) {
   $form_object = $form_state->getFormObject();
@@ -72,7 +77,7 @@ function rng_views_form_event_type_form_alter_submit($form, FormStateInterface $
     if ($views['registration_list']) {
       $view = rng_views_event_registrations($entity_type);
       $view->save();
-      drupal_set_message(t('<a href=":url">%label</a> view created.',[
+      drupal_set_message(t('<a href=":url">%label</a> view created.', [
         '%label' => $view->label(),
         ':url' => $view->toUrl()->toString(),
       ]));
@@ -98,7 +103,7 @@ function rng_views_event_registrations(EntityTypeInterface $entity_type) {
   $base_path = \Drupal::moduleHandler()->getModule('rng_views')->getPath();
   $yaml = Yaml::decode(file_get_contents($base_path . '/extra/event.registrations.yml'));
 
-  /** @var View $view */
+  /** @var \Drupal\views\Entity\View $view */
   $view = \Drupal::entityTypeManager()
     ->getStorage('view')
     ->createFromStorageRecord($yaml);
@@ -120,7 +125,7 @@ function rng_views_event_registrations(EntityTypeInterface $entity_type) {
       'rng', 'event', 'list', $entity_type->id(),
     ]));
 
-  // Dependencies
+  // Dependencies.
   $dependencies = $view->get('dependencies');
   if (array_key_exists('module', $dependencies)) {
     // Remove node module from dependencies.
@@ -146,10 +151,10 @@ function rng_views_event_registrations(EntityTypeInterface $entity_type) {
       'id' => $rid,
       'field' => $entity_type->id() . '__event',
       'admin_label' => t('Event: @entity_type', $t_args),
-    ] + $relationship
+    ] + $relationship,
   ];
 
-  // Argument
+  // Argument.
   $argument = $defaults['display_options']['arguments']['nid'];
 
   $aid = $entity_type->getKey('id');

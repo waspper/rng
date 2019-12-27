@@ -71,7 +71,7 @@ class RngEventRouteContext implements ContextProviderInterface {
   /**
    * Determine the event in the current route.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|NULL
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   The event entity, or NULL.
    */
   protected function getEventInRoute() {
@@ -89,7 +89,7 @@ class RngEventRouteContext implements ContextProviderInterface {
       // There could be multiple events in a route, determine which event
       // is the correct one.
       foreach ($events as $entity) {
-        // Exact link templates
+        // Exact link templates.
         foreach ($entity->getEntityType()->getLinkTemplates() as $link_template => $path) {
           if ($route->getPath() === $path) {
             return $entity;
@@ -131,4 +131,5 @@ class RngEventRouteContext implements ContextProviderInterface {
 
     return $events;
   }
+
 }

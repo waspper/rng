@@ -23,7 +23,6 @@ class RngViewsTest extends ViewsKernelTestBase {
 
   /**
    * {@inheritdoc}
-   *
    */
   public static $modules = ['user', 'courier', 'unlimited_number', 'rng_test_views', 'rng', 'entity_test', 'field', 'dynamic_entity_reference', 'text'];
 

@@ -12,7 +12,7 @@ interface GroupInterface extends ContentEntityInterface {
   /**
    * Get associated event.
    *
-   * @return \Drupal\Core\Entity\ContentEntityInterface|NULL
+   * @return \Drupal\Core\Entity\ContentEntityInterface|null
    *   An entity, or NULL if the event does not exist.
    */
   public function getEvent();
@@ -20,7 +20,7 @@ interface GroupInterface extends ContentEntityInterface {
   /**
    * Set associated event.
    *
-   * @param ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *
    * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns group for chaining.
@@ -30,7 +30,7 @@ interface GroupInterface extends ContentEntityInterface {
   /**
    * Determine if a module created the group.
    *
-   * @return boolean
+   * @return bool
    *   Whether the group is user created.
    */
   public function isUserGenerated();

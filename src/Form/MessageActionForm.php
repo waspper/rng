@@ -19,7 +19,7 @@ use Drupal\rng\Entity\Rule;
 class MessageActionForm extends FormBase {
 
   /**
-   * @var \Drupal\rng\Plugin\Action\CourierTemplateCollection $actionPlugin
+   * @var \Drupal\rng\Plugin\Action\CourierTemplateCollection
    */
   protected $actionPlugin;
 
@@ -79,35 +79,35 @@ class MessageActionForm extends FormBase {
     $this->actionPlugin->setConfiguration(['active' => FALSE]);
     $form_state->set('event', $event);
 
-    $triggers = array(
+    $triggers = [
       'rng:custom:date' => $this->t('To all registrations, on a date.'),
-      (string) $this->t('Registrations') => array(
+      (string) $this->t('Registrations') => [
         'entity:registration:new' => $this->t('To a single registration, when it is created.'),
         'entity:registration:update' => $this->t('To a single registration, when it is updated.'),
-      ),
-    );
+      ],
+    ];
 
-    $form['trigger'] = array(
+    $form['trigger'] = [
       '#type' => 'select',
       '#title' => $this->t('Trigger'),
       '#description' => $this->t('When should this message be sent?'),
       '#options' => $triggers,
       '#default_value' => 'now',
-    );
+    ];
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => t('Create message'),
-    );
-    $form['actions']['cancel'] = array(
+    ];
+    $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
       '#url' => Url::fromRoute(
         'rng.event.' . $event->getEntityTypeId() . '.messages',
-        array($event->getEntityTypeId() => $event->id())
+        [$event->getEntityTypeId() => $event->id()]
       ),
-    );
+    ];
 
     return $form;
   }
@@ -142,7 +142,7 @@ class MessageActionForm extends FormBase {
     $trigger_id = $form_state->getValue('trigger');
 
     $rule = Rule::create([
-      'event' => array('entity' => $event),
+      'event' => ['entity' => $event],
       'trigger_id' => $trigger_id,
     ]);
     $rule->save();

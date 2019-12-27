@@ -14,7 +14,7 @@ class RngSettingsFormTest extends RngWebTestBase {
   /**
    * Test settings form menu link.
    */
-  function testSettingsMenuLink() {
+  public function testSettingsMenuLink() {
     $web_user = $this->drupalCreateUser(['administer rng', 'access administration pages']);
     $this->drupalLogin($web_user);
 
@@ -25,7 +25,7 @@ class RngSettingsFormTest extends RngWebTestBase {
   /**
    * Test settings form.
    */
-  function testSettingsForm() {
+  public function testSettingsForm() {
     $web_user = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($web_user);
 

@@ -10,7 +10,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Condition\ConditionManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use \Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 
 /**
  * Base RNG selection plugin.

@@ -28,7 +28,7 @@ class RegistrationBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function build(RouteMatchInterface $route_match) {
-    $links = array(Link::createFromRoute($this->t('Home'), '<front>'));
+    $links = [Link::createFromRoute($this->t('Home'), '<front>')];
     $registration = $route_match->getParameter('registration');
 
     if ($event = $registration->getEvent()) {

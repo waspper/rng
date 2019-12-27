@@ -4,6 +4,9 @@ namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
+/**
+ *
+ */
 interface EventTypeRuleInterface extends ConfigEntityInterface {
 
   /**

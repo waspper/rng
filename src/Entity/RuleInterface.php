@@ -12,7 +12,7 @@ interface RuleInterface extends ContentEntityInterface {
   /**
    * Gets the event entity.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|NULL
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   The event entity. Or NULL if it does not exist.
    */
   public function getEvent();

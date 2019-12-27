@@ -12,7 +12,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
   /**
    * Gets the rule entity.
    *
-   * @return \Drupal\rng\Entity\Rule|NULL
+   * @return \Drupal\rng\Entity\Rule|null
    *   The rule entity. Or NULL if it does not exist.
    */
   public function getRule();
@@ -75,7 +75,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
    * Sets the plugin configuration.
    *
    * @param array $configuration
-   *   Mixed configuration
+   *   Mixed configuration.
    *
    * @return \Drupal\rng\Entity\RuleComponentInterface
    *   Return this object for chaining.
@@ -91,7 +91,7 @@ interface RuleComponentInterface extends ContentEntityInterface {
    * @todo: change @return when condition and action plugins have a better
    * @todo: common class.
    *
-   * @return \Drupal\Core\Condition\ConditionPluginBase|\Drupal\Core\Action\ConfigurableActionBase|NULL
+   * @return \Drupal\Core\Condition\ConditionPluginBase|\Drupal\Core\Action\ConfigurableActionBase|null
    *   A condition or action plugin. Or NULL if the plugin does not exist.
    *
    * @throws \Exception

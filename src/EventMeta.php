@@ -304,7 +304,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function getDefaultGroups() {
+  public function getDefaultGroups() {
     $groups = [];
     foreach ($this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_GROUPS} as $group) {
       $groups[] = $group->entity;
@@ -315,7 +315,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildQuery($entity_type) {
+  public function buildQuery($entity_type) {
     return $this->entityManager->getStorage($entity_type)->getQuery('AND')
       ->condition('event__target_type', $this->getEvent()->getEntityTypeId(), '=')
       ->condition('event__target_id', $this->getEvent()->id(), '=');
@@ -324,7 +324,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildEventRegistrantQuery() {
+  public function buildEventRegistrantQuery() {
     // TODO: Rebuild using non-deprecated solution.
     $query = db_select('registrant', 'ant');
     $query->join('registration', 'ion', 'ion.id = ant.registration');
@@ -339,14 +339,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildRegistrationQuery() {
+  public function buildRegistrationQuery() {
     return $this->buildQuery('registration');
   }
 
   /**
    * {@inheritdoc}
    */
-  function getRegistrations() {
+  public function getRegistrations() {
     $query = $this->buildRegistrationQuery();
     return $this->entityManager->getStorage('registration')->loadMultiple($query->execute());
   }
@@ -354,28 +354,28 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function countRegistrants() {
+  public function countRegistrants() {
     return $this->buildEventRegistrantQuery()->countQuery()->execute()->fetchField();
   }
 
   /**
    * {@inheritdoc}
    */
-  function countRegistrations() {
+  public function countRegistrations() {
     return $this->buildRegistrationQuery()->count()->execute();
   }
 
   /**
    * {@inheritdoc}
    */
-  function buildRuleQuery() {
+  public function buildRuleQuery() {
     return $this->buildQuery('rng_rule');
   }
 
   /**
    * {@inheritdoc}
    */
-  function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE) {
+  public function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE) {
     $query = $this->buildRuleQuery();
 
     if ($trigger) {
@@ -418,7 +418,7 @@ class EventMeta implements EventMetaInterface {
 
     foreach ($default_rules as $default_rule) {
       $rule = Rule::create([
-        'event' => array('entity' => $this->getEvent()),
+        'event' => ['entity' => $this->getEvent()],
         'trigger_id' => $trigger,
         'status' => TRUE,
       ]);
@@ -450,14 +450,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function isDefaultRules($trigger) {
+  public function isDefaultRules($trigger) {
     return (boolean) !$this->getRules($trigger);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function trigger($trigger, $context = array()) {
+  public function trigger($trigger, $context = []) {
     $context['event'] = $this->getEvent();
     foreach ($this->getRules($trigger) as $rule) {
       if ($rule->evaluateConditions()) {
@@ -471,14 +471,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildGroupQuery() {
+  public function buildGroupQuery() {
     return $this->buildQuery('registration_group');
   }
 
   /**
    * {@inheritdoc}
    */
-  function getGroups() {
+  public function getGroups() {
     $query = $this->buildGroupQuery();
     return $this->entityManager->getStorage('registration_group')->loadMultiple($query->execute());
   }
@@ -567,7 +567,7 @@ class EventMeta implements EventMetaInterface {
    * @param array $bundles
    *   (optional) An array of bundles.
    *
-   * @return integer
+   * @return int
    *   The number of referencable entities.
    */
   protected function countRngReferenceableEntities($entity_type_id, $bundles = []) {
@@ -665,7 +665,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function addDefaultAccess() {
+  public function addDefaultAccess() {
     $rules = $this->getDefaultRules('rng_event.register');
     foreach ($rules as $rule) {
       $rule->save();
@@ -678,7 +678,7 @@ class EventMeta implements EventMetaInterface {
    * @param string $entity_type_id
    *   An entity type Id.
    *
-   * @return boolean
+   * @return bool
    *   Whether an entity type uses a separate bundle entity type.
    */
   protected function entityTypeHasBundles($entity_type_id) {
@@ -689,7 +689,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function createDefaultEventMessages() {
+  public function createDefaultEventMessages() {
     // Get Default messages for this Event type.
     $default_messages = $this->getEventType()->getDefaultMessages();
     if ($default_messages) {
@@ -731,7 +731,7 @@ class EventMeta implements EventMetaInterface {
             ->setType('condition')
             ->setPluginId('rng_rule_scheduler');
           $rule_component->save();
-           // Save the ID into config.
+          // Save the ID into config.
           $rule_component->setConfiguration([
             'rng_rule_component' => $rule_component->id(),
           ]);

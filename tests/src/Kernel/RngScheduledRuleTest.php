@@ -72,7 +72,7 @@ class RngScheduledRuleTest extends RngKernelTestBase {
     $event_meta = $this->createEvent();
 
     $this->rule = Rule::create([
-      'event' => array('entity' => $event_meta->getEvent()),
+      'event' => ['entity' => $event_meta->getEvent()],
       'trigger_id' => 'rng:custom:date',
     ]);
 

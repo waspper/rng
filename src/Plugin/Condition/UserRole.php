@@ -56,7 +56,7 @@ class UserRole extends CoreUserRole implements RNGConditionInterface {
   /**
    * {@inheritdoc}
    */
-  function alterQuery(&$query) {
+  public function alterQuery(&$query) {
     if ($query->getEntityTypeId() != 'user') {
       throw new \Exception('Query only operates on user entity type.');
     }

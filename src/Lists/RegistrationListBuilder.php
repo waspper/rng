@@ -24,7 +24,7 @@ class RegistrationListBuilder extends EntityListBuilder {
   /**
    * Row Counter.
    *
-   * @var integer
+   * @var int
    */
   protected $row_counter;
 
@@ -90,11 +90,11 @@ class RegistrationListBuilder extends EntityListBuilder {
   protected function getDefaultOperations(EntityInterface $entity) {
     $operations = parent::getDefaultOperations($entity);
     if ($entity->access('view') && $entity->hasLinkTemplate('canonical')) {
-      $operations['view'] = array(
+      $operations['view'] = [
         'title' => $this->t('View'),
         'weight' => 0,
         'url' => $entity->urlInfo('canonical'),
-      );
+      ];
     }
     return $operations;
   }
@@ -121,11 +121,11 @@ class RegistrationListBuilder extends EntityListBuilder {
     $bundle = entity_load($this->entityType->getBundleEntityType(), $entity->bundle());
     $row['type'] = $bundle ? $bundle->label() : '';
 
-    $row['groups']['data'] = array(
+    $row['groups']['data'] = [
       '#theme' => 'item_list',
       '#items' => [],
       '#attributes' => ['class' => ['inline']],
-    );
+    ];
     foreach ($entity->getGroups() as $group) {
       $text = '@group_label';
       $t_args = ['@group_id' => $group->id(), '@group_label' => $group->label()];

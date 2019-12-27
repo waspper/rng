@@ -41,11 +41,11 @@ class RegistrantTypeForm extends EntityForm {
       ],
     ];
 
-    $form['description'] = array(
+    $form['description'] = [
       '#type' => 'textarea',
       '#title' => t('Description'),
       '#default_value' => $registrant_type->description,
-    );
+    ];
 
     return $form;
   }

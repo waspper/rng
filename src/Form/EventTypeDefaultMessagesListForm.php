@@ -171,7 +171,7 @@ class EventTypeDefaultMessagesListForm extends EntityForm {
         '#ajax' => [
           'callback' => '::processMessageCallback',
           'wrapper' => 'rng-default-messages-wrapper',
-        ]
+        ],
       ];
     }
 
@@ -221,4 +221,5 @@ class EventTypeDefaultMessagesListForm extends EntityForm {
     $this->messenger()->addMessage($this->t('Event type default messages saved.'));
     $this->eventManager->invalidateEventType($event_type);
   }
+
 }

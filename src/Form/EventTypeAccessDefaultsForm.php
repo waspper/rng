@@ -176,7 +176,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
         $k++;
         $row[] = [
           '#wrapper_attributes' => ['header' => TRUE],
-          '#markup' => $this->t('@condition.', ['@condition' => $k])
+          '#markup' => $this->t('@condition.', ['@condition' => $k]),
         ];
 
         $condition = $this->conditionManager
@@ -195,15 +195,17 @@ class EventTypeAccessDefaultsForm extends EntityForm {
 
         $row[] = [
           '#type' => 'operations',
-          '#links' => ['edit' => [
-            'title' => t('Edit'),
-            'url' => Url::fromRoute('rng.rng_event_type_rule.component.edit', [
-              'rng_event_type_rule' => $rule->id(),
-              'component_type' => 'condition',
-              'component_id' => $id,
-            ]),
-            'query' =>$this->redirectDestination->getAsArray(),
-          ]]
+          '#links' => [
+            'edit' => [
+              'title' => t('Edit'),
+              'url' => Url::fromRoute('rng.rng_event_type_rule.component.edit', [
+                'rng_event_type_rule' => $rule->id(),
+                'component_type' => 'condition',
+                'component_id' => $id,
+              ]),
+              'query' => $this->redirectDestination->getAsArray(),
+            ],
+          ],
         ];
 
         // Scope: warn user actions apply to all registrations.
@@ -212,7 +214,8 @@ class EventTypeAccessDefaultsForm extends EntityForm {
             '#wrapper_attributes' => ['colspan' => 2],
             '#plain_text' => $this->t('Single registration'),
           ];
-        } else {
+        }
+        else {
           $row[] = [
             '#plain_text' => $this->t('All registrations.'),
           ];
@@ -247,7 +250,10 @@ class EventTypeAccessDefaultsForm extends EntityForm {
     return $form;
   }
 
-  function actionRows($rule, array $operations, $scope_all, $supports_create) {
+  /**
+   *
+   */
+  public function actionRows($rule, array $operations, $scope_all, $supports_create) {
     $rowspan = count($rule->getConditions());
 
     // Actions.
@@ -323,13 +329,13 @@ class EventTypeAccessDefaultsForm extends EntityForm {
     $actions = parent::actions($form, $form_state);
     unset($actions['delete']);
 
-    $actions['delete-custom-rules'] = array(
+    $actions['delete-custom-rules'] = [
       '#type' => 'link',
       '#title' => $this->t('Delete all custom rules'),
-      '#attributes' => array(
-        'class' => array('button', 'button--danger'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['button', 'button--danger'],
+      ],
+    ];
 
     $actions['delete-custom-rules']['#url'] = Url::fromRoute('entity.rng_event_type.access_defaults.delete_all', [
       'rng_event_type' => $event_type->id(),

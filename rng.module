@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -55,20 +59,20 @@ function rng_entity_operation(EntityInterface $entity) {
   $operations = [];
 
   if ($entity instanceof EventTypeInterface) {
-    $operations['access_defaults'] = array(
+    $operations['access_defaults'] = [
       'title' => t('Event access defaults'),
       'url' => Url::fromRoute('entity.rng_event_type.access_defaults', [
         'rng_event_type' => $entity->id(),
       ]),
       'weight' => 20,
-    );
-    $operations['default_messages'] = array(
+    ];
+    $operations['default_messages'] = [
       'title' => t('Default messages'),
       'url' => Url::fromRoute('entity.rng_event_type.default_messages', [
         'rng_event_type' => $entity->id(),
       ]),
       'weight' => 25,
-    );
+    ];
   }
 
   return $operations;

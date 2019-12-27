@@ -75,27 +75,27 @@ class LocalActions extends DeriverBase implements ContainerDeriverInterface {
       }
 
       // Only need one set of actions per entity type.
-      $this->derivatives["rng.event.$entity_type.event.access.reset"] = array(
+      $this->derivatives["rng.event.$entity_type.event.access.reset"] = [
         'title' => $this->t('Reset/customize access rules'),
         'route_name' => "rng.event.$entity_type.access.reset",
         'class' => '\Drupal\rng\Plugin\Menu\LocalAction\ResetAccessRules',
-        'appears_on' => array("rng.event.$entity_type.access"),
+        'appears_on' => ["rng.event.$entity_type.access"],
         'cache_tags' => $cache_tags,
-      );
+      ];
 
-      $this->derivatives["rng.event.$entity_type.event.message.add"] = array(
+      $this->derivatives["rng.event.$entity_type.event.message.add"] = [
         'title' => $this->t('Add message'),
         'route_name' => "rng.event.$entity_type.messages.add",
-        'appears_on' => array("rng.event.$entity_type.messages"),
+        'appears_on' => ["rng.event.$entity_type.messages"],
         'cache_tags' => $cache_tags,
-      );
+      ];
 
-      $this->derivatives["rng.event.$entity_type.event.group.add"] = array(
+      $this->derivatives["rng.event.$entity_type.event.group.add"] = [
         'title' => $this->t('Add group'),
         'route_name' => "rng.event.$entity_type.group.add",
-        'appears_on' => array("rng.event.$entity_type.group.list"),
+        'appears_on' => ["rng.event.$entity_type.group.list"],
         'cache_tags' => $cache_tags,
-      );
+      ];
     }
 
     foreach ($this->derivatives as &$entry) {

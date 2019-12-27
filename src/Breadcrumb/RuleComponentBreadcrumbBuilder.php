@@ -28,7 +28,7 @@ class RuleComponentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function build(RouteMatchInterface $route_match) {
-    $links = array(Link::createFromRoute($this->t('Home'), '<front>'));
+    $links = [Link::createFromRoute($this->t('Home'), '<front>')];
     /** @var \Drupal\rng\Entity\RuleComponentInterface $component */
     $component = $route_match->getParameter('rng_rule_component');
     if ($rule = $component->getRule()) {

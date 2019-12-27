@@ -45,6 +45,7 @@ use Drupal\rng\Exception\InvalidEventException;
  * )
  */
 class Group extends ContentEntityBase implements GroupInterface {
+
   /**
    * {@inheritdoc}
    */
@@ -115,7 +116,7 @@ class Group extends ContentEntityBase implements GroupInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
-        ->setLabel(t('Group ID'))
+      ->setLabel(t('Group ID'))
       ->setDescription(t('The group ID.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
@@ -146,25 +147,25 @@ class Group extends ContentEntityBase implements GroupInterface {
       ->setTranslatable(TRUE)
       ->setDefaultValue('')
       ->setSetting('max_length', 255)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'string',
         'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => 0,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['description'] = BaseFieldDefinition::create('text_long')
       ->setLabel(t('Description'))
       ->setDescription(t('A description of the group.'))
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 50,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
@@ -221,7 +222,7 @@ class Group extends ContentEntityBase implements GroupInterface {
           $event_meta = $event_manager->getMeta($event);
 
           // Remove entity field references from the event to group in
-          // $event->{EventManagerInterface::FIELD_REGISTRATION_GROUPS}
+          // $event->{EventManagerInterface::FIELD_REGISTRATION_GROUPS}.
           $event_meta
             ->removeGroup($group->id())
             ->save();

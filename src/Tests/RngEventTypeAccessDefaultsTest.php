@@ -3,11 +3,6 @@
 namespace Drupal\rng\Tests;
 
 use Drupal\Core\Url;
-use Drupal\entity_test\Entity\EntityTest;
-use Drupal\rng\EventManagerInterface;
-use Drupal\rng\Entity\Rule;
-use Drupal\rng\Entity\RuleComponent;
-use Drupal\rng\Entity\EventTypeRule;
 
 /**
  * Tests event type access defaults.
@@ -31,7 +26,7 @@ class RngEventTypeAccessDefaultsTest extends RngWebTestBase {
   /**
    * Test access defaults.
    */
-  function testAccessDefaults() {
+  public function testAccessDefaults() {
     $edit = [
       'bundle' => 'entity_test.entity_test',
       'registrants[registrant_type]' => 'registrant',
@@ -53,7 +48,6 @@ class RngEventTypeAccessDefaultsTest extends RngWebTestBase {
     $this->assertFieldChecked('edit-actions-operations-registrant-view');
     $this->assertFieldChecked('edit-actions-operations-registrant-update');
     $this->assertNoFieldChecked('edit-actions-operations-registrant-delete');
-
 
     $this->assertFieldChecked('edit-actions-operations-user-role-create');
     $this->assertNoFieldChecked('edit-actions-operations-user-role-view');

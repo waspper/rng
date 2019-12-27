@@ -68,7 +68,7 @@ class RegistrationType extends ConfigEntityBundleBase implements RegistrationTyp
     /** @var \Drupal\rng\Entity\RegistrationTypeInterface $registration_type */
     foreach ($entities as $registration_type) {
       // Remove entity field references in
-      // $event->{EventManagerInterface::FIELD_REGISTRATION_TYPE}
+      // $event->{EventManagerInterface::FIELD_REGISTRATION_TYPE}.
       $event_types = $event_manager->getEventTypes();
       foreach ($event_types as $entity_type => $bundles) {
         $event_storage = \Drupal::entityTypeManager()->getStorage($entity_type);

@@ -28,7 +28,7 @@ class RngEventTypeTest extends RngWebTestBase {
   /**
    * Test event types in UI.
    */
-  function testEventType() {
+  public function testEventType() {
     $web_user = $this->drupalCreateUser(['administer event types', 'access administration pages']);
     $this->drupalLogin($web_user);
 
@@ -39,7 +39,7 @@ class RngEventTypeTest extends RngWebTestBase {
     $event_type->delete();
     $event_bundle->delete();
 
-    // Admin structure overview
+    // Admin structure overview.
     $this->drupalGet('admin/structure');
     $this->assertLinkByHref(Url::fromRoute('rng.structure')->toString());
     $this->assertRaw('Manage registration entity types.', 'RNG shows in administration structure.');

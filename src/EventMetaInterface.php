@@ -51,7 +51,7 @@ interface EventMetaInterface {
    * This method only checks configuration. Instead you may want to check
    * 'create' operation using entity_access.
    *
-   * @return boolean
+   * @return bool
    *   Whether this event is accepting new registrations.
    */
   public function isAcceptingRegistrations();
@@ -66,7 +66,7 @@ interface EventMetaInterface {
   /**
    * Checks if a registrant is allowed to register more than once on this event.
    *
-   * @return boolean
+   * @return bool
    *   Whether duplicate registrants are allowed.
    */
   public function duplicateRegistrantsAllowed();
@@ -93,7 +93,7 @@ interface EventMetaInterface {
    * @param \Drupal\rng\Entity\RegistrationTypeInterface
    *   A registration type entity.
    *
-   * @return boolean
+   * @return bool
    *   Whether the registration type can be used.
    */
   public function registrationTypeIsValid(RegistrationTypeInterface $registration_type);
@@ -123,7 +123,7 @@ interface EventMetaInterface {
   /**
    * Gets configuration for maximum permitted registrants on this event.
    *
-   * @return integer|EventMetaInterface::CAPACITY_UNLIMITED
+   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
    *   Maximum amount of registrants (>= 0), or unlimited.
    */
   public function getRegistrantCapacity();
@@ -133,7 +133,7 @@ interface EventMetaInterface {
    *
    * This value will not be negative if there are excessive registrations.
    *
-   * @return integer|EventMetaInterface::CAPACITY_UNLIMITED
+   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
    *   Number of new registrants allowed (>= 0), or unlimited.
    */
   public function remainingRegistrantCapacity();
@@ -141,7 +141,7 @@ interface EventMetaInterface {
   /**
    * Gets configuration for maximum permitted registrations on this event.
    *
-   * @return integer|EventMetaInterface::CAPACITY_UNLIMITED
+   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
    *   Maximum amount of registrations (>= 0), or unlimited.
    */
   public function getRegistrationCapacity();
@@ -151,7 +151,7 @@ interface EventMetaInterface {
    *
    * This value will not be negative if there are excessive registrations.
    *
-   * @return integer|EventMetaInterface::CAPACITY_UNLIMITED
+   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
    *   Number of new registrations allowed (>= 0), or unlimited.
    */
   public function remainingRegistrationCapacity();
@@ -167,7 +167,7 @@ interface EventMetaInterface {
   /**
    * Get minimum number of registrants allowed per registration.
    *
-   * @return integer
+   * @return int
    *   Minimum number of registrants allowed (>= 0)
    */
   public function getRegistrantsMinimum();
@@ -175,7 +175,7 @@ interface EventMetaInterface {
   /**
    * Get maximum number of registrants allowed per registration.
    *
-   * @return integer|EventMetaInterface::CAPACITY_UNLIMITED
+   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
    *   Maximum number of registrants allowed (>= 0), or unlimited.
    */
   public function getRegistrantsMaximum();
@@ -186,7 +186,7 @@ interface EventMetaInterface {
    * @return \Drupal\rng\Entity\GroupInterface[]
    *   An array of group entities.
    */
-  function getDefaultGroups();
+  public function getDefaultGroups();
 
   /**
    * Builds a entity query with conditions referencing this event.
@@ -200,7 +200,7 @@ interface EventMetaInterface {
    * @return \Drupal\Core\Entity\Query\QueryInterface
    *   An entity query.
    */
-  function buildQuery($entity_type);
+  public function buildQuery($entity_type);
 
   /**
    * Builds a entity query for registrations with conditions referencing this
@@ -209,7 +209,7 @@ interface EventMetaInterface {
    * @return \Drupal\Core\Entity\Query\QueryInterface
    *   An entity query.
    */
-  function buildRegistrationQuery();
+  public function buildRegistrationQuery();
 
   /**
    * Builds a entity query for registrants with conditions referencing this
@@ -218,7 +218,7 @@ interface EventMetaInterface {
    * @return \Drupal\Core\Entity\Query\QueryInterface
    *   An entity query.
    */
-  function buildEventRegistrantQuery();
+  public function buildEventRegistrantQuery();
 
   /**
    * Get all registrations for this event.
@@ -226,15 +226,15 @@ interface EventMetaInterface {
    * @return \Drupal\rng\Entity\RegistrationInterface[]
    *   An array of registration entities.
    */
-  function getRegistrations();
+  public function getRegistrations();
 
   /**
    * Count how many registrations are on this event.
    *
-   * @return integer
+   * @return int
    *   Number of registrations on this event.
    */
-  function countRegistrations();
+  public function countRegistrations();
 
   /**
    * Builds a entity query for rules with conditions referencing this event.
@@ -242,12 +242,12 @@ interface EventMetaInterface {
    * @return \Drupal\Core\Entity\Query\QueryInterface
    *   An entity query.
    */
-  function buildRuleQuery();
+  public function buildRuleQuery();
 
   /**
    * Get all rules for this event.
    *
-   * @param string|NULL $trigger
+   * @param string|null $trigger
    *   The trigger ID for the rule.
    * @param bool $defaults
    *   If there are no rules in the database, generate some unsaved rules.
@@ -257,7 +257,7 @@ interface EventMetaInterface {
    * @return \Drupal\rng\Entity\RuleInterface[]
    *   An array of rng_rule entities keyed by rule ID.
    */
-  function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE);
+  public function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE);
 
   /**
    * Gets site default access rules and associated conditions and actions.
@@ -279,10 +279,10 @@ interface EventMetaInterface {
    * @param string $trigger
    *   The trigger ID for the rules.
    *
-   * @return boolean
+   * @return bool
    *   Whether site default rules should be used.
    */
-  function isDefaultRules($trigger);
+  public function isDefaultRules($trigger);
 
   /**
    * Manually triggers rules for this event.
@@ -292,7 +292,7 @@ interface EventMetaInterface {
    * @param array $context
    *   Mixed context.
    */
-  public function trigger($trigger, $context = array());
+  public function trigger($trigger, $context = []);
 
   /**
    * Builds a entity query for groups with conditions referencing this event.
@@ -300,7 +300,7 @@ interface EventMetaInterface {
    * @return \Drupal\Core\Entity\Query\QueryInterface
    *   An entity query.
    */
-  function buildGroupQuery();
+  public function buildGroupQuery();
 
   /**
    * Get all groups for this event.
@@ -308,7 +308,7 @@ interface EventMetaInterface {
    * @return \Drupal\rng\Entity\GroupInterface[]
    *   An array of registration_group entities.
    */
-  function getGroups();
+  public function getGroups();
 
   /**
    * Builds a entity query for registrants associated to registrations
@@ -338,7 +338,7 @@ interface EventMetaInterface {
    *
    * Includes whether the current user can create an identity.
    *
-   * @return boolean
+   * @return bool
    *   Whether the current user can create an identity or reference at least one
    *   identity.
    */
@@ -350,7 +350,7 @@ interface EventMetaInterface {
    * This number includes the current user. It also only considers existing
    * identities, it does not include the ability to 'create' new identities.
    *
-   * @return integer
+   * @return int
    *   Number of identities.
    */
   public function countProxyIdentities();
@@ -400,11 +400,11 @@ interface EventMetaInterface {
    *
    * Access rules determine registration operation grants.
    */
-  function addDefaultAccess();
+  public function addDefaultAccess();
 
   /**
    * Create messages for Event from Default messages for this Event Type.
    */
-  function createDefaultEventMessages();
+  public function createDefaultEventMessages();
 
 }

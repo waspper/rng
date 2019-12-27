@@ -320,7 +320,7 @@ class EventAccessForm extends FormBase {
       return;
     }
 
-    // Component_id => [operation => enabled?, ...]
+    // Component_id => [operation => enabled?, ...].
     $component_operations = [];
     foreach ($form_state->getValue('table') as $row) {
       foreach ($row as $cell) {

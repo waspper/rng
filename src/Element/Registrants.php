@@ -42,9 +42,9 @@ class Registrants extends FormElement {
         [$class, 'validateRegisterable'],
         [$class, 'validateRegistrantCount'],
       ],
-      '#pre_render' => array(
-        array($class, 'preRenderRegistrants'),
-      ),
+      '#pre_render' => [
+        [$class, 'preRenderRegistrants'],
+      ],
       // Required.
       '#event' => NULL,
       '#attached' => [
@@ -63,7 +63,7 @@ class Registrants extends FormElement {
       // Maximum number of registrants (integer), or NULL for no maximum.
       '#registrants_maximum' => NULL,
       // Get form display modes used when creating entities inline.
-      // An array in the format: [entity_type][bundle] = form_mode_id
+      // An array in the format: [entity_type][bundle] = form_mode_id.
       '#form_modes' => [],
     ];
   }
@@ -127,7 +127,7 @@ class Registrants extends FormElement {
     $arity_is_multiple = $utility->getArity() === 'multiple';
     $arity_is_single = !$arity_is_multiple;
     $change_it = $utility->getChangeIt();
-    if(count($for_bundles) == 1){
+    if (count($for_bundles) == 1) {
       // Show the form directly if it's single persond and only one bundle:
       $utility->setShowCreateEntitySubform(TRUE);
     }
@@ -345,7 +345,7 @@ class Registrants extends FormElement {
     if ($change_it && isset($for_bundle)) {
       list($person_entity_type_id, $person_bundle) = explode(':', $for_bundle);
 
-      // Registrant
+      // Registrant.
       $person_subform['registrant'] = [
         '#tree' => TRUE,
         '#open' => TRUE,
@@ -385,7 +385,7 @@ class Registrants extends FormElement {
           ],
           '#limit_validation_errors' => [
             array_merge($element['#parents'], ['entities', 'person', 'registrant']),
-            array_merge($element['#parents'], ['entities', 'person', 'myself'])
+            array_merge($element['#parents'], ['entities', 'person', 'myself']),
           ],
           '#validate' => [
             [static::class, 'validateMyself'],
@@ -402,7 +402,7 @@ class Registrants extends FormElement {
 
         $allow_reference = isset($element['#allow_reference'][$person_entity_type_id]) && in_array($person_bundle, $element['#allow_reference'][$person_entity_type_id]);
 
-        // Existing person
+        // Existing person.
         $person_subform['existing'] = [
           '#type' => 'details',
           '#open' => TRUE,
@@ -455,7 +455,7 @@ class Registrants extends FormElement {
           ],
           '#limit_validation_errors' => [
             array_merge($element['#parents'], ['entities', 'person', 'registrant']),
-            array_merge($element['#parents'], ['entities', 'person', 'existing'])
+            array_merge($element['#parents'], ['entities', 'person', 'existing']),
           ],
           '#validate' => [
             [static::class, 'validateExisting'],
@@ -465,7 +465,7 @@ class Registrants extends FormElement {
           ],
         ];
 
-        // New entity
+        // New entity.
         $create = FALSE;
         if (isset($element['#allow_creation'][$person_entity_type_id])) {
           $create = RegistrantsElement::entityCreateAccess($person_entity_type_id, $person_bundle);
@@ -518,7 +518,7 @@ class Registrants extends FormElement {
             ],
             '#limit_validation_errors' => [
               array_merge($parents, ['entities', 'person', 'registrant']),
-              array_merge($parents, ['entities', 'person', 'new_person'])
+              array_merge($parents, ['entities', 'person', 'new_person']),
             ],
             '#validate' => [
               [static::class, 'validateCreate'],
@@ -977,7 +977,7 @@ class Registrants extends FormElement {
     $element = RegistrantsElement::findElement($form, $form_state);
     $utility = new RegistrantsElement($element, $form_state);
 
-    // New entity
+    // New entity.
     $new_entity_tree = array_merge($element['#parents'], ['entities', 'person', 'new_person', 'newentityform']);
     $subform_new_entity = NestedArray::getValue($form, $new_entity_tree);
 

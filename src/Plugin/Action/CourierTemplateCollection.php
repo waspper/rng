@@ -87,9 +87,9 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    *     entity. Automatically filled after first submission.
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'template_collection' => NULL,
-    );
+    ];
   }
 
   /**
@@ -102,7 +102,6 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
     else {
       drupal_set_message('No template collection entity found.', 'warning');
     }
-
 
     return $form;
   }
@@ -170,7 +169,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
   /**
    * Get the courier_template_collection object associated with this action.
    *
-   * @return \Drupal\courier\TemplateCollectionInterface|NULL
+   * @return \Drupal\courier\TemplateCollectionInterface|null
    *   A courier_template_collection object. NULL if it has not been created.
    */
   public function getTemplateCollection() {
