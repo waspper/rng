@@ -96,7 +96,7 @@ class RngEventAccessTest extends RngWebTestBase {
     $this->drupalGet($event->toUrl());
     $this->assertResponse(200);
     // Register tab is cached, ensure it is missing.
-    $this->assertNoLinkByHref($register_link_str);
+    $this->assertSession()->linkByHrefNotExists($register_link_str);
     $this->drupalGet($register_link);
     $this->assertResponse(403);
 
@@ -117,7 +117,7 @@ class RngEventAccessTest extends RngWebTestBase {
     $this->assertResponse(200);
     // Register tab is cached, ensure it is exposed.
     // If this fails, then the register tab is still cached to previous rules.
-    $this->assertLinkByHref($register_link_str);
+    $this->assertSession()->linkByHrefExists($register_link_str);
     $this->drupalGet($register_link);
     $this->assertResponse(200);
   }

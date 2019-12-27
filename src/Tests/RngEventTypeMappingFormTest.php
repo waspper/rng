@@ -39,7 +39,7 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
    */
   public function testMappingForm() {
     $this->drupalGet($this->eventType->toUrl('field-mapping'));
-    $this->removeWhiteSpace();
+    //$this->removeWhiteSpace();
     $this->assertSession()->responseContains('<td>Registration type</td><td>Select which registration types are valid for this event.</td><td>Exists</td>');
     $this->assertSession()->responseContains('<td>Registration groups</td><td>New registrations will be added to these groups.</td><td>Exists</td>');
     $this->assertSession()->responseContains('<td>Accept new registrations</td><td></td><td>Exists</td><td></td>');
@@ -60,14 +60,14 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
 
     $url = $this->eventType->toUrl('field-mapping');
     $this->drupalGet($url);
-    $this->removeWhiteSpace();
+    //$this->removeWhiteSpace();
 
     $this->assertSession()->responseContains('<td>Minimum registrants</td><td>Minimum number of registrants per registration.</td><td>Does not exist</td>');
     $this->assertFieldById('edit-table-rng-registrants-minimum-operations-create', 'Create', "Create button exists for 'minimum registrants' field");
 
     // Test the field is added back.
     $this->drupalPostForm($url, [], t('Create'));
-    $this->removeWhiteSpace();
+    // $this->removeWhiteSpace();
     $this->assertSession()->responseContains('<td>Minimum registrants</td><td>Minimum number of registrants per registration.</td><td>Exists</td>');
     $this->assertText('Field Minimum registrants added.');
   }

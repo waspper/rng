@@ -46,7 +46,7 @@ class RngEventTypeTest extends RngWebTestBase {
 
     // Event types button on admin.
     $this->drupalGet('admin/structure/rng');
-    $this->assertLinkByHref(Url::fromRoute('rng.event_type.overview')->toString());
+    $this->assertLinkByHref(Url::fromRoute('rng.rng_event_type.overview')->toString());
     $this->assertSession()->responseContains('Manage which entity bundles are designated as events.');
 
     // No events.

@@ -103,7 +103,7 @@ class RngViewsTest extends ViewsKernelTestBase {
       'entity_test' => $event->id(),
     ])->toString();
     $actual = $this->view->style_plugin->getField(0, 'rng_event_register');
-    $this->assertEquals($expected, $actual);
+    $this->assertEqual($actual, $expected);
   }
 
   /**
@@ -133,7 +133,7 @@ class RngViewsTest extends ViewsKernelTestBase {
       'registration_type' => $this->registrationType->id(),
     ])->toString();
     $actual = $this->view->style_plugin->getField(0, 'rng_event_register');
-    $this->assertEquals($expected, $actual);
+    $this->assertEqual($actual, $expected);
   }
 
   /**
@@ -159,7 +159,7 @@ class RngViewsTest extends ViewsKernelTestBase {
     $this->view->preview();
     $expected = '';
     $actual = $this->view->style_plugin->getField(0, 'rng_event_register');
-    $this->assertEquals($expected, $actual);
+    $this->assertEqual($actual, $expected);
   }
 
 }
