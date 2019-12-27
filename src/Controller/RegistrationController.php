@@ -47,13 +47,15 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The matched route.
-   *
    * @param string $event
    *   The parameter to find the event entity.
    *
-   * @return array A registration form.
+   * @return array
+   *   A registration form.
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\rng\Exception\InvalidEventException
    */
-  public function RegistrationAddPage(RouteMatchInterface $route_match, $event) {
+  public function registrationAddPage(RouteMatchInterface $route_match, $event) {
     $event_entity = $route_match->getParameter($event);
     $render = [];
     $registration_types = $this->eventManager->getMeta($event_entity)->getRegistrationTypes();
@@ -103,16 +105,15 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The matched route.
-   *
    * @param string $event
    *   The parameter to find the event entity.
-   *
    * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   The type of registration.
    *
-   * @return array A registration form.
+   * @return array
+   *   A registration form.
    */
-  public function RegistrationAdd(RouteMatchInterface $route_match, $event, RegistrationTypeInterface $registration_type) {
+  public function registrationAdd(RouteMatchInterface $route_match, $event, RegistrationTypeInterface $registration_type) {
     $event_entity = $route_match->getParameter($event);
     $registration = Registration::create([
       'type' => $registration_type->id(),
@@ -124,7 +125,7 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
   /**
    * Title callback for registration.event.*.register.
    *
-   * @param \Drupal\rng\Entity\RegistrationTypeInterface
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   The registration type.
    *
    * @return string

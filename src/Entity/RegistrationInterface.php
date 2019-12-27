@@ -43,6 +43,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * Set associated event.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   An entity that has an associated event.
    *
    * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
@@ -80,6 +81,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * Set the owner of the registration to object.
    *
    * @param \Drupal\user\UserInterface $account
+   *   The user account object.
    *
    * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
@@ -98,6 +100,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * Set the owner of this registration by UID.
    *
    * @param int $uid
+   *   The User ID.
    *
    * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
@@ -121,8 +124,9 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   public function getRegistrants();
 
   /**
-   * Get the number of registrants assigned to this registration, whether
-   * occupied or not.
+   * Get the number of registrants assigned to this registration.
+   *
+   * Returns the number of registrants with or without identities.
    *
    * @return int
    *   The value of the RegistrantQty field.
@@ -130,10 +134,13 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   public function getRegistrantQty();
 
   /**
-   * Set the RegistrantQty field. This is the maximum number of registrants
-   * allowed to be attached to this registration, or 0 if unlimited.
+   * Set the RegistrantQty field.
+   *
+   * This is the maximum number of registrants allowed to be attached to this
+   * registration, or 0 if unlimited.
    *
    * @param int $qty
+   *   Number of registrants for this registration, or 0 for unlimited.
    *
    * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.

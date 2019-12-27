@@ -147,7 +147,7 @@ class RouteSubscriber extends RouteSubscriberBase {
         $route = new Route(
           $canonical_path . '/event/groups/add',
           [
-            '_controller' => '\Drupal\rng\Controller\GroupController::GroupAdd',
+            '_controller' => '\Drupal\rng\Controller\GroupController::groupAdd',
             '_title' => 'Add group',
             'event' => $entity_type,
           ],
@@ -160,7 +160,7 @@ class RouteSubscriber extends RouteSubscriberBase {
         $route = new Route(
           $canonical_path . '/register',
           [
-            '_controller' => '\Drupal\rng\Controller\RegistrationController::RegistrationAddPage',
+            '_controller' => '\Drupal\rng\Controller\RegistrationController::registrationAddPage',
             '_title' => 'Register',
             'event' => $entity_type,
           ],
@@ -176,7 +176,7 @@ class RouteSubscriber extends RouteSubscriberBase {
         $route = new Route(
           $canonical_path . '/register/{registration_type}',
           [
-            '_controller' => '\Drupal\rng\Controller\RegistrationController::RegistrationAdd',
+            '_controller' => '\Drupal\rng\Controller\RegistrationController::registrationAdd',
             '_title_callback' => '\Drupal\rng\Controller\RegistrationController::addPageTitle',
             'event' => $entity_type,
           ],

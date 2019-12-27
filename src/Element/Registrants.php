@@ -53,10 +53,10 @@ class Registrants extends FormElement {
       // Use container so classes are applied.
       '#theme_wrappers' => ['container'],
       // Allow creation of which entity types + bundles:
-      //   Array of bundles keyed by entity type.
+      // Array of bundles keyed by entity type.
       '#allow_creation' => [],
       // Allow referencing existing entity types + bundles:
-      //   Array of bundles keyed by entity type.
+      // Array of bundles keyed by entity type.
       '#allow_reference' => [],
       // Minimum number of registrants (integer), or NULL for no minimum.
       '#registrants_minimum' => NULL,
@@ -80,8 +80,11 @@ class Registrants extends FormElement {
    *
    * @return array
    *   The new form structure for the element.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public static function processIdentityElement(array &$element, FormStateInterface $form_state, &$complete_form) {
+  public static function processIdentityElement(array &$element, FormStateInterface $form_state, array &$complete_form) {
     if (!isset($element['#event'])) {
       throw new \InvalidArgumentException('Element is missing #event property.');
     }
@@ -343,7 +346,7 @@ class Registrants extends FormElement {
     $person_subform = &$element['entities']['person'];
 
     if ($change_it && isset($for_bundle)) {
-      list($person_entity_type_id, $person_bundle) = explode(':', $for_bundle);
+      [$person_entity_type_id, $person_bundle] = explode(':', $for_bundle);
 
       // Registrant.
       $person_subform['registrant'] = [
@@ -384,7 +387,8 @@ class Registrants extends FormElement {
             'wrapper' => $ajax_wrapper_id_root,
           ],
           '#limit_validation_errors' => [
-            array_merge($element['#parents'], ['entities', 'person', 'registrant']),
+            array_merge($element['#parents'],
+              ['entities', 'person', 'registrant']),
             array_merge($element['#parents'], ['entities', 'person', 'myself']),
           ],
           '#validate' => [
@@ -454,8 +458,10 @@ class Registrants extends FormElement {
             'wrapper' => $ajax_wrapper_id_root,
           ],
           '#limit_validation_errors' => [
-            array_merge($element['#parents'], ['entities', 'person', 'registrant']),
-            array_merge($element['#parents'], ['entities', 'person', 'existing']),
+            array_merge($element['#parents'],
+              ['entities', 'person', 'registrant']),
+            array_merge($element['#parents'],
+              ['entities', 'person', 'existing']),
           ],
           '#validate' => [
             [static::class, 'validateExisting'],
@@ -483,7 +489,8 @@ class Registrants extends FormElement {
           $person_subform['new_person']['newentityform'] = [
             '#access' => $entity_create_form,
             '#tree' => TRUE,
-            '#parents' => array_merge($parents, ['entities', 'person', 'new_person', 'newentityform']),
+            '#parents' => array_merge($parents,
+              ['entities', 'person', 'new_person', 'newentityform']),
           ];
 
           $entity_storage = $entity_type_manager->getStorage($person_entity_type_id);
@@ -763,9 +770,11 @@ class Registrants extends FormElement {
 
     $utility->buildRegistrant(TRUE);
 
-    $autocomplete_tree = array_merge($element['#parents'], ['entities', 'person', 'existing', 'existing_autocomplete']);
+    $autocomplete_tree = array_merge($element['#parents'],
+      ['entities', 'person', 'existing', 'existing_autocomplete']);
 
-    $element_existing = NestedArray::getValue($element, ['entities', 'person', 'existing', 'existing_autocomplete']);
+    $element_existing = NestedArray::getValue($element,
+      ['entities', 'person', 'existing', 'existing_autocomplete']);
     $existing_entity_type = $element_existing['#target_type'];
     $existing_value = NestedArray::getValue($form_state->getTemporaryValue('_registrants_values'), $autocomplete_tree);
 
@@ -798,7 +807,8 @@ class Registrants extends FormElement {
 
     $utility->buildRegistrant(TRUE);
 
-    $new_person_tree = array_merge($element['#parents'], ['entities', 'person', 'new_person', 'newentityform']);
+    $new_person_tree = array_merge($element['#parents'],
+      ['entities', 'person', 'new_person', 'newentityform']);
     $subform_newentity = NestedArray::getValue($form, $new_person_tree);
 
     $value = $form_state->getTemporaryValue(array_merge(['_registrants_values'], $element['#parents']));
@@ -826,6 +836,7 @@ class Registrants extends FormElement {
    * Submission callback to change the registrant from the default people.
    *
    * @param array $form
+   *   The current form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
@@ -866,6 +877,7 @@ class Registrants extends FormElement {
    * For_arity radios submission handler.
    *
    * @param array $form
+   *   The form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
@@ -944,7 +956,8 @@ class Registrants extends FormElement {
     $registrant = $utility->buildRegistrant();
     $utility->clearPeopleFormInput();
 
-    $autocomplete_tree = array_merge($element['#parents'], ['entities', 'person', 'existing', 'existing_autocomplete']);
+    $autocomplete_tree = array_merge($element['#parents'],
+      ['entities', 'person', 'existing', 'existing_autocomplete']);
     $existing_value = NestedArray::getValue($form_state->getTemporaryValue('_registrants_values'), $autocomplete_tree);
 
     $subform_autocomplete = NestedArray::getValue($form, $autocomplete_tree);
@@ -970,6 +983,8 @@ class Registrants extends FormElement {
    *   The complete form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public static function submitCreate(array $form, FormStateInterface $form_state) {
     $form_state->setRebuild();
@@ -978,7 +993,8 @@ class Registrants extends FormElement {
     $utility = new RegistrantsElement($element, $form_state);
 
     // New entity.
-    $new_entity_tree = array_merge($element['#parents'], ['entities', 'person', 'new_person', 'newentityform']);
+    $new_entity_tree = array_merge($element['#parents'],
+      ['entities', 'person', 'new_person', 'newentityform']);
     $subform_new_entity = NestedArray::getValue($form, $new_entity_tree);
 
     // Save the entity.
