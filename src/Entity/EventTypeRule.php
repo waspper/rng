@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\rng\EventTypeRuleInterface;
 
 /**
  * Defines the event type entity.

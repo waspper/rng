@@ -1,9 +1,10 @@
 <?php
 
-namespace Drupal\rng;
+namespace Drupal\rng\Entity;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Provides an interface defining a Registration entity.
@@ -32,7 +33,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    * @param int $timestamp
    *   The registration creation timestamp.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
    */
   public function setCreatedTime($timestamp);
@@ -42,7 +43,7 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   Returns registration for chaining.
    */
   public function setEvent(ContentEntityInterface $entity);

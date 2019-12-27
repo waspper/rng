@@ -2,17 +2,16 @@
 
 namespace Drupal\rng\Entity;
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\rng\Exception\MaxRegistrantsExceededException;
-use Drupal\rng\RegistrationInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\rng\GroupInterface;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Tests\text\Functional\TextRequiredSummaryUpdateTest;
+use Drupal\user\UserInterface;
 
 /**
  * Defines the registration entity class.

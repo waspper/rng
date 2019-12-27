@@ -6,10 +6,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\rng\EventManagerInterface;
-use Drupal\rng\EventTypeRuleInterface;
+use Drupal\rng\Entity\EventTypeRuleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
 /**
  * Configure event settings.
@@ -40,7 +39,7 @@ class EventTypeRuleComponentEdit extends FormBase {
   /**
    * The event type rule.
    *
-   * @var \Drupal\rng\EventTypeRuleInterface
+   * @var \Drupal\rng\Entity\EventTypeRuleInterface
    */
   var $eventTypeRule;
 

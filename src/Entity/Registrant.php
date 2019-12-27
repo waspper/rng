@@ -4,10 +4,8 @@ namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\rng\RegistrantInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\rng\RegistrationInterface;
 
 /**
  * Defines the registrant entity class.

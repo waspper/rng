@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
-use Drupal\rng\RegistrationTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\rng\EventManagerInterface;
 

@@ -405,7 +405,7 @@ class EventMeta implements EventMetaInterface {
       return $rules;
     }
 
-    /** @var \Drupal\rng\EventTypeRuleInterface[] $default_rules */
+    /** @var \Drupal\rng\Entity\EventTypeRuleInterface[] $default_rules */
     $default_rules = $this
       ->entityManager
       ->getStorage('rng_event_type_rule')

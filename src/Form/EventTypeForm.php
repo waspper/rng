@@ -377,8 +377,8 @@ class EventTypeForm extends EntityForm {
    *   A bundle ID.
    */
   static function createDefaultRules($entity_type_id, $bundle) {
-    /** @var \Drupal\rng\EventTypeRuleInterface $rule */
     // User Role
+    /** @var \Drupal\rng\Entity\EventTypeRuleInterface $rule */
     $rule = EventTypeRule::create([
       'trigger' => 'rng_event.register',
       'entity_type' => $entity_type_id,

@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
-use Drupal\rng\RegistrantTypeInterface;
 
 /**
  * Defines the registrant type configuration entity.
