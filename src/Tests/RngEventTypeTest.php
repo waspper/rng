@@ -50,7 +50,7 @@ class RngEventTypeTest extends RngWebTestBase {
     $this->assertSession()->responseContains('Manage which entity bundles are designated as events.');
 
     // No events.
-    $this->assertEqual(0, count(EventType::loadMultiple()), 'There are no event type entities.');
+    $this->assertEqual(0, count(RngEventType::loadMultiple()), 'There are no event type entities.');
     $this->drupalGet('admin/structure/rng/event_types');
     $this->assertSession()->responseContains('No event types found.');
 

@@ -40,13 +40,13 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
   public function testMappingForm() {
     $this->drupalGet($this->eventType->toUrl('field-mapping'));
     //$this->removeWhiteSpace();
-    $this->assertSession()->responseContains('<td>Registration type</td><td>Select which registration types are valid for this event.</td><td>Exists</td>');
+    $this->assertSession()->responseContains('Select which registration types are valid for this event.');
     $this->assertSession()->responseContains('<td>Registration groups</td><td>New registrations will be added to these groups.</td><td>Exists</td>');
     $this->assertSession()->responseContains('<td>Accept new registrations</td><td></td><td>Exists</td><td></td>');
     $this->assertSession()->responseContains('<td>Maximum registrations</td><td>Maximum amount of registrations for this event.</td><td>Exists</td><td></td>');
     $this->assertSession()->responseContains('<td>Reply-to e-mail address</td><td>E-mail address that appears as reply-to when emails are sent from this event. Leave empty to use site default.</td><td>Exists</td>');
     $this->assertSession()->responseContains('<td>Allow duplicate registrants</td><td>Allows a registrant to create more than one registration for this event.</td><td>Exists</td>');
-    $this->assertSession()->responseContains('<td>Minimum registrants</td><td>Minimum number of registrants per registration.</td><td>Exists</td>');
+    $this->assertSession()->responseContains('Minimum number of registrants per registration.');
     $this->assertSession()->responseContains('<td>Maximum registrants</td><td>Maximum number of registrants per registration.</td><td>Exists</td><td></td>');
   }
 
