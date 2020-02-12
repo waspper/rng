@@ -43,27 +43,21 @@ function rng_add_event_field_storage($field_name, $entity_type) {
       ];
       break;
 
+    case EventManagerInterface::FIELD_WAIT_LIST:
+    case EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS:
     case EventManagerInterface::FIELD_STATUS:
+    case EventManagerInterface::FIELD_CAPACITY_CONFIRMED_ONLY:
       $definition = [
         'type' => 'boolean',
-      ];
-      break;
-
-    case EventManagerInterface::FIELD_REGISTRANTS_CAPACITY:
-      $definition = [
-        'type' => 'integer',
       ];
       break;
 
     case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
+    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
+    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
+    case EventManagerInterface::FIELD_REGISTRANTS_CAPACITY:
       $definition = [
         'type' => 'integer',
-      ];
-      break;
-
-    case EventManagerInterface::FIELD_WAIT_LIST:
-      $definition = [
-        'type' => 'boolean',
       ];
       break;
 
@@ -73,27 +67,10 @@ function rng_add_event_field_storage($field_name, $entity_type) {
       ];
       break;
 
-    case EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS:
-      $definition = [
-        'type' => 'boolean',
-      ];
-      break;
-
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
-      $definition = [
-        'type' => 'integer',
-      ];
-      break;
-
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
-      $definition = [
-        'type' => 'integer',
-      ];
-      break;
   }
 
   if (!empty($definition)) {
-    $field_storage = entity_create('field_storage_config', [
+    $field_storage = FieldStorageConfig::create([
       'field_name' => $field_name,
       'entity_type' => $entity_type,
     ] + $definition
@@ -132,6 +109,18 @@ function rng_event_field_config_definition($field_name) {
           'on_label' => t('Accepting new registrations'),
           'off_label' => t('Not accepting new registrations'),
         ],
+        'description' => t('Accept new registrations for this event'),
+      ];
+      break;
+
+    case EventManagerInterface::FIELD_CAPACITY_CONFIRMED_ONLY:
+      $definition = [
+        'label' => t('Capacity based on confirmed registrations'),
+        'settings' => [
+          'on_label' => t('Capacity based on confirmed registrations'),
+          'off_label' => t('Capacity based on all registrations, including unconfirmed'),
+        ],
+        'description' => t('When nearing capacity, do unconfirmed registrations count towards the used capacity, or only confirmed registrations?')
       ];
       break;
 
@@ -225,7 +214,7 @@ function rng_add_event_field_config($field_name, $entity_type, $bundle = NULL) {
   $definition = rng_event_field_config_definition($field_name);
 
   if (!empty($definition)) {
-    $field = entity_create('field_config', [
+    $field = FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => $entity_type,
       'bundle' => $bundle,

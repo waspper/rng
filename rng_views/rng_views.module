@@ -67,7 +67,7 @@ function rng_views_form_rng_event_type_form_alter(&$form, FormStateInterface &$f
  *
  * @see rng_views_form_rng_event_type_form_alter()
  */
-function rng_views_form_event_type_form_alter_submit($form, FormStateInterface $form_state) {
+function rng_views_form_rng_event_type_form_alter_submit($form, FormStateInterface $form_state) {
   $form_object = $form_state->getFormObject();
   $event_type = $form_object->getEntity();
 

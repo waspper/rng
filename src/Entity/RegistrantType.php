@@ -62,4 +62,10 @@ class RegistrantType extends ConfigEntityBundleBase implements RegistrantTypeInt
    */
   public $description;
 
+  /**
+   * A token-based pattern to use for the entity label if no identity
+   *
+   * @var string
+   */
+  public $label_pattern;
 }

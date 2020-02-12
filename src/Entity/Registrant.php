@@ -4,8 +4,10 @@ namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\rng\Exception\InvalidRegistrant;
 
 /**
  * Defines the registrant entity class.
@@ -25,6 +27,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *     "form" = {
  *       "default" = "Drupal\rng\Form\Entity\RegistrantForm",
  *       "edit" = "Drupal\rng\Form\Entity\RegistrantForm",
+ *       "compact" = "Drupal\rng\Form\Entity\RegistrantForm",
  *       "delete" = "Drupal\rng\Form\Entity\RegistrantDeleteForm",
  *     },
  *   },
@@ -102,6 +105,58 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
   }
 
   /**
+   * {@inheritDoc}
+   *
+   * If a value is set on the identity and blank on the registrant, copy values
+   * from identity to registrant, and vice-versa.
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    if (!$this->getRegistration()) {
+      throw new InvalidRegistrant('Registrant created with no registration.');
+    }
+    $event_type = $this->getRegistration()->getEventMeta()->getEventType();
+
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    $entity = $this->getIdentity();
+
+    if (!$entity && !$event_type->getAllowAnonRegistrants()) {
+      throw new InvalidRegistrant('Registrant created with no identity, and anonymous registrants are not allowed.');
+    }
+
+    if (!$entity && $event_type->getAutoAttachUsers()) {
+      $email_field = $event_type->getRegistrantEmailField();
+      if (!$this->get($email_field)->isEmpty()) {
+        $email = $this->get($email_field)->value;
+        $entity = user_load_by_mail($email);
+        if ($entity) {
+          $this->setIdentity($entity);
+        }
+      }
+    }
+
+    if ($entity && $event_type->getAutoSyncRegistrants()) {
+      $fields = $this->getFields(FALSE);
+      $entity_fields = $entity->getFields(FALSE);
+      $entity_changed = FALSE;
+      foreach ($fields as $name => $field) {
+        if (isset($entity_fields[$name])) {
+          if (empty($field) && !$entity_fields[$name]) {
+            $this->set($name, $entity_fields[$name]);
+          }
+          elseif (empty($entity_fields[$name]) && !empty($field)) {
+            $entity->set($name, $field);
+            $entity_changed = TRUE;
+          }
+        }
+      }
+
+      if ($entity_changed) {
+        $entity->save();
+      }
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function getRegistrantsIdsForIdentity(EntityInterface $identity) {
@@ -115,7 +170,25 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
    * {@inheritdoc}
    */
   public function label() {
-    return $this->id() ? t('Registrant @id', ['@id' => $this->id()]) : t('New registrant');
+    $identity = $this->getIdentity();
+    if ($identity) {
+      return t('@type @id', [
+        '@type' => $identity->getEntityTypeId(),
+        '@id' => $identity->label(),
+      ]);
+    }
+    $registration = $this->getRegistration();
+    $pattern = $this->getEntityType()->get('label_pattern');
+    if (!empty($pattern)) {
+      $label = \Drupal::token()->replace($pattern,['registrant'=>$this, 'registration'=>$registration]);
+      if (!empty(trim($label))) {
+        return $label;
+      }
+    }
+    if ($registration) {
+      return $registration->label();
+    }
+    return t('New registrant');
   }
 
   /**

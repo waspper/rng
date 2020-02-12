@@ -5,6 +5,7 @@ namespace Drupal\rng;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\rng\Entity\RegistrantInterface;
 use Drupal\user\Entity\User;
 
@@ -173,48 +174,6 @@ class RegistrantsElementUtility {
   }
 
   /**
-   * Get form state for for_arity.
-   */
-  public function getArity() {
-    $arity = $this->formState->get(array_merge($this->element['#parents'], ['for_arity']));
-    if ($arity === NULL) {
-      $values = NestedArray::getValue($this->formState->getUserInput(), $this->element['#parents']);
-      if (isset($values['for_arity'])) {
-        $arity = $values['for_arity'];
-      }
-      else {
-        // Default.
-        $minimum = $this->element['#registrants_minimum'];
-        $maximum = $this->element['#registrants_maximum'];
-
-        $count = count($this->element['#value']);
-
-        if ($minimum && $minimum > 1) {
-          $arity = 'multiple';
-        }
-        elseif ($maximum && $maximum == 1) {
-          $arity = 'single';
-        }
-        else {
-          $arity = ($count > 1) ? 'multiple' : 'single';
-        }
-      }
-    }
-
-    return $arity;
-  }
-
-  /**
-   * Set form state for for_arity.
-   *
-   * Arity needs to persist in case the user has multiple registrants, then
-   * selects 'Single', then selects 'Change' again.
-   */
-  public function setArity($arity) {
-    $this->formState->set(array_merge($this->element['#parents'], ['for_arity']), $arity);
-  }
-
-  /**
    * Get form state for opening the create-an-entity sub-form.
    *
    * @return bool
@@ -305,7 +264,7 @@ class RegistrantsElementUtility {
   public function identityExists(EntityInterface $identity) {
     $registrants = $this->getRegistrants();
     foreach ($registrants as $registrant) {
-      if (($registrant->getIdentity()->id() == $identity->id()) && ($registrant->getIdentity()->getEntityTypeId() == $identity->getEntityTypeId())) {
+      if ($registrant->getIdentity() && ($registrant->getIdentity()->id() == $identity->id()) && ($registrant->getIdentity()->getEntityTypeId() == $identity->getEntityTypeId())) {
         return TRUE;
       }
     }
@@ -364,8 +323,14 @@ class RegistrantsElementUtility {
 
     $event = $this->element['#event'];
     $event_meta = $event_manager->getMeta($event);
+    $event_type = $event_meta->getEventType();
 
     $for_bundles = [];
+    // Anonymous registrant.
+    if ($event_type->getAllowAnonRegistrants()) {
+      $for_bundles['anon:'] = t('Registrant');
+
+    }
 
     // Create.
     foreach ($this->element['#allow_creation'] as $entity_type_id => $bundles) {

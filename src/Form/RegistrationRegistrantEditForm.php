@@ -33,21 +33,21 @@ class RegistrationRegistrantEditForm extends ContentEntityForm {
     $rows = [];
     foreach ($registrants as $registrant) {
       $row = [];
+      $row[] = $registrant->id();
       $identity = $registrant->getIdentity();
       if ($identity instanceof EntityInterface) {
         $url = $identity->urlInfo();
         $row[] = $this->l($identity->label(), $url);
       }
       else {
-        $row[] = t('<em>Deleted</em>');
+        $row[] = $registrant->label();
       }
-      $row[] = $registrant->id();
       $rows[] = $row;
     }
 
     $form['registrants'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Identity'), $this->t('Registrant ID')],
+      '#header' => [$this->t('Registrant ID'), $this->t('Identity')],
       '#rows' => $rows,
       '#empty' => $this->t('No identities associated with this registration.'),
     ];

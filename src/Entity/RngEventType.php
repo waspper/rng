@@ -99,6 +99,37 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
   protected $default_registrant;
 
   /**
+   * Whether or not registrants should be allowed to be added registrations
+   * without any other identity entity.
+   *
+   * @var bool
+   */
+  protected $allow_anon_registrants;
+
+  /**
+   * Whether or not matching field data should be sync'd with identities when
+   * a registrant is saved.
+   *
+   * @var bool
+   */
+  protected $auto_sync_registrants;
+
+  /**
+   * Whether or not to automatically attach registrants to user identities by
+   * email.
+   *
+   * @var bool
+   */
+  protected $auto_attach_users;
+
+  /**
+   * An email field on the registrant to use to sync to users.
+   *
+   * @var string
+   */
+  protected $registrant_email_field;
+
+  /**
    * Types of people types allowed to be associated with this event type.
    *
    * @var array
@@ -124,6 +155,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
     EventManagerInterface::FIELD_WAIT_LIST,
     EventManagerInterface::FIELD_REGISTRANTS_CAPACITY,
     EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY,
+    EventManagerInterface::FIELD_CAPACITY_CONFIRMED_ONLY,
     EventManagerInterface::FIELD_EMAIL_REPLY_TO,
     EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS,
     EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM,
@@ -526,4 +558,63 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
     return $changed;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getAllowAnonRegistrants() {
+    return $this->allow_anon_registrants;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setAllowAnonRegistrants($allow_anon_registrants) {
+    $this->allow_anon_registrants = $allow_anon_registrants;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getAutoSyncRegistrants() {
+    return $this->auto_sync_registrants;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setAutoSyncRegistrants($auto_sync_registrants) {
+    $this->auto_sync_registrants = $auto_sync_registrants;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getAutoAttachUsers() {
+    return $this->auto_attach_users;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setAutoAttachUsers($auto_attach_users) {
+    $this->auto_attach_users = $auto_attach_users;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getRegistrantEmailField() {
+    return $this->registrant_email_field;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setRegistrantEmailField($registrant_email_field) {
+    $this->registrant_email_field = $registrant_email_field;
+    return $this;
+  }
 }

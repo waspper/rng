@@ -6,6 +6,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
+use Drupal\rng\Form\RegistrantFields;
 use Drupal\user\Entity\User;
 use Drupal\rng\RegistrantsElementUtility as RegistrantsElement;
 
@@ -20,6 +21,7 @@ use Drupal\rng\RegistrantsElementUtility as RegistrantsElement;
  * $form['registrants'] = [
  *   '#type' => 'registrants',
  *   '#event' => $event_entity,
+ *   '#registration' => $registration,
  * ];
  * @endcode
  *
@@ -41,12 +43,14 @@ class Registrants extends FormElement {
         [$class, 'validateIdentityElement'],
         [$class, 'validateRegisterable'],
         [$class, 'validateRegistrantCount'],
+        ['\Drupal\rng\Form\RegistrantFields', 'validateForm'],
       ],
       '#pre_render' => [
         [$class, 'preRenderRegistrants'],
       ],
       // Required.
       '#event' => NULL,
+      '#registration' => NULL,
       '#attached' => [
         'library' => ['rng/rng.elements.registrants'],
       ],
@@ -59,8 +63,10 @@ class Registrants extends FormElement {
       // Array of bundles keyed by entity type.
       '#allow_reference' => [],
       // Minimum number of registrants (integer), or NULL for no minimum.
+      // DEPRECATED - DETERMINED BY REGISTRATION OBJECT
       '#registrants_minimum' => NULL,
       // Maximum number of registrants (integer), or NULL for no maximum.
+      // DEPRECATED - DETERMINED BY REGISTRATION OBJECT
       '#registrants_maximum' => NULL,
       // Get form display modes used when creating entities inline.
       // An array in the format: [entity_type][bundle] = form_mode_id.
@@ -91,17 +97,23 @@ class Registrants extends FormElement {
     if (!$element['#event'] instanceof EntityInterface) {
       throw new \InvalidArgumentException('#event for element is not an entity.');
     }
-    if (empty($element['#allow_creation']) && empty($element['#allow_reference'])) {
+
+    /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
+    $registration = $element['#registration'];
+    $event_meta = $registration->getEventMeta();
+    $event_type = $event_meta->getEventType();
+    $allow_anon = $event_type->getAllowAnonRegistrants();
+    if (!$allow_anon && empty($element['#allow_creation']) && empty($element['#allow_reference'])) {
       throw new \InvalidArgumentException('Element cannot create or reference any entities.');
     }
 
-    $utility = new RegistrantsElement($element, $form_state);
-
-    /** @var \Drupal\rng\RegistrantFactory $registrant_factory */
-    $registrant_factory = \Drupal::service('rng.registrant.factory');
+    // Supporting services
+    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository */
+    $entity_display_repository = \Drupal::service('entity_display.repository');
     /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info */
     $bundle_info = \Drupal::service('entity_type.bundle.info');
-    $entity_type_manager = \Drupal::entityTypeManager();
+    /** @var \Drupal\Core\Entity\EntityFormBuilder $entity_form_builder */
+    $entity_form_builder = \Drupal::service('entity.form_builder');
 
     $parents = $element['#parents'];
 
@@ -117,6 +129,135 @@ class Registrants extends FormElement {
     /** @var \Drupal\rng\Entity\RegistrantInterface[] $people */
     $people = $element['#value'];
 
+    $ajax_wrapper_id_people = 'ajax-wrapper-people-' . implode('-', $parents);
+
+    $element['people'] = [
+      '#prefix' => '<div id="' . $ajax_wrapper_id_people . '">',
+      '#suffix' => '</div>',
+      '#tree' => TRUE,
+    ];
+
+    $counter = 0;
+    foreach ($people as $reg_id => $registrant) {
+      $counter++;
+      $curr_parent = array_merge($parents, [$counter]);
+      /** @var RegistrantFields $helper */
+      $reg_form = [
+        '#parents' => $curr_parent,
+        '#reg_counter' => $counter,
+        '#reg_id' => $reg_id,
+      ];
+      $helper = new RegistrantFields($reg_form, $form_state, $registrant);
+
+      $reg_form = $helper->getFields($reg_form, $form_state, $registrant);
+      $row = [
+        '#type' => 'details',
+        '#title' => $counter . ' - ' . $registrant->label(),
+        '#open' => TRUE,
+        '#parents' => $curr_parent,
+        'registrant' => $reg_form,
+        '#wrapper_attributes' => [
+          'class' => ['registrant-grid'],
+        ],
+      ];
+      $row['registrant']['#attributes']['class'][] = 'registrant-grid';
+      $element['people'][] = $row;
+    }
+
+    if ($registration->canAddRegistrants()) {
+      $person_subform = &$element['entities']['person'];
+
+      $person_subform['new_person'] = [
+        '#type' => 'details',
+        '#open' => TRUE,
+        '#tree' => TRUE,
+        '#title' => t('New @entity_type', ['@entity_type' => 'Registrant']),
+        '#identity_element_create_container' => TRUE,
+      ];
+
+      if (count($people)) {
+        // Add New button
+        $person_subform['new_person']['load_create_form'] = [
+          '#type' => 'submit',
+          '#value' => t('Create new @label', ['@label' => $bundle_info['label']]),
+          '#ajax' => [
+            'callback' => [static::class, 'ajaxElementRoot'],
+            'wrapper' => $ajax_wrapper_id_root,
+          ],
+          '#validate' => [
+            [static::class, 'decoyValidator'],
+          ],
+          '#submit' => [
+            [static::class, 'submitToggleCreateEntity'],
+          ],
+          '#toggle_create_entity' => TRUE,
+          '#limit_validation_errors' => [],
+        ];
+
+      }
+      else {
+        // set form
+        $person_subform['new_person']['newentityform'] = [
+          '#tree' => TRUE,
+          '#parents' => array_merge($parents,
+            ['entities', 'person', 'new_person', 'newentityform']),
+        ];
+
+        /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
+        $registrant_factory = \Drupal::service('rng.registrant_factory');
+        $new_person = $registrant_factory->createRegistrant([
+          'event' => $event,
+        ]);
+        $new_person
+          ->setRegistration($registration);
+        $display = $entity_display_repository->getFormDisplay('registrant', $new_person->bundle());
+        $display->buildForm($new_person, $person_subform['new_person']['newentityform'], $form_state);
+
+        $person_subform['new_person']['actions'] = [
+          '#type' => 'actions',
+          '#weight' => 10000,
+        ];
+        $person_subform['new_person']['actions']['create'] = [
+          '#type' => 'submit',
+          '#value' => t('Create and add to registration'),
+          '#ajax' => [
+            'callback' => [static::class, 'ajaxElementRoot'],
+            'wrapper' => $ajax_wrapper_id_root,
+          ],
+          '#limit_validation_errors' => [
+            array_merge($parents, ['entities', 'person', 'registrant']),
+            array_merge($parents, ['entities', 'person', 'new_person']),
+          ],
+          '#validate' => [
+            [static::class, 'validateCreate'],
+          ],
+          '#submit' => [
+            [static::class, 'submitCreate'],
+          ],
+        ];
+
+        $person_subform['new_person']['actions']['cancel'] = [
+          '#type' => 'submit',
+          '#value' => t('Cancel'),
+          '#ajax' => [
+            'callback' => [static::class, 'ajaxElementRoot'],
+            'wrapper' => $ajax_wrapper_id_root,
+          ],
+          '#limit_validation_errors' => [],
+          '#toggle_create_entity' => FALSE,
+          '#validate' => [
+            [static::class, 'decoyValidator'],
+          ],
+          '#submit' => [
+            [static::class, 'submitToggleCreateEntity'],
+          ],
+        ];
+
+      }
+    }
+
+    return $element;
+
     $values = NestedArray::getValue($form_state->getUserInput(), $parents);
     $for_bundles = $utility->peopleTypeOptions();
     if (isset($values['entities']['for_bundle'])) {
@@ -127,8 +268,6 @@ class Registrants extends FormElement {
       $for_bundle = count($for_bundles) == 1 ? key($for_bundles) : NULL;
     }
 
-    $arity_is_multiple = $utility->getArity() === 'multiple';
-    $arity_is_single = !$arity_is_multiple;
     $change_it = $utility->getChangeIt();
     if (count($for_bundles) == 1) {
       // Show the form directly if it's single persond and only one bundle:
@@ -141,11 +280,7 @@ class Registrants extends FormElement {
       if (count($people) > 0) {
         $people_labels = [];
         foreach ($people as $registrant) {
-          $people_labels[] = (string) $registrant->getIdentity()->toLink()->toString();
-        }
-
-        if ($arity_is_single) {
-          $people_labels = array_slice($people_labels, 0, 1);
+          $people_labels[] = (string) $registrant->label();
         }
 
         $element['for']['fortext']['#markup'] = ((string) t('This registration is for')) . ' ' . implode(', ', $people_labels);
@@ -177,54 +312,6 @@ class Registrants extends FormElement {
     // Drupals' radios element does not pass #executes_submit_callback and
     // #radios to its children radio like it does for #ajax. So we have to
     // create the children radios manually.
-    $for_arity_default = $arity_is_multiple ? 'multiple' : 'single';
-    $for_arity_options = [
-      'single' => t('Single person'),
-      'multiple' => t('Multiple people'),
-    ];
-
-    $for_arity_any_arity = TRUE;
-    $minimum = $element['#registrants_minimum'];
-    $maximum = $element['#registrants_maximum'];
-    if (($minimum && $minimum > 1) || ($maximum && $maximum == 1)) {
-      $for_arity_any_arity = FALSE;
-    }
-
-    $element['for_arity'] = [
-      '#type' => 'radios',
-      '#title' => t('This registration is for'),
-      '#options' => [],
-      '#access' => $for_arity_any_arity && $change_it,
-      '#attributes' => [
-        'class' => ['for_arity'],
-      ],
-    ];
-    foreach ($for_arity_options as $key => $label) {
-      $element['for_arity'][$key]['radio'] = [
-        '#type' => 'radio',
-        '#title' => $label,
-        '#return_value' => $key,
-        '#default_value' => $key === $for_arity_default,
-        '#parents' => array_merge($parents, ['for_arity']),
-        '#ajax' => [
-          'callback' => [static::class, 'ajaxElementRoot'],
-          'wrapper' => $ajax_wrapper_id_root,
-          'progress' => [
-            'type' => 'throbber',
-            'message' => NULL,
-          ],
-        ],
-        '#limit_validation_errors' => [],
-        '#validate' => [
-          [static::class, 'decoyValidator'],
-        ],
-        '#executes_submit_callback' => TRUE,
-        '#submit' => [
-          [static::class, 'submitArityChange'],
-        ],
-        '#disabled' => count($people) > 1,
-      ];
-    }
 
     $element['people'] = [
       '#prefix' => '<div id="' . $ajax_wrapper_id_people . '">',
@@ -235,13 +322,13 @@ class Registrants extends FormElement {
       '#header' => [
         t('Person'), t('Operations'),
       ],
-      '#access' => $arity_is_multiple && $change_it,
+      '#access' => $change_it,
       '#empty' => t('There are no people yet, add people below.'),
     ];
 
     foreach ($people as $i => $registrant) {
       $row = [];
-      $row[]['#markup'] = $registrant->getIdentity()->toLink()->toString();
+      $row[]['#markup'] = $registrant->label();
 
       $row[] = [
         // Needs a name else the submission handlers think all buttons are the
@@ -262,7 +349,9 @@ class Registrants extends FormElement {
         ],
         '#identity_element_registrant_row' => $i,
       ];
-
+      $display = $entity_display_repository->getFormDisplay('registrant', $registrant->bundle());
+      $display->buildForm($registrant, $row, $form_state);
+      $row[] = $display;
       $element['people']['people_list'][] = $row;
     }
 
@@ -275,7 +364,7 @@ class Registrants extends FormElement {
       '#suffix' => '</div>',
       '#open' => TRUE,
       '#tree' => TRUE,
-      '#title' => $arity_is_multiple ? t('Add another person') : t('Select person'),
+      '#title' => t('Add another person'),
       '#attributes' => [
         'class' => ['entities'],
       ],
@@ -318,7 +407,7 @@ class Registrants extends FormElement {
     ];
 
     // Display a close button if there are people and arity is multiple.
-    if ($arity_is_multiple && count($people) > 0) {
+    if (count($people) > 0) {
       $element['entities']['controls']['actions']['done'] = [
         '#type' => 'submit',
         '#value' => t('Done'),
@@ -355,20 +444,6 @@ class Registrants extends FormElement {
         '#title' => t('Registrant metadata'),
         '#parents' => array_merge($parents, ['entities', 'person', 'registrant']),
       ];
-
-      unset($registrant);
-      if ($arity_is_single) {
-        $first_registrant = reset($people);
-        if ($first_registrant) {
-          $registrant = $first_registrant;
-        }
-      }
-      // If no first registrant, then create one.
-      if (!isset($registrant)) {
-        $registrant = $registrant_factory->createRegistrant([
-          'event' => $event,
-        ]);
-      }
 
       $display = entity_get_form_display('registrant', $registrant->bundle(), 'default');
       $display->buildForm($registrant, $person_subform['registrant'], $form_state);
@@ -437,22 +512,12 @@ class Registrants extends FormElement {
           $person_subform['existing']['existing_autocomplete']['#selection_settings']['target_bundles'] = [$person_bundle];
         }
 
-        if ($arity_is_single) {
-          $first_registrant = reset($people);
-          if ($first_registrant) {
-            $identity = $first_registrant->getIdentity();
-            if (isset($identity) && ($identity->getEntityTypeId() == $person_entity_type_id)) {
-              $person_subform['existing']['existing_autocomplete']['#default_value'] = $identity;
-            }
-          }
-        }
-
         $person_subform['existing']['actions'] = [
           '#type' => 'actions',
         ];
         $person_subform['existing']['actions']['add_existing'] = [
           '#type' => 'submit',
-          '#value' => $arity_is_single ? t('Select person') : t('Add person'),
+          '#value' => t('Add person'),
           '#ajax' => [
             'callback' => [static::class, 'ajaxElementRoot'],
             'wrapper' => $ajax_wrapper_id_root,
@@ -518,7 +583,7 @@ class Registrants extends FormElement {
 
           $person_subform['new_person']['actions']['create'] = [
             '#type' => 'submit',
-            '#value' => $arity_is_single ? t('Create and select person') : t('Create and add to registration'),
+            '#value' => t('Create and add to registration'),
             '#ajax' => [
               'callback' => [static::class, 'ajaxElementRoot'],
               'wrapper' => $ajax_wrapper_id_root,
@@ -590,7 +655,7 @@ class Registrants extends FormElement {
    * {@inheritdoc}
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
-    $parents = array_merge($element['#parents'], ['registrants']);
+    $parents = $element['#parents'];
     $value = $form_state->get($parents);
 
     if ($value === NULL) {
@@ -626,17 +691,6 @@ class Registrants extends FormElement {
 
     $registrants = $element['#value'];
 
-    $arity_is_single = $utility->getArity() === 'single';
-    if ($arity_is_single) {
-      $registrants = array_slice($registrants, 0, 1);
-      $change_it = $utility->getChangeIt();
-      if ($change_it) {
-        // Ensure if the change it is TRUE and single form is open then throw
-        // error.
-        $form_state->setError($element, t('You must select a person.'));
-      }
-    }
-
     // Store original form submission in temporary values.
     $values = $form_state->getValue($element['#parents']);
     $form_state->setTemporaryValue(array_merge(['_registrants_values'], $element['#parents']), $values);
@@ -655,9 +709,11 @@ class Registrants extends FormElement {
     $utility = new RegistrantsElement($element, $form_state);
 
     // Add existing registrants to whitelist.
-    foreach ($complete_form['registrants_before']['#value'] as $existing_registrant) {
+    foreach ($element['#default_value'] as $existing_registrant) {
       $identity = $existing_registrant->getIdentity();
-      $utility->addWhitelistExisting($identity);
+      if ($identity) {
+        $utility->addWhitelistExisting($identity);
+      }
     }
 
     /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants */
@@ -667,12 +723,14 @@ class Registrants extends FormElement {
     $identities = [];
     foreach ($registrants as $registrant) {
       $identity = $registrant->getIdentity();
-      $entity_type = $identity->getEntityTypeId();
-      $id = $identity->id();
-      // Check if identity can skip existing revalidation. This needs to be done
-      // when the identity was created by this element.
-      if (!isset($whitelisted[$entity_type][$id])) {
-        $identities[$entity_type][$id] = $identity->label();
+      if ($identity) {
+        $entity_type = $identity->getEntityTypeId();
+        $id = $identity->id();
+        // Check if identity can skip existing revalidation. This needs to be done
+        // when the identity was created by this element.
+        if (!isset($whitelisted[$entity_type][$id])) {
+          $identities[$entity_type][$id] = $identity->label();
+        }
       }
     }
 
@@ -763,6 +821,9 @@ class Registrants extends FormElement {
    *   The complete form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public static function validateExisting(array &$form, FormStateInterface $form_state) {
     $element = RegistrantsElement::findElement($form, $form_state);
@@ -779,14 +840,11 @@ class Registrants extends FormElement {
     $existing_value = NestedArray::getValue($form_state->getTemporaryValue('_registrants_values'), $autocomplete_tree);
 
     if (!empty($existing_value)) {
-      $new_arity = $utility->getArity();
-      if ($new_arity === 'multiple') {
         $identity = \Drupal::entityTypeManager()->getStorage($existing_entity_type)
           ->load($existing_value);
         if ($utility->identityExists($identity)) {
           $form_state->setError(NestedArray::getValue($form, $autocomplete_tree), t('Person is already on this registration.'));
         }
-      }
     }
     else {
       $form_state->setError(NestedArray::getValue($form, $autocomplete_tree), t('Choose a person.'));
@@ -848,11 +906,6 @@ class Registrants extends FormElement {
 
     $utility->setChangeIt(TRUE);
 
-    $new_arity = $utility->getArity();
-    if ($new_arity === 'single') {
-      $utility->clearPeopleFormInput();
-      $utility->setForBundleAsFirstRegistrant();
-    }
   }
 
   /**
@@ -871,39 +924,6 @@ class Registrants extends FormElement {
 
     $utility->setChangeIt(FALSE);
     $utility->clearPeopleFormInput();
-  }
-
-  /**
-   * For_arity radios submission handler.
-   *
-   * @param array $form
-   *   The form array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  public static function submitArityChange(array $form, FormStateInterface $form_state) {
-    $form_state->setRebuild();
-    $trigger = $form_state->getTriggeringElement();
-    $element = RegistrantsElement::findElement($form, $form_state);
-    $utility = new RegistrantsElement($element, $form_state);
-
-    /** @var \Drupal\rng\Entity\RegistrantInterface[] $people */
-    $people = $element['#value'];
-
-    $new_arity = $trigger['#value'];
-    $utility->setArity($new_arity);
-
-    if ((count($people) > 0)) {
-      if ($new_arity === 'single') {
-        $utility->clearPeopleFormInput();
-        $utility->setForBundleAsFirstRegistrant();
-      }
-      else {
-        $utility->clearPeopleFormInput();
-        $parents = array_merge($element['#parents'], ['entities', 'for_bundle']);
-        NestedArray::unsetValue($form_state->getUserInput(), $parents);
-      }
-    }
   }
 
   /**
@@ -927,15 +947,6 @@ class Registrants extends FormElement {
     if ($current_user->isAuthenticated()) {
       $person = User::load($current_user->id());
       $registrant->setIdentity($person);
-    }
-
-    $arity = $utility->getArity();
-    if ($arity === 'single') {
-      $utility->replaceFirstRegistrant($registrant);
-      $utility->setChangeIt(FALSE);
-    }
-    else {
-      $utility->addRegistrant($registrant);
     }
   }
 
@@ -966,14 +977,6 @@ class Registrants extends FormElement {
       ->load($existing_value);
     $registrant->setIdentity($person);
 
-    $arity = $utility->getArity();
-    if ($arity === 'single') {
-      $utility->replaceFirstRegistrant($registrant);
-      $utility->setChangeIt(FALSE);
-    }
-    else {
-      $utility->addRegistrant($registrant);
-    }
   }
 
   /**
@@ -1013,16 +1016,6 @@ class Registrants extends FormElement {
 
     $registrant->setIdentity($new_person);
 
-    $arity = $utility->getArity();
-    if ($arity === 'single') {
-      $utility->replaceFirstRegistrant($registrant);
-      $utility->setChangeIt(FALSE);
-      $utility->setShowCreateEntitySubform(FALSE);
-    }
-    else {
-      $utility->addRegistrant($registrant);
-      $utility->setShowCreateEntitySubform(FALSE);
-    }
   }
 
   /**

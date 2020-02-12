@@ -35,6 +35,9 @@ rng.registrant_type.*:
     description:
       type: text
       label: 'Description'
+    label_pattern:
+      type: string
+      label: 'Fallback default title pattern'
 
 rng.rng_event_type.*.*:
   type: config_entity
@@ -52,6 +55,18 @@ rng.rng_event_type.*.*:
     mirror_operation_to_event_manage:
       type: string
       label: 'Mirrors another operation grant from the event to event manage.'
+    allow_anon_registrants:
+      type: boolean
+      label: 'Allow anonymous registrants to be created, without requiring an identity.'
+    auto_sync_registrants:
+      type: boolean
+      label: 'Automatically sync field data with matching field names between registrant and its identity.'
+    auto_attach_users:
+      type: boolean
+      label: 'Automatically attach anonymous registrations to existing users if email address matches.'
+    registrant_email_field:
+      type: string
+      label: 'Machine name of email field on registrant to look up on user account.'
     custom_rules:
       type: boolean
       label: 'Allow event managers to customise default rules.'

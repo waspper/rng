@@ -177,6 +177,52 @@ class EventTypeForm extends EntityForm {
       '#default_value' => (boolean) (($event_type->getEventManageOperation() !== NULL) ? $event_type->getEventManageOperation() : TRUE),
     ];
 
+    // Allow Anonymous Registrants?
+    $form['allow_anon_registrants'] = [
+      '#group' => 'settings',
+      '#type' => 'checkbox',
+      '#title' => t('Allow anonymous registrants without saving to other identities?'),
+      '#description' => t('Allow editing registrant data as text fields on a registration. Add fields to the registrant type for information you would like to collect.'),
+      '#default_value' => (boolean) $event_type->getAllowAnonRegistrants(),
+    ];
+
+    // Auto Sync Registrants
+    $form['auto_sync_registrants'] = [
+      '#group' => 'settings',
+      '#type' => 'checkbox',
+      '#title' => t('Sync matching field data between registrant and registrant identity'),
+      '#description' => t('If there are empty fields on either the registrant or an identity, copy data from the other when a registrant is updated. This can streamline views of attendee data.'),
+      '#default_value' => (boolean) $event_type->getAutoSyncRegistrants(),
+    ];
+
+    // Auto Attach User Identities
+    $form['auto_attach_users'] = [
+      '#group' => 'settings',
+      '#type' => 'checkbox',
+      '#title' => t('Automatically add user identities to anonymous registrants if email matches'),
+      '#description' => t('If an email field in a registrant matches a user account, automatically add the user account as the identity.'),
+      '#default_value' => (boolean) $event_type->getAutoAttachUsers(),
+      '#states' => [
+        'invisible' => [
+          ':input[name="allow_anon_registrants"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
+    // Registrant email field
+    $form['registrant_email_field'] = [
+      '#group' => 'settings',
+      '#type' => 'textfield',
+      '#title' => t('Registrant email field'),
+      '#description' => t('Machine name of a field on the registrant to use when looking up a user account.'),
+      '#default_value' => $event_type->getRegistrantEmailField(),
+      '#states' => [
+        'invisible' => [
+          ':input[name="auto_attach_users"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
     $registrant_types = [];
     foreach (RegistrantType::loadMultiple() as $registrant_type) {
       /** @var \Drupal\rng\Entity\RegistrantTypeInterface $registrant_type */
@@ -322,7 +368,11 @@ class EventTypeForm extends EntityForm {
     $event_type->setDefaultRegistrantType($form_state->getValue(['registrants', 'registrant_type']));
     // Set to the access operation for event.
     $op = $form_state->getValue('mirror_update') ? 'update' : '';
-    $event_type->setEventManageOperation($op);
+    $event_type->setEventManageOperation($op)
+      ->setAllowAnonRegistrants($form_state->getValue('allow_anon_registrants'))
+      ->setAutoSyncRegistrants($form_state->getValue('auto_sync_registrants'))
+      ->setAutoAttachUsers($form_state->getValue('auto_attach_users'))
+      ->setRegistrantEmailField($form_state->getValue('registrant_email_field'));
 
     $status = $event_type->save();
 

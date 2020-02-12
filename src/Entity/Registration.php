@@ -4,6 +4,7 @@ namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\rng\Exception\InvalidEventException as InvalidEventExceptionAlias;
 use Drupal\rng\Exception\MaxRegistrantsExceededException;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -79,6 +80,16 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function getEventMeta() {
+    // Add group defaults event settings.
+    /* @var $event_manager \Drupal\rng\EventManagerInterface */
+    $event_manager = \Drupal::service('rng.event_manager');
+    return $event_manager->getMeta($this->getEvent());
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function setEvent(ContentEntityInterface $entity) {
@@ -90,7 +101,19 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public function label() {
-    return !empty($this->id->value) ? t('Registration @id', ['@id' => $this->id->value]) : t('New registration');
+    $owner = $this->getOwner();
+    $qty = $this->getRegistrantQty();
+    $registrations = '';
+    if ($qty) {
+      $registrations = '[' . $qty . ']';
+    }
+    if ($owner) {
+      return t('@owner @regs', [
+        '@owner' => $owner->label(),
+        '@regs' => $registrations,
+      ]);
+    }
+    return t('New registration');
   }
 
   /**
@@ -173,8 +196,27 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public function getRegistrants() {
-    return \Drupal::entityTypeManager()->getStorage('registrant')
+    if ($this->getRegistrantQty()) {
+      $this->createStubs();
+    }
+    $registrants = \Drupal::entityTypeManager()->getStorage('registrant')
       ->loadMultiple($this->getRegistrantIds());
+    if (!count($registrants)) {
+      /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
+      $registrant_factory = \Drupal::service('rng.registrant.factory');
+
+      // Always return at least one, even if it's not saved. This should only
+      // run if there is not a defined number of registrants for this
+      // registration, and no existing registrants.
+      $registrant = $registrant_factory->createRegistrant([
+        'event' => $this->getEvent(),
+      ]);
+      $registrant->setRegistration($this);
+
+      $registrants[] = $registrant;
+    }
+
+    return $registrants;
   }
 
   /**
@@ -362,10 +404,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       throw new MaxRegistrantsExceededException('Too many registrants on this registration.');
     }
 
-    // Add group defaults event settings.
-    /* @var $event_manager \Drupal\rng\EventManagerInterface */
-    $event_manager = \Drupal::service('rng.event_manager');
-    $event_meta = $event_manager->getMeta($this->getEvent());
+    $event_meta = $this->getEventMeta();
     if ($this->isNew()) {
       foreach ($event_meta->getDefaultGroups() as $group) {
         $this->addGroup($group);
@@ -379,7 +418,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     parent::postSave($storage, $update);
 
-    /** @var \Drupal\rng\RegistrantFactory $registrant_factory */
+    /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
     $registrant_factory = \Drupal::service('rng.registrant.factory');
 
     foreach ($this->identities_unsaved as $k => $identity) {
@@ -391,6 +430,28 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
         ->setIdentity($identity)
         ->save();
       unset($this->identities_unsaved[$k]);
+    }
+    $this->createStubs();
+  }
+
+  protected function createStubs() {
+    $stub_count = $this->getRegistrantQty();
+    if ($stub_count && $this->canAddRegistrants()) {
+      /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
+      $registrant_factory = \Drupal::service('rng.registrant.factory');
+
+      $registrant_count = count($this->getRegistrantIds());
+      $stub_count -= $registrant_count;
+
+      while ($stub_count) {
+        $registrant = $registrant_factory->createRegistrant([
+          'event' => $this->getEvent(),
+        ]);
+        $registrant
+          ->setRegistration($this)
+          ->save();
+        $stub_count--;
+      }
     }
   }
 
@@ -429,10 +490,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       if (count($registrants) > $qty) {
         throw new MaxRegistrantsExceededException('Cannot set registrant qty below number of current registrants.');
       }
-      /* @var $event_manager \Drupal\rng\EventManagerInterface */
-      $event_manager = \Drupal::service('rng.event_manager');
-      /** @var \Drupal\rng\EventMeta $event */
-      $event_meta = $event_manager->getMeta($this->getEvent());
+      $event_meta = $this->getEventMeta();
       $max = $event_meta->getRegistrantsMaximum();
       $min = $event_meta->getRegistrantsMinimum();
       if (!empty($max) && $max > -1 && $qty > $max) {

@@ -21,6 +21,13 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   public function getEvent();
 
   /**
+   * Get the event meta object for this event.
+   *
+   * @return \Drupal\rng\EventMetaInterface
+   *   The event meta entity.
+   */
+  public function getEventMeta();
+  /**
    * Returns the registration creation timestamp.
    *
    * @return int

@@ -42,6 +42,15 @@ interface EventManagerInterface {
   const FIELD_REGISTRANTS_CAPACITY = 'rng_registrants_capacity';
 
   /**
+   * ID of a 'boolean' field attached to an event bundle.
+   *
+   * Whether FIELD_REGISTRANTS_CAPACITY and FIELD_REGISTRATIONS_CAPACITY include
+   * confirmed registrations only (TRUE) or all registrations, including
+   * unconfirmed (FALSE).
+   */
+  const FIELD_CAPACITY_CONFIRMED_ONLY = 'rng_capacity_confirmed_only';
+
+  /**
    * ID of an `integer` field attached to an event bundle.
    *
    * The absolute maximum number of registrations that can be created

@@ -58,6 +58,78 @@ interface EventTypeInterface extends ConfigEntityInterface {
   public function setEventManageOperation($permission);
 
   /**
+   * Gets whether anonymous registrants should be created/used.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getAllowAnonRegistrants();
+
+  /**
+   * Set whether or not to allow anonymous registrants.
+   *
+   * @param bool $allow_anon_registrants
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setAllowAnonRegistrants($allow_anon_registrants);
+
+  /**
+   * Gets whether registrants should automatically sync with their identities.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getAutoSyncRegistrants();
+
+  /**
+   * Set whether or not to automatically sync identity data with registrant data.
+   *
+   * @param bool $auto_sync_registrants
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setAutoSyncRegistrants($auto_sync_registrants);
+
+  /**
+   * Gets whether existing users should be added as identities when email matches.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getAutoAttachUsers();
+
+  /**
+   * Set whether or not to automatically add user identities that match by email.
+   *
+   * @param bool $auto_attach_users
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setAutoAttachUsers($auto_attach_users);
+
+  /**
+   * Gets the machine name of field containing email on registrant to use for sync.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getRegistrantEmailField();
+
+  /**
+   * Set the machine name of an email field on the registrant to use for sync.
+   *
+   * @param string $registrant_email_field
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setRegistrantEmailField($registrant_email_field);
+
+  /**
    * Whether to allow event managers to customize default rules.
    *
    * @return bool
