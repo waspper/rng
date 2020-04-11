@@ -246,29 +246,6 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRegistrationCapacity() {
-    $capacity = (int) $this->getEvent()->{EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY}->value;
-    if ($capacity != '' && is_numeric($capacity) && $capacity >= 0) {
-      return $capacity;
-    }
-    return EventMetaInterface::CAPACITY_UNLIMITED;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function remainingRegistrationCapacity() {
-    $capacity = $this->getRegistrationCapacity();
-    if ($capacity == EventMetaInterface::CAPACITY_UNLIMITED) {
-      return $capacity;
-    }
-    $remaining = $capacity - $this->countRegistrations();
-    return $remaining > 0 ? $remaining : 0;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function allowWaitList() {
     return (bool) $this->getEvent()->{EventManagerInterface::FIELD_WAIT_LIST}->value;
   }
@@ -276,23 +253,9 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRegistrantsMinimum() {
-    if (isset($this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM})) {
-      $field = $this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM};
-      $minimum = $field->value;
-      if ($minimum !== '' && is_numeric($minimum) && $minimum >= 0) {
-        return $minimum;
-      }
-    }
-    return 1;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getRegistrantsMaximum() {
-    if (isset($this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM})) {
-      $field = $this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM};
+    if (isset($this->getEvent()->{EventManagerInterface::FIELD_REGISTRANTS_CAPACITY})) {
+      $field = $this->getEvent()->{EventManagerInterface::FIELD_REGISTRANTS_CAPACITY};
       $maximum = $field->value;
       if ($maximum !== '' && is_numeric($maximum) && $maximum >= 0) {
         return $maximum;
@@ -741,4 +704,29 @@ class EventMeta implements EventMetaInterface {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getDateString() {
+    $event_type = $this->getEventType();
+    $start_field = $event_type->getEventStartDateField();
+    $end_field = $event_type->getEventEndDateField();
+    $event = $this->getEvent();
+    $start = $event->get($start_field)->value;
+    $count = $event->get($end_field)->count();
+    $end_value = $event->get($end_field)->get($count - 1);
+    if (!empty($end_value->end_value)) {
+      $end = $end_value->end_value;
+    }
+    else {
+      $end = $end_value->value;
+    }
+    $start_date = date('F j, Y', strtotime($start));
+    $end_date = date('F j, Y', strtotime($end));
+    if ($start_date == $end_date) {
+      return $start_date;
+    }
+    return date('F j', strtotime($start)) . ' - ' . date('j, Y', strtotime($end));
+
+  }
 }

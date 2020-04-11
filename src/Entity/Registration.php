@@ -4,7 +4,6 @@ namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\rng\Exception\InvalidEventException as InvalidEventExceptionAlias;
 use Drupal\rng\Exception\MaxRegistrantsExceededException;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -492,12 +491,8 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       }
       $event_meta = $this->getEventMeta();
       $max = $event_meta->getRegistrantsMaximum();
-      $min = $event_meta->getRegistrantsMinimum();
       if (!empty($max) && $max > -1 && $qty > $max) {
         throw new MaxRegistrantsExceededException('Cannot set registrations above event maximum');
-      }
-      if (!empty($min) && $qty < $min) {
-        throw new MaxRegistrantsExceededException('Cannot set registrations below event minimum');
       }
     }
     $this->set('registrant_qty', $qty);
@@ -528,4 +523,11 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
     return [\Drupal::currentUser()->id()];
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getDateString() {
+    $event_meta = $this->getEventMeta();
+    return $event_meta->getDateString();
+  }
 }

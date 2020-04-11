@@ -115,6 +115,14 @@ interface RegistrationInterface extends ContentEntityInterface, EntityChangedInt
   public function setOwnerId($uid);
 
   /**
+   * Get a string representing the date of the event.
+   *
+   * @return string
+   *   Date string to summarize the event date.
+   */
+  public function getDateString();
+
+  /**
    * Get registrants IDs for the registration.
    *
    * @return integer[]

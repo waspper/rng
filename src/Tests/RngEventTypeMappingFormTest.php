@@ -54,10 +54,6 @@ class RngEventTypeMappingFormTest extends RngWebTestBase {
    * Test mapping form when a field does not exist.
    */
   public function testMappingFormDeleted() {
-    // Delete the field since it was added automatically by EventType::postSave.
-    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM);
-    $field->delete();
-
     $url = $this->eventType->toUrl('field-mapping');
     $this->drupalGet($url);
     //$this->removeWhiteSpace();

@@ -151,8 +151,8 @@ class Registrants extends FormElement {
 
       $reg_form = $helper->getFields($reg_form, $form_state, $registrant);
       $row = [
-        '#type' => 'details',
-        '#title' => $counter . ' - ' . $registrant->label(),
+        '#type' => 'fieldset',
+        '#title' => 'Attendee ' . $counter . ' - ' . '<a href="/user">' . $registrant->label() . '</a>',
         '#open' => TRUE,
         '#parents' => $curr_parent,
         'registrant' => $reg_form,

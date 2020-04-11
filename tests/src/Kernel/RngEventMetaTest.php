@@ -53,62 +53,6 @@ class RngEventMetaTest extends RngKernelTestBase {
   }
 
   /**
-   * Tests minimum registrants is unlimited if there is no field value.
-   *
-   * Including no default field value on the entity level.
-   *
-   * @covers ::getRegistrantsMinimum
-   */
-  public function testRegistrantsMinimumNoField() {
-    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM);
-    $field->delete();
-
-    $event = EntityTest::create();
-    $event_meta = $this->eventManager->getMeta($event);
-    $this->assertSame(1, $event_meta->getRegistrantsMinimum(), 'Minimum registrants is "1" when no field exists.');
-  }
-
-  /**
-   * Tests minimum registrants is unlimited if there is no field value.
-   *
-   * @covers ::getRegistrantsMinimum
-   */
-  public function testRegistrantsMinimumDefaultValue() {
-    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM);
-    $field
-      ->setDefaultValue([['value' => 666]])
-      ->save();
-
-    $event = EntityTest::create();
-    $event_meta = $this->eventManager->getMeta($event);
-    $this->assertSame(666, $event_meta->getRegistrantsMinimum(), 'Minimum registrants matches bundle default value.');
-  }
-
-  /**
-   * Tests minimum registrants is unlimited if there is no field value.
-   *
-   * @covers ::getRegistrantsMinimum
-   */
-  public function testRegistrantsMinimumNoDefaultValue() {
-    $event = EntityTest::create();
-    $event_meta = $this->eventManager->getMeta($event);
-    $this->assertSame(1, $event_meta->getRegistrantsMinimum(), 'Minimum registrants matches empty bundle default.');
-  }
-
-  /**
-   * Tests minimum registrants value when set on event entity.
-   *
-   * @covers ::getRegistrantsMinimum
-   */
-  public function testRegistrantsMinimumEventValue() {
-    $event = EntityTest::create([
-      EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM => 555,
-    ]);
-    $event_meta = $this->eventManager->getMeta($event);
-    $this->assertSame(555, $event_meta->getRegistrantsMinimum(), 'Minimum registrants matches event field value.');
-  }
-
-  /**
    * Tests maximum registrants is unlimited if there is no field value.
    *
    * Including no default field value on the entity level.
@@ -116,7 +60,7 @@ class RngEventMetaTest extends RngKernelTestBase {
    * @covers ::getRegistrantsMaximum
    */
   public function testRegistrantsMaximumNoField() {
-    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM);
+    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRANTS_CAPACITY);
     $field->delete();
 
     $event = EntityTest::create();
@@ -130,7 +74,7 @@ class RngEventMetaTest extends RngKernelTestBase {
    * @covers ::getRegistrantsMaximum
    */
   public function testRegistrantsMaximumDefaultValue() {
-    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM);
+    $field = FieldConfig::loadByName('entity_test', 'entity_test', EventManagerInterface::FIELD_REGISTRANTS_CAPACITY);
     $field
       ->setDefaultValue([['value' => 666]])
       ->save();
@@ -151,17 +95,5 @@ class RngEventMetaTest extends RngKernelTestBase {
     $this->assertSame($this->unlimited, $event_meta->getRegistrantsMaximum(), 'Maximum registrants matches empty bundle default.');
   }
 
-  /**
-   * Tests maximum registrants value when set on event entity.
-   *
-   * @covers ::getRegistrantsMaximum
-   */
-  public function testRegistrantsMaximumEventValue() {
-    $event = EntityTest::create([
-      EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM => 555,
-    ]);
-    $event_meta = $this->eventManager->getMeta($event);
-    $this->assertSame(555, $event_meta->getRegistrantsMaximum(), 'Maximum registrants matches event field value.');
-  }
 
 }

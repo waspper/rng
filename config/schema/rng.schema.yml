@@ -67,6 +67,12 @@ rng.rng_event_type.*.*:
     registrant_email_field:
       type: string
       label: 'Machine name of email field on registrant to look up on user account.'
+    event_start_date_field:
+      type: string
+      label: 'Machine name of event start date field on event entity.'
+    event_end_date_field:
+      type: string
+      label: 'Machine name of event end date field. Uses end_value if exists.'
     custom_rules:
       type: boolean
       label: 'Allow event managers to customise default rules.'

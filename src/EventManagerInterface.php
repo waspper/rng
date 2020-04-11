@@ -44,19 +44,11 @@ interface EventManagerInterface {
   /**
    * ID of a 'boolean' field attached to an event bundle.
    *
-   * Whether FIELD_REGISTRANTS_CAPACITY and FIELD_REGISTRATIONS_CAPACITY include
+   * Whether FIELD_REGISTRANTS_CAPACITY include
    * confirmed registrations only (TRUE) or all registrations, including
    * unconfirmed (FALSE).
    */
   const FIELD_CAPACITY_CONFIRMED_ONLY = 'rng_capacity_confirmed_only';
-
-  /**
-   * ID of an `integer` field attached to an event bundle.
-   *
-   * The absolute maximum number of registrations that can be created
-   * for an event. A negative or missing value indicates unlimited capacity.
-   */
-  const FIELD_REGISTRATIONS_CAPACITY = 'rng_registrations_capacity';
 
   /**
    * ID of an `boolean` field attached to an event bundle.
@@ -79,20 +71,6 @@ interface EventManagerInterface {
    * registrations. An empty value reverts to the site default.
    */
   const FIELD_ALLOW_DUPLICATE_REGISTRANTS = 'rng_registrants_duplicate';
-
-  /**
-   * ID of an `integer` field attached to an event bundle.
-   *
-   * The minimum number of registrants per registration associated.
-   */
-  const FIELD_REGISTRATION_REGISTRANTS_MINIMUM = 'rng_registration_registrants_min';
-
-  /**
-   * ID of an `integer` field attached to an event bundle.
-   *
-   * The maximum number of registrants per registration associated.
-   */
-  const FIELD_REGISTRATION_REGISTRANTS_MAXIMUM = 'rng_registration_registrants_max';
 
   /**
    * Get the meta instance for an event.

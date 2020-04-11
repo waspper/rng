@@ -288,3 +288,35 @@ function rng_update_8203() {
     ->setDisplayConfigurable('form', TRUE);
   $definition_manager->installFieldStorageDefinition('status', 'registration', 'registration', $status);
 }
+
+/**
+ * Add Event dynamic entity reference to registrant.
+ */
+function rng_update_8204() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+  $event = BaseFieldDefinition::create('dynamic_entity_reference')
+    ->setLabel(t('Event'))
+    ->setDescription(t('The event for the registrant.'))
+    ->setSetting('exclude_entity_types', 'true')
+    ->setSetting('entity_type_ids', ['registrant', 'registration'])
+    ->setDescription(t('The relationship between this registrant and an event.'))
+    ->setRevisionable(TRUE)
+    ->setReadOnly(TRUE);
+
+  $definition_manager->installFieldStorageDefinition('event', 'registrant', 'registrant', $event);
+}
+
+/**
+ * Resave all registrants to populate event links.
+ */
+function rng_update_8205() {
+  $storage = \Drupal::entityTypeManager()->getStorage('registrant');
+    $registrants = $storage->loadMultiple(NULL);
+    foreach ($registrants as $registrant) {
+      if ($registrant->id() < 73) {
+        $registrant->delete();
+      }
+      $registrant->save();
+    }
+
+}

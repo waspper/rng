@@ -129,6 +129,9 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
    */
   protected $registrant_email_field;
 
+  protected $event_start_date_field;
+
+  protected $event_end_date_field;
   /**
    * Types of people types allowed to be associated with this event type.
    *
@@ -154,12 +157,9 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
     EventManagerInterface::FIELD_STATUS,
     EventManagerInterface::FIELD_WAIT_LIST,
     EventManagerInterface::FIELD_REGISTRANTS_CAPACITY,
-    EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY,
     EventManagerInterface::FIELD_CAPACITY_CONFIRMED_ONLY,
     EventManagerInterface::FIELD_EMAIL_REPLY_TO,
     EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS,
-    EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM,
-    EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM,
   ];
 
   /**
@@ -442,12 +442,9 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
         EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS,
         EventManagerInterface::FIELD_WAIT_LIST,
         EventManagerInterface::FIELD_REGISTRANTS_CAPACITY,
-        EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY,
         EventManagerInterface::FIELD_EMAIL_REPLY_TO,
         EventManagerInterface::FIELD_REGISTRATION_TYPE,
         EventManagerInterface::FIELD_REGISTRATION_GROUPS,
-        EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM,
-        EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM,
       ];
 
       module_load_include('inc', 'rng', 'rng.field.defaults');
@@ -615,6 +612,36 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
    */
   public function setRegistrantEmailField($registrant_email_field) {
     $this->registrant_email_field = $registrant_email_field;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEventStartDateField() {
+    return $this->event_start_date_field;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setEventStartDateField($event_start_date_field) {
+    $this->event_start_date_field = $event_start_date_field;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEventEndDateField() {
+    return $this->event_end_date_field;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setEventEndDateField($event_end_date_field) {
+    $this->event_end_date_field = $event_end_date_field;
     return $this;
   }
 }

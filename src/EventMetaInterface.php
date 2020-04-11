@@ -139,46 +139,12 @@ interface EventMetaInterface {
   public function remainingRegistrantCapacity();
 
   /**
-   * Gets configuration for maximum permitted registrations on this event.
-   *
-   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
-   *   Maximum amount of registrations (>= 0), or unlimited.
-   */
-  public function getRegistrationCapacity();
-
-  /**
-   * Calculates how many more registrations can be added to this event.
-   *
-   * This value will not be negative if there are excessive registrations.
-   *
-   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
-   *   Number of new registrations allowed (>= 0), or unlimited.
-   */
-  public function remainingRegistrationCapacity();
-
-  /**
    * Checks if a registrant is allowed to register on a wait list on this event.
    *
    * @return bool
    *   Whether wait list registrations are allowed.
    */
   public function allowWaitList();
-
-  /**
-   * Get minimum number of registrants allowed per registration.
-   *
-   * @return int
-   *   Minimum number of registrants allowed (>= 0)
-   */
-  public function getRegistrantsMinimum();
-
-  /**
-   * Get maximum number of registrants allowed per registration.
-   *
-   * @return int|EventMetaInterfaceCAPACITY_UNLIMITED
-   *   Maximum number of registrants allowed (>= 0), or unlimited.
-   */
-  public function getRegistrantsMaximum();
 
   /**
    * Get groups that should be added to all new registrations.
@@ -406,5 +372,13 @@ interface EventMetaInterface {
    * Create messages for Event from Default messages for this Event Type.
    */
   public function createDefaultEventMessages();
+
+  /**
+   * Format the dates of this event.
+   *
+   * @return string
+   *   A string expressing the date range for the event.
+   */
+  public function getDateString();
 
 }

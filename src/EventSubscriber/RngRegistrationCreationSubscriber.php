@@ -89,7 +89,7 @@ class RngRegistrationCreationSubscriber implements EventSubscriberInterface {
    */
   public function remainingCapacity(RegistrationAccessEvent $event) {
     $meta = $this->getMeta($event->getContext());
-    if (!$meta->allowWaitList() && $meta->remainingRegistrationCapacity() < 1) {
+    if (!$meta->allowWaitList() && $meta->remainingRegistrantCapacity() < 1) {
       $event->setAccess(FALSE);
     }
   }

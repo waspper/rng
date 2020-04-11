@@ -114,7 +114,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
   /**
    * Gets the machine name of field containing email on registrant to use for sync.
    *
-   * @return bool
+   * @return string
    *   The setting.
    */
   public function getRegistrantEmailField();
@@ -128,6 +128,42 @@ interface EventTypeInterface extends ConfigEntityInterface {
    *   Return this event type for chaining.
    */
   public function setRegistrantEmailField($registrant_email_field);
+
+  /**
+   * Gets the machine name of the field containing the event start date on the ewent entity.
+   *
+   * @return string|bppl
+   *   The start date field.
+   */
+  public function getEventStartDateField();
+
+  /**
+   * Set the machine name of the start date field.
+   *
+   * @param string $event_start_date_field
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setEventStartDateField($event_start_date_field);
+
+  /**
+   * Gets the machine name of the field containing the event end date on the event entity.
+   *
+   * @return string|bool
+   *   The end date field.
+   */
+  public function getEventEndDateField();
+
+  /**
+   * Set the machine name of the end date field. Uses end_value if daterange.
+   *
+   * @param string $event_end_date_field
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setEventEndDateField($event_end_date_field);
 
   /**
    * Whether to allow event managers to customize default rules.

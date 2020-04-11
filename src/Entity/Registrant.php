@@ -116,6 +116,13 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
     }
     $event_type = $this->getRegistration()->getEventMeta()->getEventType();
 
+    if ($this->event->isEmpty()) {
+      $registration = $this->getRegistration();
+      $this->event->setValue([
+        'target_id' => $registration->event->target_id,
+        'target_type' => $registration->event->target_type,
+      ]);
+    }
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $this->getIdentity();
 
@@ -210,6 +217,15 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
       ->setSetting('exclude_entity_types', 'true')
       ->setSetting('entity_type_ids', ['registrant', 'registration'])
       ->setCardinality(1)
+      ->setReadOnly(TRUE);
+
+    $fields['event'] = BaseFieldDefinition::create('dynamic_entity_reference')
+      ->setLabel(t('Event'))
+      ->setDescription(t('The event for the registrant.'))
+      ->setSetting('exclude_entity_types', 'true')
+      ->setSetting('entity_type_ids', ['registrant', 'registration'])
+      ->setDescription(t('The relationship between this registrant and an event.'))
+      ->setRevisionable(TRUE)
       ->setReadOnly(TRUE);
 
     return $fields;

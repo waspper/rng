@@ -73,10 +73,8 @@ class RegistrantFields {
       '#open' => TRUE,
     ];
     $form['details'] = [
-      '#type' => 'details',
-      '#title' => 'Registrant Info',
-      '#tree' => TRUE,
-      '#open' => TRUE,
+      '#type' => 'container',
+      '#title' => 'Attendee Info'
     ];
     // Set #parents to 'top-level' by default.
     $form['#parents'] = $parents;
@@ -103,7 +101,7 @@ class RegistrantFields {
       ];
       $form['identity_types']['remove_identity'] = [
         '#type' => 'submit',
-        '#value' => t('Change Registrant'),
+        '#value' => t('Change Attendee'),
         '#submit' => ['\Drupal\rng\Form\RegistrantFields::removeIdentity', '::save'],
       ];
 

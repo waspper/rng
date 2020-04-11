@@ -223,6 +223,22 @@ class EventTypeForm extends EntityForm {
       ],
     ];
 
+    // Event date fields
+    $form['event_date_field_start'] = [
+      '#group' => 'settings',
+      '#type' => 'textfield',
+      '#title' => t('Event Start Date field'),
+      '#description' => t('Machine name of a field on the event to use as the event start date.'),
+      '#default_value' => $event_type->getEventStartDateField(),
+    ];
+    $form['event_date_field_end'] = [
+      '#group' => 'settings',
+      '#type' => 'textfield',
+      '#title' => t('Event End Date field'),
+      '#description' => t('Machine name of a field on the event to use as the event end date. Will be combined into a "friendly" date string on registrations.'),
+      '#default_value' => $event_type->getEventEndDateField(),
+    ];
+
     $registrant_types = [];
     foreach (RegistrantType::loadMultiple() as $registrant_type) {
       /** @var \Drupal\rng\Entity\RegistrantTypeInterface $registrant_type */
@@ -372,7 +388,9 @@ class EventTypeForm extends EntityForm {
       ->setAllowAnonRegistrants($form_state->getValue('allow_anon_registrants'))
       ->setAutoSyncRegistrants($form_state->getValue('auto_sync_registrants'))
       ->setAutoAttachUsers($form_state->getValue('auto_attach_users'))
-      ->setRegistrantEmailField($form_state->getValue('registrant_email_field'));
+      ->setRegistrantEmailField($form_state->getValue('registrant_email_field'))
+      ->setEventStartDateField($form_state->getValue('event_date_field_start'))
+      ->setEventEndDateField($form_state->getValue('event_date_field_end'));
 
     $status = $event_type->save();
 

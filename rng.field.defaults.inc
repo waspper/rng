@@ -52,9 +52,6 @@ function rng_add_event_field_storage($field_name, $entity_type) {
       ];
       break;
 
-    case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
     case EventManagerInterface::FIELD_REGISTRANTS_CAPACITY:
       $definition = [
         'type' => 'integer',
@@ -134,16 +131,6 @@ function rng_event_field_config_definition($field_name) {
       ];
       break;
 
-    case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
-      $definition = [
-        'label' => 'Maximum registrations',
-        'description' => t('Maximum amount of registrations for this event.'),
-        'settings' => [
-          'min' => 1,
-        ],
-      ];
-      break;
-
     case EventManagerInterface::FIELD_WAIT_LIST:
       $definition = [
         'label' => 'Allow a wait list',
@@ -173,31 +160,6 @@ function rng_event_field_config_definition($field_name) {
       ];
       break;
 
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
-      $definition = [
-        'label' => 'Minimum registrants per registration',
-        'description' => t('Minimum number of registrants per registration.'),
-        'settings' => [
-          'min' => 0,
-        ],
-        'default_value' => [
-          ['value' => 1],
-        ],
-      ];
-      break;
-
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
-      $definition = [
-        'label' => 'Maximum registrants per registration',
-        'description' => t('Maximum number of registrants per registration.'),
-        'settings' => [
-          'min' => -1,
-        ],
-        'default_value' => [
-          ['value' => -1],
-        ],
-      ];
-      break;
   }
 
   return $definition;
@@ -263,12 +225,6 @@ function rng_add_event_form_display_defaults(EntityFormDisplayInterface $form_di
       ]);
       break;
 
-    case EventManagerInterface::FIELD_REGISTRATIONS_CAPACITY:
-      $form_display->setComponent($field_name, [
-        'type' => 'unlimited_number',
-      ]);
-      break;
-
     case EventManagerInterface::FIELD_WAIT_LIST:
       $form_display->setComponent($field_name, [
         'type' => 'boolean_checkbox',
@@ -290,27 +246,6 @@ function rng_add_event_form_display_defaults(EntityFormDisplayInterface $form_di
       ]);
       break;
 
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM:
-      $form_display->setComponent($field_name, [
-        'type' => 'unlimited_number',
-        'settings' => [
-          'value_unlimited' => 0,
-          'label_unlimited' => t('No registrants required'),
-          'label_number' => t('Minimum'),
-        ],
-      ]);
-      break;
-
-    case EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM:
-      $form_display->setComponent($field_name, [
-        'type' => 'unlimited_number',
-        'settings' => [
-          'value_unlimited' => -1,
-          'label_unlimited' => t('No maximum'),
-          'label_number' => t('Maximum'),
-        ],
-      ]);
-      break;
   }
   return $form_display;
 }
