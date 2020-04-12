@@ -2,7 +2,7 @@ name: RNG
 type: module
 description: 'Provides the ability to create and manage events and registrations.'
 package: RNG
-core: 8.x
+core_version_requirement: ^8.8.4
 dependencies:
   - drupal:system (>=8.1)
   - dynamic_entity_reference:dynamic_entity_reference
