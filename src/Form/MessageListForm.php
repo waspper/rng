@@ -198,7 +198,7 @@ class MessageListForm extends FormBase {
       }
     }
 
-    drupal_set_message($message ? $message : $this->t('No action performed.'));
+    $this->messenger()->addMessage($message ? $message : $this->t('No action performed.'));
   }
 
   /**
@@ -258,7 +258,7 @@ class MessageListForm extends FormBase {
       if ($component->access('edit')) {
         $links['edit-date'] = [
           'title' => $this->t('Edit date'),
-          'url' => $component->urlInfo('edit-form'),
+          'url' => $component->toUrl('edit-form'),
           'query' => $destination,
         ];
       }
@@ -267,7 +267,7 @@ class MessageListForm extends FormBase {
     if ($rule->access('delete')) {
       $links['delete'] = [
         'title' => $this->t('Delete'),
-        'url' => $rule->urlInfo('delete-form'),
+        'url' => $rule->toUrl('delete-form'),
         'query' => $destination,
       ];
     }

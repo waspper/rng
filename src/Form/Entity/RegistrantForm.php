@@ -52,10 +52,10 @@ class RegistrantForm extends ContentEntityForm {
     $registrant->save();
 
     if ($is_new) {
-      drupal_set_message($this->t('Registrant created.'));
+      $this->messenger()->addMessage($this->t('Registrant created.'));
     }
     else {
-      drupal_set_message($this->t('Registrant updated.'));
+      $this->messenger()->addMessage($this->t('Registrant updated.'));
     }
   }
 

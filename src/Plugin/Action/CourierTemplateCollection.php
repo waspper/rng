@@ -4,6 +4,7 @@ namespace Drupal\rng\Plugin\Action;
 
 use Drupal\Core\Action\ConfigurableActionBase;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -29,7 +30,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * The RNG event manager.
@@ -54,16 +55,16 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    * @param \Drupal\courier\Service\CourierManagerInterface $courier_manager
    *   The courier manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->eventManager = $event_manager;
     $this->courierManager = $courier_manager;
   }
@@ -100,7 +101,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
       $form['template_collection']['#markup'] = $this->t('Template collection #@id', ['@id' => $template_collection->id()]);
     }
     else {
-      drupal_set_message('No template collection entity found.', 'warning');
+      $this->messenger()->addMessage('No template collection entity found.', 'warning');
     }
 
     return $form;
@@ -174,7 +175,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    */
   public function getTemplateCollection() {
     if (isset($this->configuration['template_collection'])) {
-      return $this->entityManager
+      return $this->entityTypeManager
         ->getStorage('courier_template_collection')
         ->load($this->configuration['template_collection']);
     }

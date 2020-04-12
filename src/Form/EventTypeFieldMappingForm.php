@@ -97,12 +97,12 @@ class EventTypeFieldMappingForm extends EntityForm {
     // Create the field.
     rng_add_event_field_storage($field_name, $entity_type);
     $field_config = rng_add_event_field_config($field_name, $entity_type, $bundle);
-    drupal_set_message(t('Field %field_name added.', [
+    \Drupal::messenger()->addMessage(t('Field %field_name added.', [
       '%field_name' => $field_config->label(),
     ]));
 
     // Make the field visible on the edit form.
-    $display = entity_get_form_display($entity_type, $bundle, 'rng_event');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay($entity_type, $bundle, 'rng_event');
     rng_add_event_form_display_defaults($display, $field_name);
     $component = $display->getComponent($field_name);
     $component['weight'] = 9999;

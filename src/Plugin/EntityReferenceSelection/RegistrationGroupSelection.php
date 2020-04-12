@@ -2,7 +2,7 @@
 
 namespace Drupal\rng\Plugin\EntityReferenceSelection;
 
-use Drupal\Core\Entity\Plugin\EntityReferenceSelection\SelectionBase;
+use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Database\Query\SelectInterface;
 
@@ -17,7 +17,7 @@ use Drupal\Core\Database\Query\SelectInterface;
  *   weight = 1
  * )
  */
-class RegistrationGroupSelection extends SelectionBase {
+class RegistrationGroupSelection extends DefaultSelection {
 
   /**
    * {@inheritdoc}

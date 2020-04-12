@@ -427,7 +427,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
       }
     }
 
-    $display = entity_get_form_display($this->entity_type, $this->bundle, 'rng_event');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay($this->entity_type, $this->bundle, 'rng_event');
     if ($display->isNew()) {
       // EntityDisplayBase::init() adds default fields. Remove them.
       foreach (array_keys($display->getComponents()) as $name) {
@@ -476,7 +476,7 @@ class RngEventType extends ConfigEntityBase implements EventTypeInterface {
         $field->delete();
       }
 
-      $display = entity_get_form_display($this->entity_type, $this->bundle, 'rng_event');
+      $display = \Drupal::service('entity_display.repository')->getFormDisplay($this->entity_type, $this->bundle, 'rng_event');
       if (!$display->isNew()) {
         $display->delete();
       }

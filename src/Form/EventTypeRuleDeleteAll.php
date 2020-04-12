@@ -126,7 +126,7 @@ class EventTypeRuleDeleteAll extends ConfirmFormBase {
       }
     }
 
-    drupal_set_message($this->formatPlural($count, '@count custom access rule deleted.', '@count custom access rules deleted.'));
+    $this->messenger()->addMessage($this->formatPlural($count, '@count custom access rule deleted.', '@count custom access rules deleted.'));
 
     $this->eventManager->invalidateEventType($this->eventType);
     $form_state->setRedirectUrl($this->getCancelUrl());

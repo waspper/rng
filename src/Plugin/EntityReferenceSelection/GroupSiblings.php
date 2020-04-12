@@ -2,7 +2,7 @@
 
 namespace Drupal\rng\Plugin\EntityReferenceSelection;
 
-use Drupal\Core\Entity\Plugin\EntityReferenceSelection\SelectionBase;
+use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Entity\GroupInterface;
 
@@ -19,7 +19,7 @@ use Drupal\rng\Entity\GroupInterface;
  *   weight = 1
  * )
  */
-class GroupSiblings extends SelectionBase {
+class GroupSiblings extends DefaultSelection {
 
   /**
    * {@inheritdoc}

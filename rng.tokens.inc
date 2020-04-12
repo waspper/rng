@@ -75,19 +75,19 @@ function rng_tokens($type, $tokens, array $data = [], array $options = []) {
             break;
 
           case 'created':
-            $replacements[$original] = $registration->id() ? format_date($registration->getCreatedTime(), 'medium', '', NULL, $langcode) : t('Unassigned');
+            $replacements[$original] = $registration->id() ? \Drupal::service('date.formatter')->format($registration->getCreatedTime(), 'medium', '', NULL, $langcode) : t('Unassigned');
             break;
 
           case 'changed':
-            $replacements[$original] = $registration->id() ? format_date($registration->getChangedTime(), 'medium', '', NULL, $langcode) : t('Unassigned');
+            $replacements[$original] = $registration->id() ? \Drupal::service('date.formatter')->format($registration->getChangedTime(), 'medium', '', NULL, $langcode) : t('Unassigned');
             break;
 
           case 'url':
-            $replacements[$original] = $registration->id() ? $registration->url('canonical', $url_options) : t('Unassigned');
+            $replacements[$original] = $registration->id() ? $registration->toUrl('canonical', $url_options)->toString() : t('Unassigned');
             break;
 
           case 'edit-url':
-            $replacements[$original] = $registration->id() ? $registration->url('edit-form', $url_options) : t('Unassigned');
+            $replacements[$original] = $registration->id() ? $registration->toUrl('edit-form', $url_options)->toString() : t('Unassigned');
             break;
 
         }

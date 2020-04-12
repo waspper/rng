@@ -129,10 +129,10 @@ class RuleComponentForm extends ContentEntityForm {
     $t_args = ['@type' => isset($types[$type]) ? $types[$type] : $this->t('Component')];
 
     if ($is_new) {
-      drupal_set_message(t('@type created.', $t_args));
+      $this->messenger()->addMessage(t('@type created.', $t_args));
     }
     else {
-      drupal_set_message(t('@type updated.', $t_args));
+      $this->messenger()->addMessage(t('@type updated.', $t_args));
     }
   }
 

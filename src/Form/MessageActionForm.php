@@ -119,7 +119,7 @@ class MessageActionForm extends FormBase {
     $this->actionPlugin->submitConfigurationForm($form, $form_state);
 
     if (!$template_collection = $this->actionPlugin->getTemplateCollection()) {
-      drupal_set_message(t('Unable to create templates.', 'error'));
+      $this->messenger()->addMessage(t('Unable to create templates.', 'error'));
       return;
     }
 
@@ -132,7 +132,7 @@ class MessageActionForm extends FormBase {
     $template_collection->setContext($context);
     $template_collection->setOwner($event);
     $template_collection->save();
-    drupal_set_message(t('Templates created.'));
+    $this->messenger()->addMessage(t('Templates created.'));
 
     $action = RuleComponent::create([])
       ->setPluginId($this->actionPlugin->getPluginId())

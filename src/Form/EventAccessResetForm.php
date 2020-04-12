@@ -138,11 +138,11 @@ class EventAccessResetForm extends ConfirmFormBase {
       foreach ($rules as $rule) {
         $rule->delete();
       }
-      drupal_set_message($this->t('Access rules reset to site defaults.'));
+      $this->messenger()->addMessage($this->t('Access rules reset to site defaults.'));
     }
     else {
       $this->eventMeta->addDefaultAccess();
-      drupal_set_message($this->t('Access rules can now be customized using edit operations.'));
+      $this->messenger()->addMessage($this->t('Access rules can now be customized using edit operations.'));
     }
     Cache::invalidateTags($this->event->getCacheTagsToInvalidate());
     $form_state->setRedirectUrl($this->getCancelUrl());

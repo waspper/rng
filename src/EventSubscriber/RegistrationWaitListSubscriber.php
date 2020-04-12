@@ -2,7 +2,7 @@
 
 namespace Drupal\rng\EventSubscriber;
 
-use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\rng\Event\RegistrationEvent;
 use Drupal\rng\Event\RegistrationEvents;
@@ -15,6 +15,7 @@ use Drupal\rng\EventManagerInterface;
 class RegistrationWaitListSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
+  use MessengerTrait;
 
   /**
    * Drupal\rng\EventManagerInterface definition.
@@ -24,13 +25,6 @@ class RegistrationWaitListSubscriber implements EventSubscriberInterface {
   protected $rngEventManager;
 
   /**
-   * The messenger server.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
    * RegistrationWaitListSubscriber constructor.
    *
    * @param \Drupal\rng\EventManagerInterface $rng_event_manager
@@ -38,9 +32,8 @@ class RegistrationWaitListSubscriber implements EventSubscriberInterface {
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
    */
-  public function __construct(EventManagerInterface $rng_event_manager, MessengerInterface $messenger) {
+  public function __construct(EventManagerInterface $rng_event_manager) {
     $this->rngEventManager = $rng_event_manager;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -62,7 +55,7 @@ class RegistrationWaitListSubscriber implements EventSubscriberInterface {
   public function onRegistrationInsert(RegistrationEvent $event) {
     $meta = $this->rngEventManager->getMeta($event->getRegistration()->getEvent());
     if ($meta->allowWaitList() && ($meta->getCapacity() - $meta->countRegistrations()) < 0) {
-      $this->messenger->addStatus($this->t('Registration is at its capacity. You have been added to a waiting list.'));
+      $this->messenger()->addStatus($this->t('Registration is at its capacity. You have been added to a waiting list.'));
     }
   }
 

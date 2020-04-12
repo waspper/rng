@@ -39,7 +39,7 @@ class RegistrantDeleteForm extends ContentEntityConfirmFormBase {
     $registrant = $this->entity;
     $registrant->delete();
 
-    drupal_set_message($this->t('Registrant deleted.'));
+    $this->messenger()->addMessage($this->t('Registrant deleted.'));
 
     $registration = $registrant->getRegistration();
     if ($url = $registration->toUrl()) {

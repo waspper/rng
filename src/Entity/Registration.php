@@ -53,7 +53,7 @@ use Drupal\user\UserInterface;
  *   admin_permission = "administer registration entity",
  *   permission_granularity = "bundle",
  *   links = {
- *     "canonical" = "/registration/{registration}",
+*     "canonical" = "/registration/{registration}",
  *     "edit-form" = "/registration/{registration}/edit",
  *     "delete-form" = "/registration/{registration}/delete"
  *   },

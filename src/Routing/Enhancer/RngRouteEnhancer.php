@@ -2,21 +2,14 @@
 
 namespace Drupal\rng\Routing\Enhancer;
 
-use Drupal\Core\Routing\Enhancer\RouteEnhancerInterface;
+use Drupal\Core\Routing\EnhancerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
 /**
  * Route enhancer for RNG.
  */
-class RngRouteEnhancer implements RouteEnhancerInterface {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function applies(Route $route) {
-    return $route->hasRequirement('_entity_is_event') && $route->hasDefault('event');
-  }
+class RngRouteEnhancer implements EnhancerInterface {
 
   /**
    * {@inheritdoc}

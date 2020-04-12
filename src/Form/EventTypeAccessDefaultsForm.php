@@ -313,7 +313,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
     // access/viability.
     Cache::invalidateTags(['rendered']);
 
-    drupal_set_message($this->t('Event type access defaults saved.'));
+    $this->messenger()->addMessage($this->t('Event type access defaults saved.'));
     $this->eventManager->invalidateEventType($event_type);
   }
 

@@ -5,6 +5,7 @@ namespace Drupal\rng\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -91,10 +92,10 @@ class RegistrationTypeForm extends EntityForm {
     $status = $registration_type->save();
 
     $message = ($status == SAVED_UPDATED) ? '%label registration type was updated.' : '%label registration type was added.';
-    $url = $registration_type->urlInfo();
-    $t_args = ['%label' => $registration_type->label(), 'link' => $this->l(t('Edit'), $url)];
+    $url = $registration_type->toUrl();
+    $t_args = ['%label' => $registration_type->label(), 'link' => Link::fromTextAndUrl(t('Edit'), $url)];
 
-    drupal_set_message($this->t($message, $t_args));
+    $this->messenger()->addMessage($this->t($message, $t_args));
     $this->logger('rng')->notice($message, $t_args);
 
     $form_state->setRedirect('rng.registration_type.overview');

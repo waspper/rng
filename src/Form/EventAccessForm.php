@@ -352,7 +352,7 @@ class EventAccessForm extends FormBase {
     }
 
     Cache::invalidateTags($this->event->getCacheTagsToInvalidate());
-    drupal_set_message($this->t('Updated access operations.'));
+    $this->messenger()->addMessage($this->t('Updated access operations.'));
   }
 
 }

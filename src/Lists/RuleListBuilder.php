@@ -74,7 +74,7 @@ class RuleListBuilder extends EntityListBuilder {
     if (isset($rng_event)) {
       $this->event = $rng_event;
     }
-    drupal_set_message($this->t('This rule list is for advanced users. Take care when committing any actions from this page.'), 'warning');
+    $this->messenger()->addMessage($this->t('This rule list is for advanced users. Take care when committing any actions from this page.'), 'warning');
     $render = parent::render();
     $render['table']['#empty'] = t('No rules found for this event.');
     return $render;

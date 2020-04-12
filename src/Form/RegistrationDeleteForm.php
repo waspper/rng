@@ -21,7 +21,7 @@ class RegistrationDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return $this->entity->urlInfo();
+    return $this->entity->toUrl();
   }
 
   /**
@@ -39,7 +39,7 @@ class RegistrationDeleteForm extends ContentEntityConfirmFormBase {
     $registration->delete();
     $event = $registration->getEvent();
 
-    drupal_set_message(t('Registration deleted.'));
+    $this->messenger()->addMessage(t('Registration deleted.'));
 
     if ($urlInfo = $event->urlInfo()) {
       $form_state->setRedirectUrl($urlInfo);

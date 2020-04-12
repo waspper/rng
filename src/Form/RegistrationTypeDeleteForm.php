@@ -47,7 +47,7 @@ class RegistrationTypeDeleteForm extends EntityConfirmFormBase {
       return parent::buildForm($form, $form_state);
     }
 
-    drupal_set_message($this->t('Cannot delete registration type.'), 'warning');
+    $this->messenger()->addMessage($this->t('Cannot delete registration type.'), 'warning');
 
     $form['#title'] = $this->getQuestion();
     $form['description'] = [
@@ -67,7 +67,7 @@ class RegistrationTypeDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message($this->t('Registration type %label was deleted.', [
+    $this->messenger()->addMessage($this->t('Registration type %label was deleted.', [
       '%label' => $this->entity->label(),
     ]));
 

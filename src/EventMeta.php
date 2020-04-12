@@ -288,8 +288,7 @@ class EventMeta implements EventMetaInterface {
    * {@inheritdoc}
    */
   public function buildEventRegistrantQuery() {
-    // TODO: Rebuild using non-deprecated solution.
-    $query = db_select('registrant', 'ant');
+    $query = \Drupal::database()->select('registrant', 'ant');
     $query->join('registration', 'ion', 'ion.id = ant.registration');
     $query->join('registration_field_data', 'rfd', 'ion.id = rfd.id');
     $query->fields('ant', ['id']);

@@ -47,7 +47,7 @@ function rng_views_form_rng_event_type_form_alter(&$form, FormStateInterface &$f
     /** @var \Drupal\views\Entity\View $view */
     if ($view->hasLinkTemplate('edit-form')) {
       $title = t('Create registration list (<a href="@view_link">view already exists</a>)', [
-        '@view_link' => $view->urlInfo()->toString(),
+        '@view_link' => $view->toUrl()->toString(),
       ]);
     }
     else {
@@ -72,12 +72,12 @@ function rng_views_form_rng_event_type_form_alter_submit($form, FormStateInterfa
   $event_type = $form_object->getEntity();
 
   $entity_type_id = $event_type->getEventEntityTypeId();
-  if ($entity_type = \Drupal::entityManager()->getDefinition($event_type->getEventEntityTypeId())) {
+  if ($entity_type = \Drupal::entityTypeManager()->getDefinition($event_type->getEventEntityTypeId())) {
     $views = $form_state->getValue('views');
     if ($views['registration_list']) {
       $view = rng_views_event_registrations($entity_type);
       $view->save();
-      drupal_set_message(t('<a href=":url">%label</a> view created.', [
+      \Drupal::messenger()->addMessage(t('<a href=":url">%label</a> view created.', [
         '%label' => $view->label(),
         ':url' => $view->toUrl()->toString(),
       ]));

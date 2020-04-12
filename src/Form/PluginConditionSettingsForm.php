@@ -95,7 +95,7 @@ class PluginConditionSettingsForm extends FormBase {
         ->save();
     }
     $this->eventManager->invalidateEventTypes();
-    drupal_set_message(t('Updated condition plugin settings.'));
+    $this->messenger()->addMessage(t('Updated condition plugin settings.'));
   }
 
 }

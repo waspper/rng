@@ -23,7 +23,7 @@ class RegistrationTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $this->getLabel($entity);
+    $row['label'] = $entity->label();
     $row['machine_name'] = $entity->id();
     return $row + parent::buildRow($entity);
   }

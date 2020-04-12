@@ -39,7 +39,7 @@ class GroupDeleteForm extends ContentEntityConfirmFormBase {
     $group->delete();
     $event = $group->getEvent();
 
-    drupal_set_message(t('Group deleted.'));
+    $this->messenger()->addMessage(t('Group deleted.'));
 
     $form_state->setRedirect(
       'rng.event.' . $event->getEntityTypeId() . '.group.list',

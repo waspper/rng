@@ -133,7 +133,7 @@ class RngSettingsForm extends ConfigFormBase {
     $config->set('identity_types', $identity_types);
     $config->save();
 
-    drupal_set_message(t('RNG settings updated.'));
+    $this->messenger()->addMessage(t('RNG settings updated.'));
   }
 
 }

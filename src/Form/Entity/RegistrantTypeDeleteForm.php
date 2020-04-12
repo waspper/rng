@@ -56,7 +56,7 @@ class RegistrantTypeDeleteForm extends EntityDeleteForm {
       ->execute();
 
     if ($count > 0) {
-      drupal_set_message($this->t('Cannot delete registrant type.'), 'warning');
+      $this->messenger()->addMessage($this->t('Cannot delete registrant type.'), 'warning');
 
       $form['#title'] = $this->getQuestion();
       $form['description'] = [

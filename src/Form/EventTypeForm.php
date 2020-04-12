@@ -5,6 +5,7 @@ namespace Drupal\rng\Form;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -363,7 +364,7 @@ class EventTypeForm extends EntityForm {
           '%label' => $node_type->label(),
           ':url' => $node_type->toUrl()->toString(),
         ];
-        drupal_set_message(t('The content type <a href=":url">%label</a> has been added.', $t_args));
+        $this->messenger()->addMessage(t('The content type <a href=":url">%label</a> has been added.', $t_args));
         $event_type->setEventEntityTypeId($node_type->getEntityType()->getBundleOf());
         $event_type->setEventBundle($node_type->id());
       }
@@ -375,7 +376,7 @@ class EventTypeForm extends EntityForm {
     }
 
     foreach ($form_state->getValue(['registrants', 'registrants']) as $row_key => $row) {
-      list($entity_type, $bundle) = explode(':', $row_key);
+      [$entity_type, $bundle] = explode(':', $row_key);
       $event_type->setIdentityTypeCreate($entity_type, $bundle, !empty($row['create']));
       $event_type->setIdentityTypeReference($entity_type, $bundle, !empty($row['existing']));
       $event_type->setIdentityTypeEntityFormMode($entity_type, $bundle, $row['entity_form_mode']);
@@ -400,10 +401,10 @@ class EventTypeForm extends EntityForm {
     }
 
     $message = ($status == SAVED_UPDATED) ? '%label event type updated.' : '%label event type added.';
-    $url = $event_type->urlInfo();
-    $t_args = ['%label' => $event_type->id(), 'link' => $this->l(t('Edit'), $url)];
+    $url = $event_type->toUrl();
+    $t_args = ['%label' => $event_type->id(), 'link' => Link::fromTextAndUrl(t('Edit'), $url)];
 
-    drupal_set_message($this->t($message, $t_args));
+    $this->messenger()->addMessage($this->t($message, $t_args));
     $this->logger('rng')->notice($message, $t_args);
   }
 
@@ -423,13 +424,13 @@ class EventTypeForm extends EntityForm {
     $i = 0;
     $separator = '_';
     $id = $prefix;
-    while (NodeType::load(Unicode::strtolower($id))) {
+    while (NodeType::load(mb_strtolower($id))) {
       $i++;
       $id = $prefix . $separator . $i;
     }
 
     $node_type = NodeType::create([
-      'type' => Unicode::strtolower($id),
+      'type' => mb_strtolower($id),
       'name' => $id,
     ]);
     $node_type->save();

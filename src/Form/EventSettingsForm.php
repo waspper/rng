@@ -52,7 +52,7 @@ class EventSettingsForm extends FormBase {
     $entity = clone $rng_event;
     $form_state->set('event', $entity);
 
-    $display = entity_get_form_display($entity->getEntityTypeId(), $entity->bundle(), 'rng_event');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay($entity->getEntityTypeId(), $entity->bundle(), 'rng_event');
     $form_state->set('form_display', $display);
 
     $form['event'] = ['#weight' => 0];
@@ -78,7 +78,7 @@ class EventSettingsForm extends FormBase {
     $event->save();
 
     $t_args = ['%event_label' => $event->label()];
-    drupal_set_message(t('Event settings updated.', $t_args));
+    $this->messenger()->addMessage(t('Event settings updated.', $t_args));
   }
 
 }

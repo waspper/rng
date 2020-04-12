@@ -4,6 +4,7 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\rng\Entity\RegistrationInterface;
 use Drupal\Core\Entity\EntityInterface;
 
@@ -36,8 +37,8 @@ class RegistrationRegistrantEditForm extends ContentEntityForm {
       $row[] = $registrant->id();
       $identity = $registrant->getIdentity();
       if ($identity instanceof EntityInterface) {
-        $url = $identity->urlInfo();
-        $row[] = $this->l($identity->label(), $url);
+        $url = $identity->toUrl();
+        $row[] = Link::fromTextAndUrl($identity->label(), $url);
       }
       else {
         $row[] = $registrant->label();

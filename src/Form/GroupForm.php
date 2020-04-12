@@ -47,10 +47,10 @@ class GroupForm extends ContentEntityForm {
 
     $t_args = ['%label' => $group->label()];
     if ($is_new) {
-      drupal_set_message(t('Group %label has been created.', $t_args));
+      $this->messenger()->addMessage(t('Group %label has been created.', $t_args));
     }
     else {
-      drupal_set_message(t('Group %label was updated.', $t_args));
+      $this->messenger()->addMessage(t('Group %label was updated.', $t_args));
     }
 
     $form_state->setRedirect(

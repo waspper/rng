@@ -33,7 +33,7 @@ class RuleComponentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $component = $route_match->getParameter('rng_rule_component');
     if ($rule = $component->getRule()) {
       if ($event = $rule->getEvent()) {
-        $links[] = new Link($event->label(), $event->urlInfo());
+        $links[] = new Link($event->label(), $event->toUrl());
       }
     }
 

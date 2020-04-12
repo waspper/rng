@@ -93,7 +93,7 @@ class RegistrationListBuilder extends EntityListBuilder {
       $operations['view'] = [
         'title' => $this->t('View'),
         'weight' => 0,
-        'url' => $entity->urlInfo('canonical'),
+        'url' => $entity->toUrl('canonical'),
       ];
     }
     return $operations;
@@ -118,7 +118,7 @@ class RegistrationListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['counter'] = ++$this->row_counter;
-    $bundle = entity_load($this->entityType->getBundleEntityType(), $entity->bundle());
+    $bundle = $this->storage->load($entity->bundle());
     $row['type'] = $bundle ? $bundle->label() : '';
 
     $row['groups']['data'] = [
@@ -137,7 +137,7 @@ class RegistrationListBuilder extends EntityListBuilder {
       );
     }
 
-    $row['created'] = format_date($entity->created->value);
+    $row['created'] = \Drupal::service('date.formatter')->format($entity->created->value);
     return $row + parent::buildRow($entity);
   }
 

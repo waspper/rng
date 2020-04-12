@@ -84,9 +84,8 @@ services:
     tags:
       - { name: event_subscriber }
   rng.registration_waitlist_subscriber:
-    class: Drupal\rng\EventSubscriber\RegistrationWaitlistSubscriber
+    class: Drupal\rng\EventSubscriber\RegistrationWaitListSubscriber
     arguments:
       - '@rng.event_manager'
-      - '@messenger'
     tags:
       - { name: event_subscriber }

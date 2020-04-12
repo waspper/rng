@@ -445,7 +445,7 @@ class Registrants extends FormElement {
         '#parents' => array_merge($parents, ['entities', 'person', 'registrant']),
       ];
 
-      $display = entity_get_form_display('registrant', $registrant->bundle(), 'default');
+      $display = \Drupal::service('entity_display.repository')->getFormDisplay('registrant', $registrant->bundle());
       $display->buildForm($registrant, $person_subform['registrant'], $form_state);
       $form_state->set('registrant__form_display', $display);
       $form_state->set('registrant__entity', $registrant);
@@ -571,7 +571,7 @@ class Registrants extends FormElement {
             $form_mode = $element['#form_modes'][$person_entity_type_id][$person_bundle];
           }
 
-          $display = entity_get_form_display($person_entity_type_id, $person_bundle, $form_mode);
+          $display = \Drupal::service('entity_display.repository')->getFormDisplay($person_entity_type_id, $person_bundle, $form_mode);
           $display->buildForm($new_person, $person_subform['new_person']['newentityform'], $form_state);
           $form_state->set('newentity__form_display', $display);
           $form_state->set('newentity__entity', $new_person);

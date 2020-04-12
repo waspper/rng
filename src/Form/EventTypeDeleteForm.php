@@ -39,7 +39,7 @@ class EventTypeDeleteForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
-    drupal_set_message(t('Event type %label was deleted.', [
+    $this->messenger()->addMessage(t('Event type %label was deleted.', [
       '%label' => $this->entity->label(),
     ]));
     $form_state->setRedirectUrl($this->getCancelUrl());

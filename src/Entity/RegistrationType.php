@@ -61,7 +61,7 @@ class RegistrationType extends ConfigEntityBundleBase implements RegistrationTyp
    * {@inheritdoc}
    */
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
-    $registration_storage = \Drupal::entityManager()->getStorage('registration');
+    $registration_storage = \Drupal::entityTypeManager()->getStorage('registration');
     /** @var \Drupal\rng\EventManagerInterface $event_manager */
     $event_manager = \Drupal::service('rng.event_manager');
 

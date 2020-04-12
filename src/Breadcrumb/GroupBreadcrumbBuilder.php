@@ -33,7 +33,7 @@ class GroupBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $group = $route_match->getParameter('registration_group');
 
     if ($event = $group->getEvent()) {
-      $links[] = new Link($event->label(), $event->urlInfo());
+      $links[] = new Link($event->label(), $event->toUrl());
     }
 
     $breadcrumb = new Breadcrumb();
