@@ -185,7 +185,7 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
       ]);
     }
     $registration = $this->getRegistration();
-    $pattern = $this->getEntityType()->get('label_pattern');
+    $pattern = $this->type->entity->label_pattern;
     if (!empty($pattern)) {
       $label = \Drupal::token()->replace($pattern,['registrant'=>$this, 'registration'=>$registration]);
       if (!empty(trim($label))) {
