@@ -23,13 +23,13 @@
   ],
   "license": "GPL-2.0+",
   "require": {
-    "drupal/core": "^8.1",
+    "drupal/core": "^8.8.4",
     "drupal/dynamic_entity_reference": "^1.0",
-    "drupal/courier": "^1.0@alpha",
     "drupal/unlimited_number": "^1.0@beta"
   },
   "suggest": {
     "drupal/token": " Improves token UI on message template forms.",
+    "drupal/courier": "Message subscription framework",
     "drupal/rng_quick": "Provides blocks for event registration.",
     "drupal/rng_conflict": "Prevent registrations when a registrant is registered for a similar event.",
     "drupal/rng_contact": "Provides a simple contact entity type.",

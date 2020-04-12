@@ -6,5 +6,4 @@ core_version_requirement: ^8.8.4
 dependencies:
   - drupal:system (>=8.1)
   - dynamic_entity_reference:dynamic_entity_reference
-  - courier:courier
   - unlimited_number:unlimited_number (>=8.x-1.0-beta2)
