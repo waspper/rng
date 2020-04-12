@@ -2,9 +2,10 @@
 
 namespace Drupal\rng;
 
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\rng\Entity\RegistrationTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
 use Drupal\courier\Service\IdentityChannelManagerInterface;
@@ -30,9 +31,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
+
+  /**
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $bundleInfo;
 
   /**
    * The config factory service.
@@ -86,8 +92,10 @@ class EventMeta implements EventMetaInterface {
   /**
    * Constructs a new EventMeta object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
+   * @param EntityTypeBundleInfoInterface $bundle_info
+   *   The bundle info.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
    * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_plugin_manager
@@ -105,8 +113,9 @@ class EventMeta implements EventMetaInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The event entity.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ConfigFactoryInterface $config_factory, SelectionPluginManagerInterface $selection_plugin_manager, IdentityChannelManagerInterface $identity_channel_manager, RngConfigurationInterface $rng_configuration, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager, ActionManager $action_manager, EntityInterface $entity) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, EntityTypeBundleInfoInterface $bundle_info, ConfigFactoryInterface $config_factory, SelectionPluginManagerInterface $selection_plugin_manager, IdentityChannelManagerInterface $identity_channel_manager, RngConfigurationInterface $rng_configuration, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager, ActionManager $action_manager, EntityInterface $entity) {
     $this->entityManager = $entity_manager;
+    $this->bundleInfo = $bundle_info;
     $this->configFactory = $config_factory;
     $this->selectionPluginManager = $selection_plugin_manager;
     $this->identityChannelManager = $identity_channel_manager;
@@ -122,7 +131,8 @@ class EventMeta implements EventMetaInterface {
    */
   public static function createInstance(ContainerInterface $container, EntityInterface $entity) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info'),
       $container->get('config.factory'),
       $container->get('plugin.manager.entity_reference_selection'),
       $container->get('plugin.manager.identity_channel'),
@@ -567,7 +577,7 @@ class EventMeta implements EventMetaInterface {
     $result = [];
     $identity_types_available = $this->rngConfiguration->getIdentityTypes();
     foreach ($identity_types_available as $entity_type_id) {
-      $bundles = $this->entityManager->getBundleInfo($entity_type_id);
+      $bundles = $this->bundleInfo->getBundleInfo($entity_type_id);
       foreach ($bundles as $bundle => $info) {
         if ($event_type->canIdentityTypeReference($entity_type_id, $bundle)) {
           $result[$entity_type_id][] = $bundle;
@@ -587,7 +597,7 @@ class EventMeta implements EventMetaInterface {
     $result = [];
     $identity_types_available = $this->rngConfiguration->getIdentityTypes();
     foreach ($identity_types_available as $entity_type_id) {
-      $bundles = $this->entityManager->getBundleInfo($entity_type_id);
+      $bundles = $this->bundleInfo->getBundleInfo($entity_type_id);
       foreach ($bundles as $bundle => $info) {
         if ($event_type->canIdentityTypeCreate($entity_type_id, $bundle)) {
           $result[$entity_type_id][] = $bundle;

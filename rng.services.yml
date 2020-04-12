@@ -4,7 +4,7 @@ services:
     arguments: ['@config.factory', '@plugin.manager.identity_channel']
   rng.event_manager:
     class: Drupal\rng\EventManager
-    arguments: ['@entity.manager']
+    arguments: ['@entity_type.manager']
     parent: container.trait
   rng.cron:
     class: Drupal\rng\RngCron
@@ -36,7 +36,7 @@ services:
       - { name: breadcrumb_builder, priority: 100 }
   rng.route_subscriber:
     class: Drupal\rng\Routing\RouteSubscriber
-    arguments: ['@entity.manager', '@rng.event_manager']
+    arguments: ['@entity_type.manager', '@rng.event_manager']
     tags:
       - { name: event_subscriber }
   rng.request_subscriber:

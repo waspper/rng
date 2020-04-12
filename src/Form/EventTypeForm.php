@@ -4,10 +4,11 @@ namespace Drupal\rng\Form;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\rng\RngConfigurationInterface;
@@ -24,10 +25,16 @@ class EventTypeForm extends EntityForm {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
+  /**
+   * Bundle Info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $bundleInfo;
   /**
    * The module handler service.
    *
@@ -59,8 +66,10 @@ class EventTypeForm extends EntityForm {
   /**
    * Constructs a EventTypeForm object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
+   * @param EntityTypeBundleInfoInterface $bundle_info
+   *   The Bundle Info.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
@@ -70,8 +79,9 @@ class EventTypeForm extends EntityForm {
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ModuleHandlerInterface $module_handler, EntityDisplayRepositoryInterface $entity_display_repository, RngConfigurationInterface $rng_configuration, EventManagerInterface $event_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, EntityTypeBundleInfoInterface $bundle_info, ModuleHandlerInterface $module_handler, EntityDisplayRepositoryInterface $entity_display_repository, RngConfigurationInterface $rng_configuration, EventManagerInterface $event_manager) {
     $this->entityManager = $entity_manager;
+    $this->bundleInfo = $bundle_info;
     $this->moduleHandler = $module_handler;
     $this->entityDisplayRepository = $entity_display_repository;
     $this->rngConfiguration = $rng_configuration;
@@ -83,7 +93,7 @@ class EventTypeForm extends EntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('module_handler'),
       $container->get('entity_display.repository'),
       $container->get('rng.configuration'),
@@ -109,8 +119,8 @@ class EventTypeForm extends EntityForm {
       $bundle_options = [];
       // Generate a list of fieldable bundles which are not events.
       foreach ($this->entityManager->getDefinitions() as $entity_type) {
-        if ($entity_type->isSubclassOf('\Drupal\Core\Entity\ContentEntityInterface')) {
-          foreach ($this->entityManager->getBundleInfo($entity_type->id()) as $bundle => $bundle_info) {
+        if ($entity_type->entityClassImplements('\Drupal\Core\Entity\ContentEntityInterface')) {
+          foreach ($this->bundleInfo->getBundleInfo($entity_type->id()) as $bundle => $bundle_info) {
             if (!$this->eventManager->eventType($entity_type->id(), $bundle)) {
               $bundle_options[(string) $entity_type->getLabel()][$entity_type->id() . '.' . $bundle] = $bundle_info['label'];
             }
@@ -285,7 +295,7 @@ class EventTypeForm extends EntityForm {
 
     foreach ($this->rngConfiguration->getIdentityTypes() as $entity_type_id) {
       $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
-      $bundles = $this->entityManager->getBundleInfo($entity_type_id);
+      $bundles = $this->bundleInfo->getBundleInfo($entity_type_id);
       foreach ($bundles as $bundle => $info) {
         $t_args = [
           '@bundle' => $info['label'],

@@ -3,7 +3,6 @@
 namespace Drupal\rng\Plugin\Action;
 
 use Drupal\Core\Action\ConfigurableActionBase;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -28,7 +27,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -74,7 +73,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('rng.event_manager'),
       $container->get('courier.manager')
     );

@@ -2,8 +2,11 @@
 
 namespace Drupal\rng\Plugin\EntityReferenceSelection;
 
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Database\Connection;
@@ -25,6 +28,16 @@ class RNGSelectionBase extends DefaultSelection {
   protected $conditionManager;
 
   /**
+   * @var \Drupal\Core\Entity\EntityTypeInterface|null
+   */
+  protected $entityType;
+
+  /**
+   * @var \Drupal\rng\EventMetaInterface|null
+   */
+  protected $eventMeta;
+
+  /**
    * Constructs a new RegisterIdentityContactSelection object.
    *
    * {@inheritdoc}
@@ -34,11 +47,19 @@ class RNGSelectionBase extends DefaultSelection {
    * @param \Drupal\Core\Condition\ConditionManager $condition_manager
    *   The condition plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager, ModuleHandlerInterface $module_handler, AccountInterface $current_user, Connection $connection, EventManagerInterface $event_manager, ConditionManager $condition_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_manager, $module_handler, $current_user);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition,
+                              EntityTypeManagerInterface $entity_type_manager,
+                              ModuleHandlerInterface $module_handler,
+                              AccountInterface $current_user,
+                              EntityFieldManagerInterface $entity_field_manager,
+                              EntityTypeBundleInfoInterface $entity_type_bundle_info,
+                              EntityRepositoryInterface $entity_repository,
+                              EventManagerInterface $event_manager,
+                              ConditionManager $condition_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $module_handler, $current_user, $entity_field_manager, $entity_type_bundle_info, $entity_repository);
 
     if (isset($this->configuration['handler_settings']['event_entity_type'], $this->configuration['handler_settings']['event_entity_id'])) {
-      $event = $this->entityManager->getStorage($this->configuration['handler_settings']['event_entity_type'])->load($this->configuration['handler_settings']['event_entity_id']);
+      $event = $this->entityTypeManager->getStorage($this->configuration['handler_settings']['event_entity_type'])->load($this->configuration['handler_settings']['event_entity_id']);
       $this->eventMeta = $event_manager->getMeta($event);
     }
     else {
@@ -46,7 +67,7 @@ class RNGSelectionBase extends DefaultSelection {
     }
 
     $this->conditionManager = $condition_manager;
-    $this->entityType = $this->entityManager->getDefinition($this->configuration['target_type']);
+    $this->entityType = $this->entityTypeManager->getDefinition($this->configuration['target_type']);
   }
 
   /**
@@ -57,10 +78,12 @@ class RNGSelectionBase extends DefaultSelection {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('module_handler'),
       $container->get('current_user'),
-      $container->get('database'),
+      $container->get('entity_field.manager'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('entity.repository'),
       $container->get('rng.event_manager'),
       $container->get('plugin.manager.condition')
     );

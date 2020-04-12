@@ -5,7 +5,7 @@ namespace Drupal\rng\Plugin\Derivative;
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\rng\EventManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +21,7 @@ class LocalActions extends DeriverBase implements ContainerDeriverInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
@@ -35,14 +35,14 @@ class LocalActions extends DeriverBase implements ContainerDeriverInterface {
   /**
    * Constructs a LocalTasks object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, RouteProviderInterface $route_provider, EventManagerInterface $event_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, RouteProviderInterface $route_provider, EventManagerInterface $event_manager) {
     $this->entityManager = $entity_manager;
     $this->routeProvider = $route_provider;
     $this->eventManager = $event_manager;

@@ -2,9 +2,9 @@
 
 namespace Drupal\rng;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\Entity\EventTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Exception\InvalidEventException;
 use Drupal\Core\Cache\Cache;
@@ -33,11 +33,11 @@ class EventManager implements EventManagerInterface {
   /**
    * Constructs a new EventManager object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->eventTypeStorage = $entity_manager->getStorage('rng_event_type');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->eventTypeStorage = $entity_type_manager->getStorage('rng_event_type');
   }
 
   /**

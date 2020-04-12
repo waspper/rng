@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Action\ActionManager;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Entity\RuleComponent;
@@ -26,7 +26,7 @@ class MessageActionForm extends FormBase {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
@@ -42,12 +42,12 @@ class MessageActionForm extends FormBase {
    *
    * @param \Drupal\Core\Action\ActionManager $action_manager
    *   The action manager.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(ActionManager $action_manager, EntityManagerInterface $entity_manager, EventManagerInterface $event_manager) {
+  public function __construct(ActionManager $action_manager, EntityTypeManagerInterface $entity_manager, EventManagerInterface $event_manager) {
     $this->actionPlugin = $action_manager->createInstance('rng_courier_message');
     $this->entityManager = $entity_manager;
     $this->eventManager = $event_manager;

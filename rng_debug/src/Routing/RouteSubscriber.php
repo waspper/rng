@@ -3,7 +3,7 @@
 namespace Drupal\rng_debug\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -16,9 +16,9 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * The RNG event manager.
@@ -30,13 +30,13 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * Constructs a RouteSubscriber object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, EventManagerInterface $event_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EventManagerInterface $event_manager) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->eventManager = $event_manager;
   }
 
@@ -46,7 +46,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection) {
     $event_types = $this->eventManager->getEventTypes();
     foreach (array_keys($event_types) as $entity_type) {
-      $definition = $this->entityManager->getDefinition($entity_type);
+      $definition = $this->entityTypeManager->getDefinition($entity_type);
       if ($canonical_path = $definition->getLinkTemplate('canonical')) {
         $manage_requirements = [
           '_entity_access' => $entity_type . '.manage event',
