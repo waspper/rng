@@ -31,7 +31,7 @@ class EventTypeDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('rng.event_type.overview');
+    return new Url('rng.rng_event_type.overview');
   }
 
   /**
