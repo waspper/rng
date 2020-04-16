@@ -71,7 +71,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
     $registrant_id = reset($registrant_ids);
     $this->registrant = Registrant::load($registrant_id);
 
-    $field_name = Unicode::strtolower($this->randomMachineName());
+    $field_name = mb_strtolower($this->randomMachineName());
     FieldStorageConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'registrant',
@@ -84,14 +84,14 @@ class RngRegistrantRouteTest extends RngWebTestBase {
       'bundle' => 'registrant',
     ])->save();
 
-    $form_display = entity_get_form_display('registrant', 'registrant', 'default');
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('registrant', 'registrant', 'default');
     $form_display->setComponent($field_name, [
       'type' => 'text_textfield',
       'weight' => 1,
     ]);
     $form_display->save();
 
-    $display = entity_get_display('registrant', 'registrant', 'default');
+    $display = \Drupal::service('entity_display.repository')->getViewDisplay('registrant', 'registrant', 'default');
     $display->setComponent($field_name, [
       'type' => 'text_default',
       'weight' => 1,

@@ -76,6 +76,7 @@ class RngEventSettingsTest extends RngSiteTestBase {
 
   /**
    * Tests canonical event page, and the Event default local task.
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function testEventSettingsTabs() {
     $account = $this->drupalCreateUser([
@@ -87,7 +88,7 @@ class RngEventSettingsTest extends RngSiteTestBase {
 
     // Local task appears on canonical route.
     $base_url = 'node/1';
-    $this->drupalGet($event->urlInfo());
+    $this->drupalGet($event->toUrl());
     $this->assertLinkByHref($base_url . '/event');
 
     // Event settings form.
