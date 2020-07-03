@@ -30,6 +30,25 @@ interface RegistrantInterface extends ContentEntityInterface {
   public function setRegistration(RegistrationInterface $registration);
 
   /**
+   * Get associated content entity.
+   *
+   * @return ContentEntityInterface|null
+   *   The parent event, if set.
+   */
+  public function getEvent();
+
+  /**
+   * Set the event for this registrant.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $event
+   *
+   * @return \Drupal\rng\Entity\RegistrantInterface
+   *   Returns registratant for chaining.
+   */
+  public function setEvent(ContentEntityInterface $event);
+
+
+  /**
    * Get associated identity.
    *
    * @return \Drupal\Core\Entity\EntityInterface|null

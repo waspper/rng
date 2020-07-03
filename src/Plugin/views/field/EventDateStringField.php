@@ -193,7 +193,7 @@ class EventDateStringField extends Date {
   public function render(ResultRow $values) {
     // Make sure we are looking at the correct entity.
     $object = $this->getEntity($values);
-    if ($object->getEntityTypeId() != $this->configuration['entity_type']) {
+    if (empty($object) || $object->getEntityTypeId() != $this->configuration['entity_type']) {
       return;
     }
     $event_meta = $this->eventManager->getMeta($object);

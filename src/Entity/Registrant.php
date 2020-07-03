@@ -3,10 +3,12 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\rng\Exception\InvalidRegistrant;
 
 /**
@@ -183,12 +185,15 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
         '@type' => $identity->getEntityTypeId(),
         '@id' => $identity->label(),
       ]);
-    }
+    } 
     $registration = $this->getRegistration();
     $pattern = $this->type->entity->label_pattern;
     if (!empty($pattern)) {
       $label = \Drupal::token()->replace($pattern,['registrant'=>$this, 'registration'=>$registration]);
       if (!empty(trim($label))) {
+        if (strstr($label, '[') != FALSE) {
+          return t(' ');
+        }
         return $label;
       }
     }
@@ -228,7 +233,28 @@ class Registrant extends ContentEntityBase implements RegistrantInterface {
       ->setRevisionable(TRUE)
       ->setReadOnly(TRUE);
 
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+    ->setLabel(new TranslatableMarkup('Confirmed'))
+    ->setRevisionable(TRUE)
+    ->setTranslatable(TRUE)
+    ->setDefaultValue(TRUE)
+    ->setDisplayConfigurable('form', TRUE);
+
     return $fields;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getEvent() {
+    return $this->get('event')->entity;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setEvent(ContentEntityInterface $event) {
+    $this->set('event', ['entity' => $event]);
+    return $this;
+  }
 }

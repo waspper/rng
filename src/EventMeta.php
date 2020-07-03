@@ -738,4 +738,29 @@ class EventMeta implements EventMetaInterface {
     return date('F j', strtotime($start)) . ' - ' . date('j, Y', strtotime($end));
 
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function isPastEvent($use_end_date = FALSE) {
+    $event_type = $this->getEventType();
+    $event = $this->getEvent();
+    if ($use_end_date) {
+      $end_field = $event_type->getEventEndDateField();
+      $count = $event->get($end_field)->count();
+      $end_value = $event->get($end_field)->get($count - 1);
+      if (!empty($end_value->end_value)) {
+        $compare_date = $end_value->end_value;
+      }
+      else {
+        $compare_date = $end_value->value;
+      }
+    }
+    else {
+      $start_field = $event_type->getEventStartDateField();
+      $compare_date = $event->get($start_field)->value;
+    }
+    return strtotime($compare_date) < time();
+
+  }
 }

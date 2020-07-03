@@ -153,7 +153,9 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
         $collection->setTokenValue('registration', $registration);
         foreach ($registration->getRegistrants() as $registrant) {
           $identity = $registrant->getIdentity();
-          $this->courierManager->sendMessage($collection, $identity, $options);
+          if ($identity) {
+            $this->courierManager->sendMessage($collection, $identity, $options);
+          }
         }
       }
     }

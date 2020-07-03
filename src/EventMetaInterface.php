@@ -374,6 +374,17 @@ interface EventMetaInterface {
   public function createDefaultEventMessages();
 
   /**
+   * Check whether the event date is in the past.
+   *
+   * @param bool $use_end_date
+   *   Set to TRUE to check whether end date is in the past. FALSE checks start date.
+   *
+   * @return bool
+   *   Whether the event start or end date is in the past.
+   */
+  public function isPastEvent($use_end_date = FALSE);
+
+  /**
    * Format the dates of this event.
    *
    * @return string
