@@ -33,13 +33,18 @@ See MAINTAINERS.txt for a list of official developers.
 __RNG__
 
  *  [Dynamic Entity Reference](https://www.drupal.org/project/dynamic_entity_reference)
- *  [Courier](https://www.drupal.org/project/courier)
  *  [Unlimited Number](https://www.drupal.org/project/unlimited_number)
 
 __RNG Views sub module__
 
  *  [Views Entity Operation Access](https://www.drupal.org/project/veoa)
  *  [Views Advanced Routing](https://www.drupal.org/project/views_advanced_routing)
+
+__RNG Courier sub module__
+ *  [Courier](https://www.drupal.org/project/courier)
+
+__RNG Easy Email submodule__
+* [Easy Email](https://www.drupal.org/project/easy_email)
 
 # Terms
 
@@ -48,7 +53,7 @@ __RNG Views sub module__
  *  __Registration__: an entity that associates with one Event, and has at least
     one child Registrant. Each Registration has at least one owner Registrant.
  *  __Registrant__: an entity that maintains a relationship between a
-    Registration and an Identity.
+    Registration and an Identity. (2.x+ allows registrants to standalone without a separate identity.)
  *  __Identity__: an entity that has implemented a method for contact. Cores'
     user module provides the User entity. Identity module provides the Contact
     entity, allowing users to create registrations by providing an email
@@ -66,10 +71,10 @@ __RNG Views sub module__
               └─► Rule(s) ─┬─► Action(s)
                            └─► Condition(s)
 
-A Registration is a content entity that associated with an Event entity, and 
+A Registration is a content entity that associated with an Event entity, and
 maintains relationships to Identities via Registrant entities. Each Registrant
-maintains a relationship between a Registration and an Identity. Registrant 
-entities are content, and thus can hold meta information in fields describing 
+maintains a relationship between a Registration and an Identity. Registrant
+entities are content, and thus can hold meta information in fields describing
 how an Identity relates to a Registration.
 
 # Usage
