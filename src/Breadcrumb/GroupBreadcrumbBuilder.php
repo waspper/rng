@@ -5,7 +5,7 @@ namespace Drupal\rng\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\rng\GroupInterface;
+use Drupal\rng\Entity\GroupInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 
@@ -28,12 +28,12 @@ class GroupBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function build(RouteMatchInterface $route_match) {
-    $links = array(Link::createFromRoute($this->t('Home'), '<front>'));
-    /** @var \Drupal\rng\GroupInterface $group */
+    $links = [Link::createFromRoute($this->t('Home'), '<front>')];
+    /** @var \Drupal\rng\Entity\GroupInterface $group */
     $group = $route_match->getParameter('registration_group');
 
     if ($event = $group->getEvent()) {
-      $links[] = new Link($event->label(), $event->urlInfo());
+      $links[] = new Link($event->label(), $event->toUrl());
     }
 
     $breadcrumb = new Breadcrumb();

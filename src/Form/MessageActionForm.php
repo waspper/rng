@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Action\ActionManager;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Entity\RuleComponent;
@@ -19,14 +19,14 @@ use Drupal\rng\Entity\Rule;
 class MessageActionForm extends FormBase {
 
   /**
-   * @var \Drupal\rng\Plugin\Action\CourierTemplateCollection $actionPlugin
+   * @var \Drupal\rng\Plugin\Action\CourierTemplateCollection
    */
   protected $actionPlugin;
 
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
@@ -42,12 +42,12 @@ class MessageActionForm extends FormBase {
    *
    * @param \Drupal\Core\Action\ActionManager $action_manager
    *   The action manager.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(ActionManager $action_manager, EntityManagerInterface $entity_manager, EventManagerInterface $event_manager) {
+  public function __construct(ActionManager $action_manager, EntityTypeManagerInterface $entity_manager, EventManagerInterface $event_manager) {
     $this->actionPlugin = $action_manager->createInstance('rng_courier_message');
     $this->entityManager = $entity_manager;
     $this->eventManager = $event_manager;
@@ -59,7 +59,7 @@ class MessageActionForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.action'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('rng.event_manager')
     );
   }
@@ -79,35 +79,35 @@ class MessageActionForm extends FormBase {
     $this->actionPlugin->setConfiguration(['active' => FALSE]);
     $form_state->set('event', $event);
 
-    $triggers = array(
+    $triggers = [
       'rng:custom:date' => $this->t('To all registrations, on a date.'),
-      (string) $this->t('Registrations') => array(
+      (string) $this->t('Registrations') => [
         'entity:registration:new' => $this->t('To a single registration, when it is created.'),
         'entity:registration:update' => $this->t('To a single registration, when it is updated.'),
-      ),
-    );
+      ],
+    ];
 
-    $form['trigger'] = array(
+    $form['trigger'] = [
       '#type' => 'select',
       '#title' => $this->t('Trigger'),
       '#description' => $this->t('When should this message be sent?'),
       '#options' => $triggers,
       '#default_value' => 'now',
-    );
+    ];
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => t('Create message'),
-    );
-    $form['actions']['cancel'] = array(
+    ];
+    $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
       '#url' => Url::fromRoute(
         'rng.event.' . $event->getEntityTypeId() . '.messages',
-        array($event->getEntityTypeId() => $event->id())
+        [$event->getEntityTypeId() => $event->id()]
       ),
-    );
+    ];
 
     return $form;
   }
@@ -119,7 +119,7 @@ class MessageActionForm extends FormBase {
     $this->actionPlugin->submitConfigurationForm($form, $form_state);
 
     if (!$template_collection = $this->actionPlugin->getTemplateCollection()) {
-      drupal_set_message(t('Unable to create templates.', 'error'));
+      $this->messenger()->addMessage(t('Unable to create templates.', 'error'));
       return;
     }
 
@@ -132,7 +132,7 @@ class MessageActionForm extends FormBase {
     $template_collection->setContext($context);
     $template_collection->setOwner($event);
     $template_collection->save();
-    drupal_set_message(t('Templates created.'));
+    $this->messenger()->addMessage(t('Templates created.'));
 
     $action = RuleComponent::create([])
       ->setPluginId($this->actionPlugin->getPluginId())
@@ -142,7 +142,7 @@ class MessageActionForm extends FormBase {
     $trigger_id = $form_state->getValue('trigger');
 
     $rule = Rule::create([
-      'event' => array('entity' => $event),
+      'event' => ['entity' => $event],
       'trigger_id' => $trigger_id,
     ]);
     $rule->save();

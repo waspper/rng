@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\rng\RuleScheduleInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 

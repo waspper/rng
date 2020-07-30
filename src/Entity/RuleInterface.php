@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\rng;
+namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 
@@ -12,7 +12,7 @@ interface RuleInterface extends ContentEntityInterface {
   /**
    * Gets the event entity.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|NULL
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   The event entity. Or NULL if it does not exist.
    */
   public function getEvent();
@@ -39,7 +39,7 @@ interface RuleInterface extends ContentEntityInterface {
    * @param bool $is_active
    *   Whether the rule can be executed.
    *
-   * @return \Drupal\rng\RuleInterface
+   * @return \Drupal\rng\Entity\RuleInterface
    *   Return this object for chaining.
    */
   public function setIsActive($is_active);
@@ -47,7 +47,7 @@ interface RuleInterface extends ContentEntityInterface {
   /**
    * Get actions for the rule.
    *
-   * @return \Drupal\rng\RuleComponentInterface[]
+   * @return \Drupal\rng\Entity\RuleComponentInterface[]
    *   An array of action entities.
    */
   public function getActions();
@@ -55,7 +55,7 @@ interface RuleInterface extends ContentEntityInterface {
   /**
    * Get conditions for the rule.
    *
-   * @return \Drupal\rng\RuleComponentInterface[]
+   * @return \Drupal\rng\Entity\RuleComponentInterface[]
    *   An array of action entities.
    */
   public function getConditions();
@@ -65,10 +65,10 @@ interface RuleInterface extends ContentEntityInterface {
    *
    * Components are not saved until the rule is saved.
    *
-   * @param \Drupal\rng\RuleComponentInterface $component
+   * @param \Drupal\rng\Entity\RuleComponentInterface $component
    *   The rule component entity.
    *
-   * @return \Drupal\rng\RuleInterface
+   * @return \Drupal\rng\Entity\RuleInterface
    *   Return this object for chaining.
    */
   public function addComponent(RuleComponentInterface $component);

@@ -3,20 +3,18 @@
 namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\rng\EventManagerInterface;
-use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\EventMetaInterface;
 
 /**
  * Form controller for registrations.
  */
 class RegistrationForm extends ContentEntityForm {
 
+
   /**
-   * @var \Drupal\rng\RegistrationInterface
+   * @var \Drupal\rng\Entity\RegistrationInterface
    */
   protected $entity;
 
@@ -28,15 +26,12 @@ class RegistrationForm extends ContentEntityForm {
   protected $eventManager;
 
   /**
-   * Constructs a registration form.
+   * Inject services for this form without being tightly linked to parent constructor.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, EventManagerInterface $event_manager) {
-    parent::__construct($entity_manager);
+  public function setUp(EventManagerInterface $event_manager) {
     $this->eventManager = $event_manager;
   }
 
@@ -44,17 +39,17 @@ class RegistrationForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.manager'),
-      $container->get('rng.event_manager')
-    );
+    $self = parent::create($container);
+    $self->setup(
+      $container->get('rng.event_manager'));
+    return $self;
   }
 
   /**
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrationInterface $registration */
+    /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
     $registration = $this->getEntity();
     $current_user = $this->currentUser();
 
@@ -71,26 +66,10 @@ class RegistrationForm extends ContentEntityForm {
       ]);
     }
 
-    $registrants = [];
-    if ($registration->isNew()) {
-      /** @var \Drupal\rng\RegistrantFactory $registrant_factory */
-      $registrant_factory = \Drupal::service('rng.registrant.factory');
-
-      $count = $event_meta->identitiesCanRegister('user', [$current_user->id()]);
-      if (count($count) > 0) {
-        $registrant = $registrant_factory->createRegistrant([
-          'event' => $event,
-        ]);
-
-        $current_user = User::load($current_user->id());
-        $registrant->setIdentity($current_user);
-
-        $registrants[] = $registrant;
-      }
-    }
-    else {
-      $registrants = $registration->getRegistrants();
-    }
+    // Registrants are initially either a collection of stub registrant
+    // entities, or a single blank one. After any data changes, registrants
+    // include all associated with the registration.
+    $registrants = $registration->getRegistrants();
 
     $form['registrants_before'] = [
       '#type' => 'value',
@@ -106,17 +85,15 @@ class RegistrationForm extends ContentEntityForm {
     ];
 
     $event_type = $event_meta->getEventType();
-    $min = $event_meta->getRegistrantsMinimum();
-    $max = $event_meta->getRegistrantsMaximum();
     $form['people']['registrants'] = [
       '#type' => 'registrants',
       '#event' => $event,
       '#default_value' => $registrants,
       '#allow_creation' => $event_meta->getCreatableIdentityTypes(),
       '#allow_reference' => $event_meta->getIdentityTypes(),
-      '#registrants_minimum' => ($min !== EventMetaInterface::CAPACITY_UNLIMITED) ? $min : NULL,
-      '#registrants_maximum' => ($max !== EventMetaInterface::CAPACITY_UNLIMITED) ? $max : NULL,
+      '#registration' => $registration,
       '#form_modes' => $event_type->getIdentityTypeEntityFormModes(),
+      '#tree' => TRUE,
     ];
 
     if (!$registration->isNew()) {
@@ -144,12 +121,12 @@ class RegistrationForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrationInterface $registration */
+    /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
     $registration = parent::validateForm($form, $form_state);
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants_before */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants_before */
     $registrants_before = $form_state->getValue('registrants_before');
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants_after */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants_after */
     $registrants_after = $form_state->getValue(['people', 'registrants']);
 
     // Registrants.
@@ -163,7 +140,7 @@ class RegistrationForm extends ContentEntityForm {
     // Delete old registrants if they are not needed.
     $registrants_delete = [];
     foreach ($registrants_before as $i => $registrant) {
-      if (!$registrant->isNew())  {
+      if (!$registrant->isNew()) {
         if (!in_array($registrant->id(), $registrants_after_ids)) {
           $registrants_delete[] = $registrant;
         }
@@ -175,7 +152,6 @@ class RegistrationForm extends ContentEntityForm {
 
     return $registration;
   }
-
 
   /**
    * {@inheritdoc}
@@ -194,30 +170,31 @@ class RegistrationForm extends ContentEntityForm {
     }
 
     if ($registration->save() == SAVED_NEW) {
-      drupal_set_message($this->t('Registration has been created.', $t_args));
+      $this->messenger()->addMessage($this->t('Registration has been created.', $t_args));
     }
     else {
-      drupal_set_message($this->t('Registration was updated.', $t_args));
+      $this->messenger()->addMessage($this->t('Registration was updated.', $t_args));
     }
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants */
     $registrants = $form_state->get('registrants_after');
     foreach ($registrants as $registrant) {
       $registrant->setRegistration($registration);
       $registrant->save();
     }
 
-    /** @var \Drupal\rng\RegistrantInterface[] $registrants_delete */
+    /** @var \Drupal\rng\Entity\RegistrantInterface[] $registrants_delete */
     $registrants_delete = $form_state->get('registrants_delete');
     foreach ($registrants_delete as $registrant) {
       $registrant->delete();
     }
 
+    $event = $registration->getEvent();
     if ($registration->access('view')) {
       $form_state->setRedirectUrl($registration->toUrl());
     }
     else {
-      $form_state->setRedirect('<front>');
+      $form_state->setRedirectUrl($event->toUrl());
     }
   }
 

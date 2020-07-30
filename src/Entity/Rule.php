@@ -3,8 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\rng\RuleInterface;
-use Drupal\rng\RuleComponentInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -37,9 +35,9 @@ class Rule extends ContentEntityBase implements RuleInterface {
   /**
    * Internal cache of components to associate with this rule when it is saved.
    *
-   * @see \Drupal\rng\RuleInterface->addComponent()
+   * @see \Drupal\rng\Entity\RuleInterface->addComponent()
    *
-   * @var \Drupal\rng\RuleComponentInterface[]
+   * @var \Drupal\rng\Entity\RuleComponentInterface[]
    */
   protected $components_unsaved = [];
 
@@ -166,7 +164,7 @@ class Rule extends ContentEntityBase implements RuleInterface {
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
     $component_storage = \Drupal::entityTypeManager()->getStorage('rng_rule_component');
 
-    /** @var \Drupal\rng\RuleInterface $rule */
+    /** @var \Drupal\rng\Entity\RuleInterface $rule */
     foreach ($entities as $rule) {
       // Delete associated rule components.
       $ids = $component_storage->getQuery()

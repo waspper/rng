@@ -5,7 +5,7 @@ namespace Drupal\rng\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\rng\RuleComponentInterface;
+use Drupal\rng\Entity\RuleComponentInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 
@@ -28,12 +28,12 @@ class RuleComponentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function build(RouteMatchInterface $route_match) {
-    $links = array(Link::createFromRoute($this->t('Home'), '<front>'));
-    /** @var \Drupal\rng\RuleComponentInterface $component */
+    $links = [Link::createFromRoute($this->t('Home'), '<front>')];
+    /** @var \Drupal\rng\Entity\RuleComponentInterface $component */
     $component = $route_match->getParameter('rng_rule_component');
     if ($rule = $component->getRule()) {
       if ($event = $rule->getEvent()) {
-        $links[] = new Link($event->label(), $event->urlInfo());
+        $links[] = new Link($event->label(), $event->toUrl());
       }
     }
 

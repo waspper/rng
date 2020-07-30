@@ -34,7 +34,7 @@ class RngRegistrationEntityTest extends RngKernelTestBase {
   protected $eventManager;
 
   /**
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   protected $registrationType;
 
@@ -53,7 +53,7 @@ class RngRegistrationEntityTest extends RngKernelTestBase {
     $this->installEntitySchema('rng_rule_component');
     $this->installEntitySchema('user');
     $this->installConfig('rng');
-    $this->installSchema('system', array('sequences'));
+    $this->installSchema('system', ['sequences']);
 
     $this->registrationType = $this->createRegistrationType();
     $this->createEventType('entity_test', 'entity_test');

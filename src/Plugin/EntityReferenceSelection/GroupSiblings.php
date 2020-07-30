@@ -2,10 +2,9 @@
 
 namespace Drupal\rng\Plugin\EntityReferenceSelection;
 
-use Drupal\Core\Entity\Plugin\EntityReferenceSelection\SelectionBase;
+use Drupal\Core\Entity\Plugin\EntityReferenceSelection\DefaultSelection;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\rng\GroupInterface;
+use Drupal\rng\Entity\GroupInterface;
 
 /**
  * Provides selection to sibling groups on an event.
@@ -20,7 +19,7 @@ use Drupal\rng\GroupInterface;
  *   weight = 1
  * )
  */
-class GroupSiblings extends SelectionBase {
+class GroupSiblings extends DefaultSelection {
 
   /**
    * {@inheritdoc}
@@ -28,7 +27,7 @@ class GroupSiblings extends SelectionBase {
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
     $query = parent::buildEntityQuery($match, $match_operator);
     if (($registration_group = $this->configuration['entity']) instanceof GroupInterface) {
-      /** @var GroupInterface $registration_group */
+      /** @var \Drupal\rng\Entity\GroupInterface $registration_group */
       if (($event = $registration_group->getEvent()) instanceof EntityInterface) {
         $group = $query->andConditionGroup()
           ->condition('event__target_type', $event->getEntityTypeId(), '=')

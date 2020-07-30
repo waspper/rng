@@ -9,22 +9,22 @@ use Drupal\rng\Form\EventTypeForm;
  */
 abstract class RngSiteTestBase extends RngWebTestBase {
 
-  public static $modules = array('rng', 'node');
+  public static $modules = ['rng', 'node'];
 
   /**
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
-  var $registration_type;
+  public $registration_type;
 
   /**
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $event_bundle;
+  public $event_bundle;
 
   /**
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $event_type;
+  public $event_type;
 
   /**
    * {@inheritdoc}

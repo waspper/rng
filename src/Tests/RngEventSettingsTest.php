@@ -76,6 +76,7 @@ class RngEventSettingsTest extends RngSiteTestBase {
 
   /**
    * Tests canonical event page, and the Event default local task.
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function testEventSettingsTabs() {
     $account = $this->drupalCreateUser([
@@ -87,7 +88,7 @@ class RngEventSettingsTest extends RngSiteTestBase {
 
     // Local task appears on canonical route.
     $base_url = 'node/1';
-    $this->drupalGet($event->urlInfo());
+    $this->drupalGet($event->toUrl());
     $this->assertLinkByHref($base_url . '/event');
 
     // Event settings form.
@@ -111,10 +112,10 @@ class RngEventSettingsTest extends RngSiteTestBase {
     $this->drupalLogin($account);
 
     $this->createEntity($this->event_bundle, [
-      'uid' => \Drupal::currentUser()->id()
+      'uid' => \Drupal::currentUser()->id(),
     ]);
 
-    // Event
+    // Event.
     $base_url = 'node/1';
     $this->drupalGet($base_url . '');
     $this->assertResponse(200);
@@ -124,12 +125,10 @@ class RngEventSettingsTest extends RngSiteTestBase {
     $this->drupalGet($base_url . '/register');
     $this->assertResponse(403);
 
-    // Settings
+    // Settings.
     $edit = [
       'rng_status[value]' => TRUE,
       'rng_registration_type[' . $this->registration_type->id() . ']' => TRUE,
-      'rng_capacity[0][unlimited_number][unlimited_number]' => 'limited',
-      'rng_capacity[0][unlimited_number][number]' => '1',
     ];
     $this->drupalPostForm($base_url . '/event', $edit, t('Save'));
     $this->assertRaw(t('Event settings updated.'));

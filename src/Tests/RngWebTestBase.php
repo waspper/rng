@@ -2,22 +2,21 @@
 
 namespace Drupal\rng\Tests;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\rng\Entity\EventType;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\rng\Entity\Registration;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Sets up page and article content types.
  */
-abstract class RngWebTestBase extends WebTestBase {
+abstract class RngWebTestBase extends BrowserTestBase {
 
   use RngTestTrait {
     RngTestTrait::createEventType as traitCreateEventType;
   }
 
-  public static $modules = array('rng');
+  public static $modules = ['rng'];
 
   /**
    * The RNG event manager.
@@ -37,7 +36,7 @@ abstract class RngWebTestBase extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  function createEventType($entity_type_id, $bundle, $values = []) {
+  public function createEventType($entity_type_id, $bundle, $values = []) {
     $event_type = $this->traitCreateEventType($entity_type_id, $bundle, $values);
     \Drupal::service('router.builder')->rebuildIfNeeded();
     return $event_type;
@@ -54,7 +53,7 @@ abstract class RngWebTestBase extends WebTestBase {
    * @return \Drupal\Core\Entity\EntityInterface
    *   An event.
    */
-  function createEntity(ConfigEntityInterface $entity_type, $settings = []) {
+  public function createEntity(ConfigEntityInterface $entity_type, $settings = []) {
     // @todo change to custom entity
     $entity = $this->drupalCreateNode([
       'type' => $entity_type->id(),
@@ -73,7 +72,7 @@ abstract class RngWebTestBase extends WebTestBase {
    * @return \Drupal\rng\Entity\Registration
    *   A saved registration entity.
    */
-  function createRegistration(ContentEntityInterface $event, $registration_type_id) {
+  public function createRegistration(ContentEntityInterface $event, $registration_type_id) {
     $registration = Registration::create([
       'type' => $registration_type_id,
     ])

@@ -58,7 +58,7 @@ class ScheduledRuleProcessor extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    *
-   * @param integer $data['rule_scheduler_id']
+   * @param int $data['rule_scheduler_id']
    *   ID of a rule component entity.
    */
   public function processItem($data) {
@@ -78,7 +78,7 @@ class ScheduledRuleProcessor extends QueueWorkerBase implements ContainerFactory
       $event_meta = $this->eventManager->getMeta($event);
       $context = [
         'event' => $event,
-        'registrations' => $event_meta->getRegistrations()
+        'registrations' => $event_meta->getRegistrations(),
       ];
 
       foreach ($rule->getActions() as $action) {

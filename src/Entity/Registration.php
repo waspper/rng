@@ -1,16 +1,18 @@
 <?php
 
 namespace Drupal\rng\Entity;
+
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\rng\RegistrationInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\rng\Exception\MaxRegistrantsExceededException;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\rng\GroupInterface;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Defines the registration entity class.
@@ -28,8 +30,10 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "id" = "id",
  *     "revision" = "vid",
  *     "bundle" = "type",
+ *     "published" = "status",
  *     "langcode" = "langcode",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "uid" = "uid"
  *   },
  *   handlers = {
  *     "views_data" = "Drupal\rng\Views\RegistrationViewsData",
@@ -42,13 +46,14 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *       "edit" = "Drupal\rng\Form\RegistrationForm",
  *       "delete" = "Drupal\rng\Form\RegistrationDeleteForm",
  *       "registrants" = "Drupal\rng\Form\RegistrationRegistrantEditForm"
- *     }
+ *     },
+ *     "storage" = "Drupal\rng\RegistrationStorage",
  *   },
  *   bundle_entity_type = "registration_type",
  *   admin_permission = "administer registration entity",
  *   permission_granularity = "bundle",
  *   links = {
- *     "canonical" = "/registration/{registration}",
+*     "canonical" = "/registration/{registration}",
  *     "edit-form" = "/registration/{registration}/edit",
  *     "delete-form" = "/registration/{registration}/delete"
  *   },
@@ -74,10 +79,20 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function getEventMeta() {
+    // Add group defaults event settings.
+    /* @var $event_manager \Drupal\rng\EventManagerInterface */
+    $event_manager = \Drupal::service('rng.event_manager');
+    return $event_manager->getMeta($this->getEvent());
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function setEvent(ContentEntityInterface $entity) {
-    $this->set('event', array('entity' => $entity));
+    $this->set('event', ['entity' => $entity]);
     return $this;
   }
 
@@ -85,7 +100,19 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public function label() {
-    return !empty($this->id->value) ? t('Registration @id', array('@id' => $this->id->value)) : t('New registration');
+    $owner = $this->getOwner();
+    $qty = $this->getRegistrantQty();
+    $registrations = '';
+    if ($qty) {
+      $registrations = '[' . $qty . ']';
+    }
+    if ($owner) {
+      return t('@owner @regs', [
+        '@owner' => $owner->label(),
+        '@regs' => $registrations,
+      ]);
+    }
+    return t('New registration');
   }
 
   /**
@@ -113,6 +140,51 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
   /**
    * {@inheritdoc}
    */
+  public function isConfirmed() {
+    return (bool) $this->getEntityKey('published');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfirmed($confirmed) {
+    $this->set('status', (bool) $confirmed);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner() {
+    return $this->get('uid')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('uid', $account->id());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId() {
+    return $this->getEntityKey('owner');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('uid', $uid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getRegistrantIds() {
     return $this->registrant_ids = \Drupal::entityQuery('registrant')
       ->condition('registration', $this->id(), '=')
@@ -123,8 +195,27 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public function getRegistrants() {
-    return \Drupal::entityTypeManager()->getStorage('registrant')
+    if ($this->getRegistrantQty()) {
+      $this->createStubs();
+    }
+    $registrants = \Drupal::entityTypeManager()->getStorage('registrant')
       ->loadMultiple($this->getRegistrantIds());
+    if (!count($registrants)) {
+      /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
+      $registrant_factory = \Drupal::service('rng.registrant.factory');
+
+      // Always return at least one, even if it's not saved. This should only
+      // run if there is not a defined number of registrants for this
+      // registration, and no existing registrants.
+      $registrant = $registrant_factory->createRegistrant([
+        'event' => $this->getEvent(),
+      ]);
+      $registrant->setRegistration($this);
+
+      $registrants[] = $registrant;
+    }
+
+    return $registrants;
   }
 
   /**
@@ -151,6 +242,9 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
     if ($this->hasIdentity($identity)) {
       // Identity already exists on this registration.
       throw new \Exception('Duplicate identity on registration');
+    }
+    if (!$this->canAddRegistrants()) {
+      throw new MaxRegistrantsExceededException('Cannot add another registrant to this registration.');
     }
     $this->identities_unsaved[] = $identity;
     return $this;
@@ -193,6 +287,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Registration ID'))
       ->setDescription(t('The registration ID.'))
@@ -210,6 +305,20 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
 
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Confirmed'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 90,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The registration type.'))
@@ -225,9 +334,8 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setLabel(t('Event'))
       ->setDescription(t('The event for the registration.'))
       ->setSetting('exclude_entity_types', 'true')
-      ->setSetting('entity_type_ids', array('registrant', 'registration'))
+      ->setSetting('entity_type_ids', ['registrant', 'registration'])
       ->setDescription(t('The relationship between this registration and an event.'))
-      // @todo: change to false when https://www.drupal.org/node/2300101 gets in.
       ->setRevisionable(TRUE)
       ->setReadOnly(TRUE);
 
@@ -250,6 +358,34 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
+    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Owner'))
+      ->setDescription(t('The owner of the registration.'))
+      ->setSetting('target_type', 'user')
+      ->setSetting('handler', 'default')
+      ->setDefaultValueCallback('Drupal\rng\Entity\Registration::getCurrentUserId')
+      ->setTranslatable(TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    /**
+     * Optional registrant qty field, used for rendering the registrant form. If
+     * set and not zero, users cannot add more than this number of registrants
+     * to the registration.
+     */
+    $fields['registrant_qty'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Registrant Qty'))
+      ->setDescription(t('Number of registrants on this registration'))
+      ->setDefaultValue(0)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
+
     return $fields;
   }
 
@@ -261,11 +397,13 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
     if (!$this->getEvent() instanceof ContentEntityBase) {
       throw new EntityMalformedException('Invalid or missing event on registration.');
     }
+    $registrants = $this->getRegistrantIds();
+    $count = $this->getRegistrantQty();
+    if (!empty($count) && $count < count($registrants)) {
+      throw new MaxRegistrantsExceededException('Too many registrants on this registration.');
+    }
 
-    // Add group defaults event settings.
-    /* @var $event_manager \Drupal\rng\EventManagerInterface */
-    $event_manager = \Drupal::service('rng.event_manager');
-    $event_meta = $event_manager->getMeta($this->getEvent());
+    $event_meta = $this->getEventMeta();
     if ($this->isNew()) {
       foreach ($event_meta->getDefaultGroups() as $group) {
         $this->addGroup($group);
@@ -279,7 +417,7 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     parent::postSave($storage, $update);
 
-    /** @var \Drupal\rng\RegistrantFactory $registrant_factory */
+    /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
     $registrant_factory = \Drupal::service('rng.registrant.factory');
 
     foreach ($this->identities_unsaved as $k => $identity) {
@@ -291,6 +429,28 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
         ->setIdentity($identity)
         ->save();
       unset($this->identities_unsaved[$k]);
+    }
+    $this->createStubs();
+  }
+
+  protected function createStubs() {
+    $stub_count = $this->getRegistrantQty();
+    if ($stub_count && $this->canAddRegistrants()) {
+      /** @var \Drupal\rng\RegistrantFactoryInterface $registrant_factory */
+      $registrant_factory = \Drupal::service('rng.registrant.factory');
+
+      $registrant_count = count($this->getRegistrantIds());
+      $stub_count -= $registrant_count;
+
+      while ($stub_count) {
+        $registrant = $registrant_factory->createRegistrant([
+          'event' => $this->getEvent(),
+        ]);
+        $registrant
+          ->setRegistration($this)
+          ->save();
+        $stub_count--;
+      }
     }
   }
 
@@ -313,4 +473,61 @@ class Registration extends ContentEntityBase implements RegistrationInterface {
     parent::preDelete($storage, $entities);
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getRegistrantQty() {
+    return $this->get('registrant_qty')->value;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setRegistrantQty($qty) {
+    $registrants = $this->getRegistrantIds();
+    if ($qty > 0) {
+      if (count($registrants) > $qty) {
+        throw new MaxRegistrantsExceededException('Cannot set registrant qty below number of current registrants.');
+      }
+      $event_meta = $this->getEventMeta();
+      $max = $event_meta->getRegistrantsMaximum();
+      if (!empty($max) && $max > -1 && $qty > $max) {
+        throw new MaxRegistrantsExceededException('Cannot set registrations above event maximum');
+      }
+    }
+    $this->set('registrant_qty', $qty);
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function canAddRegistrants() {
+    $registrants = $this->getRegistrantIds();
+    $qty = $this->getRegistrantQty();
+    if ($qty) {
+      return $qty > count($registrants);
+    }
+    return TRUE;
+  }
+
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return [\Drupal::currentUser()->id()];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getDateString() {
+    $event_meta = $this->getEventMeta();
+    return $event_meta->getDateString();
+  }
 }

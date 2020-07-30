@@ -26,14 +26,14 @@ class RngEventAccessTest extends RngWebTestBase {
   protected $eventManager;
 
   /**
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
-  var $registration_type;
+  public $registration_type;
 
   /**
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $event_type;
+  public $event_type;
 
   /**
    * {@inheritdoc}
@@ -52,7 +52,7 @@ class RngEventAccessTest extends RngWebTestBase {
    *
    * Ensure if these rules change they invalidate caches.
    */
-  function testComponentAccessCache() {
+  public function testComponentAccessCache() {
     $event = EntityTest::create([
       EventManagerInterface::FIELD_REGISTRATION_TYPE => $this->registration_type->id(),
       EventManagerInterface::FIELD_STATUS => TRUE,
@@ -96,7 +96,7 @@ class RngEventAccessTest extends RngWebTestBase {
     $this->drupalGet($event->toUrl());
     $this->assertResponse(200);
     // Register tab is cached, ensure it is missing.
-    $this->assertNoLinkByHref($register_link_str);
+    $this->assertSession()->linkByHrefNotExists($register_link_str);
     $this->drupalGet($register_link);
     $this->assertResponse(403);
 
@@ -117,7 +117,7 @@ class RngEventAccessTest extends RngWebTestBase {
     $this->assertResponse(200);
     // Register tab is cached, ensure it is exposed.
     // If this fails, then the register tab is still cached to previous rules.
-    $this->assertLinkByHref($register_link_str);
+    $this->assertSession()->linkByHrefExists($register_link_str);
     $this->drupalGet($register_link);
     $this->assertResponse(200);
   }
@@ -127,7 +127,7 @@ class RngEventAccessTest extends RngWebTestBase {
    *
    * Ensure if these rules change they invalidate caches.
    */
-  function testComponentAccessDefaultsCache() {
+  public function testComponentAccessDefaultsCache() {
     // Create a rule as a baseline.
     $rule = EventTypeRule::create([
       'trigger' => 'rng_event.register',

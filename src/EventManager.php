@@ -2,8 +2,9 @@
 
 namespace Drupal\rng;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\rng\Entity\EventTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Exception\InvalidEventException;
 use Drupal\Core\Cache\Cache;
@@ -32,11 +33,11 @@ class EventManager implements EventManagerInterface {
   /**
    * Constructs a new EventManager object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  function __construct(EntityManagerInterface $entity_manager) {
-    $this->eventTypeStorage = $entity_manager->getStorage('event_type');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->eventTypeStorage = $entity_type_manager->getStorage('rng_event_type');
   }
 
   /**
@@ -67,7 +68,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function eventType($entity_type, $bundle) {
+  public function eventType($entity_type, $bundle) {
     $ids = $this->eventTypeStorage->getQuery()
       ->condition('entity_type', $entity_type, '=')
       ->condition('bundle', $bundle, '=')
@@ -84,7 +85,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function eventTypeWithEntityType($entity_type) {
+  public function eventTypeWithEntityType($entity_type) {
     $ids = $this->eventTypeStorage->getQuery()
       ->condition('entity_type', $entity_type, '=')
       ->execute();
@@ -99,8 +100,8 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventTypes() {
-    /** @var \Drupal\rng\EventTypeInterface[] $event_types */
+  public function getEventTypes() {
+    /** @var \Drupal\rng\Entity\EventTypeInterface[] $event_types */
     $entity_type_bundles = [];
     foreach ($this->eventTypeStorage->loadMultiple() as $entity) {
       $entity_type_bundles[$entity->getEventEntityTypeId()][$entity->getEventBundle()] = $entity;
@@ -111,11 +112,11 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function invalidateEventTypes() {
+  public function invalidateEventTypes() {
     $event_types = $this->getEventTypes();
     foreach ($event_types as $i => $bundles) {
       foreach ($bundles as $b => $event_type) {
-        /** @var \Drupal\rng\EventTypeInterface $event_type */
+        /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
         $this->invalidateEventType($event_type);
       }
     }
@@ -124,7 +125,7 @@ class EventManager implements EventManagerInterface {
   /**
    * {@inheritdoc}
    */
-  function invalidateEventType(EventTypeInterface $event_type) {
+  public function invalidateEventType(EventTypeInterface $event_type) {
     Cache::invalidateTags($event_type->getCacheTags());
   }
 

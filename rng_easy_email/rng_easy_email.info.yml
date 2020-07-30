@@ -1,0 +1,7 @@
+name: 'RNG Easy Email'
+type: module
+description: 'RNG integration with Easy Email'
+core_version_requirement: ^8.8.4 || ^9.0
+package: 'RNG'
+dependencies:
+  - rng

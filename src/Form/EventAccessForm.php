@@ -229,7 +229,7 @@ class EventAccessForm extends FormBase {
 
       // Actions.
       foreach ($rule->getActions() as $action_storage) {
-        /** @var \Drupal\rng\RuleComponentInterface $action_storage */
+        /** @var \Drupal\rng\Entity\RuleComponentInterface $action_storage */
 
         $row = [];
         $row[] = [
@@ -320,7 +320,7 @@ class EventAccessForm extends FormBase {
       return;
     }
 
-    // Component_id => [operation => enabled?, ...]
+    // Component_id => [operation => enabled?, ...].
     $component_operations = [];
     foreach ($form_state->getValue('table') as $row) {
       foreach ($row as $cell) {
@@ -352,7 +352,7 @@ class EventAccessForm extends FormBase {
     }
 
     Cache::invalidateTags($this->event->getCacheTagsToInvalidate());
-    drupal_set_message($this->t('Updated access operations.'));
+    $this->messenger()->addMessage($this->t('Updated access operations.'));
   }
 
 }

@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
-use Drupal\rng\RegistrationTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\rng\EventManagerInterface;
 
@@ -32,6 +31,11 @@ use Drupal\rng\EventManagerInterface;
  *     "canonical" = "/admin/structure/rng/registration_types/manage/{registration_type}",
  *     "edit-form" = "/admin/structure/rng/registration_types/manage/{registration_type}",
  *     "delete-form" = "/admin/structure/rng/registration_types/manage/{registration_type}/delete",
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "description",
  *   }
  * )
  */
@@ -62,14 +66,14 @@ class RegistrationType extends ConfigEntityBundleBase implements RegistrationTyp
    * {@inheritdoc}
    */
   public static function preDelete(EntityStorageInterface $storage, array $entities) {
-    $registration_storage = \Drupal::entityManager()->getStorage('registration');
+    $registration_storage = \Drupal::entityTypeManager()->getStorage('registration');
     /** @var \Drupal\rng\EventManagerInterface $event_manager */
     $event_manager = \Drupal::service('rng.event_manager');
 
-    /** @var \Drupal\rng\RegistrationTypeInterface $registration_type */
+    /** @var \Drupal\rng\Entity\RegistrationTypeInterface $registration_type */
     foreach ($entities as $registration_type) {
       // Remove entity field references in
-      // $event->{EventManagerInterface::FIELD_REGISTRATION_TYPE}
+      // $event->{EventManagerInterface::FIELD_REGISTRATION_TYPE}.
       $event_types = $event_manager->getEventTypes();
       foreach ($event_types as $entity_type => $bundles) {
         $event_storage = \Drupal::entityTypeManager()->getStorage($entity_type);

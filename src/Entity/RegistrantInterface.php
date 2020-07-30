@@ -1,6 +1,7 @@
 <?php
 
-namespace Drupal\rng;
+namespace Drupal\rng\Entity;
+
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 
@@ -12,7 +13,7 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Get associated registration.
    *
-   * @return \Drupal\rng\RegistrationInterface|NULL
+   * @return \Drupal\rng\Entity\RegistrationInterface|null
    *   The parent registration, or NULL if it does not exist.
    */
   public function getRegistration();
@@ -20,18 +21,37 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Set associated registration.
    *
-   * @param \Drupal\rng\RegistrationInterface $registration
+   * @param \Drupal\rng\Entity\RegistrationInterface $registration
    *   The new associated registration.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   Returns registrant for chaining.
    */
   public function setRegistration(RegistrationInterface $registration);
 
   /**
+   * Get associated content entity.
+   *
+   * @return ContentEntityInterface|null
+   *   The parent event, if set.
+   */
+  public function getEvent();
+
+  /**
+   * Set the event for this registrant.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $event
+   *
+   * @return \Drupal\rng\Entity\RegistrantInterface
+   *   Returns registratant for chaining.
+   */
+  public function setEvent(ContentEntityInterface $event);
+
+
+  /**
    * Get associated identity.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|NULL
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   An entity, or NULL if the identity does not exist.
    */
   public function getIdentity();
@@ -39,7 +59,7 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Get associated identity entity keys.
    *
-   * @return array|NULL
+   * @return array|null
    *   An array with the keys entity_type and entity_id, or NULL if the identity
    *   does not exist.
    */
@@ -51,7 +71,7 @@ interface RegistrantInterface extends ContentEntityInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The identity to set.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   Returns registrant for chaining.
    */
   public function setIdentity(EntityInterface $entity);
@@ -59,7 +79,7 @@ interface RegistrantInterface extends ContentEntityInterface {
   /**
    * Removes identity associated with this registrant.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   Returns registrant for chaining.
    */
   public function clearIdentity();
@@ -70,7 +90,7 @@ interface RegistrantInterface extends ContentEntityInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The identity to check is associated with this registrant.
    *
-   * @return boolean
+   * @return bool
    *   Whether the identity is the registrant.
    */
   public function hasIdentity(EntityInterface $entity);

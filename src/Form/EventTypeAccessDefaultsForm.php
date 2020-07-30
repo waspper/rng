@@ -57,7 +57,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
   /**
    * Rules for the event type.
    *
-   * @var \Drupal\rng\EventTypeRuleInterface[]
+   * @var \Drupal\rng\Entity\EventTypeRuleInterface[]
    */
   protected $rules;
 
@@ -107,7 +107,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
       '#empty' => $this->t('No access rules.'),
     ];
 
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     $trigger = 'rng_event.register';
@@ -176,7 +176,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
         $k++;
         $row[] = [
           '#wrapper_attributes' => ['header' => TRUE],
-          '#markup' => $this->t('@condition.', ['@condition' => $k])
+          '#markup' => $this->t('@condition.', ['@condition' => $k]),
         ];
 
         $condition = $this->conditionManager
@@ -195,15 +195,17 @@ class EventTypeAccessDefaultsForm extends EntityForm {
 
         $row[] = [
           '#type' => 'operations',
-          '#links' => ['edit' => [
-            'title' => t('Edit'),
-            'url' => Url::fromRoute('rng.rng_event_type_rule.component.edit', [
-              'rng_event_type_rule' => $rule->id(),
-              'component_type' => 'condition',
-              'component_id' => $id,
-            ]),
-            'query' =>$this->redirectDestination->getAsArray(),
-          ]]
+          '#links' => [
+            'edit' => [
+              'title' => t('Edit'),
+              'url' => Url::fromRoute('rng.rng_event_type_rule.component.edit', [
+                'rng_event_type_rule' => $rule->id(),
+                'component_type' => 'condition',
+                'component_id' => $id,
+              ]),
+              'query' => $this->redirectDestination->getAsArray(),
+            ],
+          ],
         ];
 
         // Scope: warn user actions apply to all registrations.
@@ -212,7 +214,8 @@ class EventTypeAccessDefaultsForm extends EntityForm {
             '#wrapper_attributes' => ['colspan' => 2],
             '#plain_text' => $this->t('Single registration'),
           ];
-        } else {
+        }
+        else {
           $row[] = [
             '#plain_text' => $this->t('All registrations.'),
           ];
@@ -247,7 +250,10 @@ class EventTypeAccessDefaultsForm extends EntityForm {
     return $form;
   }
 
-  function actionRows($rule, array $operations, $scope_all, $supports_create) {
+  /**
+   *
+   */
+  public function actionRows($rule, array $operations, $scope_all, $supports_create) {
     $rowspan = count($rule->getConditions());
 
     // Actions.
@@ -285,7 +291,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
     $registration_operations = $form_state->getValue(['actions', 'operations']);
 
@@ -307,7 +313,7 @@ class EventTypeAccessDefaultsForm extends EntityForm {
     // access/viability.
     Cache::invalidateTags(['rendered']);
 
-    drupal_set_message($this->t('Event type access defaults saved.'));
+    $this->messenger()->addMessage($this->t('Event type access defaults saved.'));
     $this->eventManager->invalidateEventType($event_type);
   }
 
@@ -317,22 +323,22 @@ class EventTypeAccessDefaultsForm extends EntityForm {
    * Remove delete element since it is confusing on non CRUD forms.
    */
   protected function actions(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     $actions = parent::actions($form, $form_state);
     unset($actions['delete']);
 
-    $actions['delete-custom-rules'] = array(
+    $actions['delete-custom-rules'] = [
       '#type' => 'link',
       '#title' => $this->t('Delete all custom rules'),
-      '#attributes' => array(
-        'class' => array('button', 'button--danger'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['button', 'button--danger'],
+      ],
+    ];
 
-    $actions['delete-custom-rules']['#url'] = Url::fromRoute('entity.event_type.access_defaults.delete_all', [
-      'event_type' => $event_type->id(),
+    $actions['delete-custom-rules']['#url'] = Url::fromRoute('entity.rng_event_type.access_defaults.delete_all', [
+      'rng_event_type' => $event_type->id(),
     ]);
 
     return $actions;

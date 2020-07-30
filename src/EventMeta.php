@@ -2,14 +2,19 @@
 
 namespace Drupal\rng;
 
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\rng\Entity\RegistrationTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
 use Drupal\courier\Service\IdentityChannelManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Entity\Rule;
 use Drupal\rng\Entity\RuleComponent;
+use Drupal\courier\Entity\TemplateCollection;
+use Drupal\courier\Service\CourierManagerInterface;
+use Drupal\Core\Action\ActionManager;
 
 /**
  * Meta event wrapper for RNG.
@@ -26,9 +31,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
+
+  /**
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $bundleInfo;
 
   /**
    * The config factory service.
@@ -66,10 +76,26 @@ class EventMeta implements EventMetaInterface {
   protected $eventManager;
 
   /**
+   * The courier manager.
+   *
+   * @var \Drupal\courier\Service\CourierManagerInterface
+   */
+  protected $courier_manager;
+
+  /**
+   * The action manager.
+   *
+   * @var \Drupal\Core\Action\ActionManager
+   */
+  protected $action_manager;
+
+  /**
    * Constructs a new EventMeta object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
+   * @param EntityTypeBundleInfoInterface $bundle_info
+   *   The bundle info.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
    * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_plugin_manager
@@ -80,16 +106,23 @@ class EventMeta implements EventMetaInterface {
    *   The RNG configuration service.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
+   * @param \Drupal\courier\Service\CourierManagerInterface $courier_manager
+   *   The courier manager.
+   * @param \Drupal\Core\Action\ActionManager $action_manager
+   *   The action manager.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The event entity.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ConfigFactoryInterface $config_factory, SelectionPluginManagerInterface $selection_plugin_manager, IdentityChannelManagerInterface $identity_channel_manager, RngConfigurationInterface $rng_configuration, EventManagerInterface $event_manager, EntityInterface $entity) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, EntityTypeBundleInfoInterface $bundle_info, ConfigFactoryInterface $config_factory, SelectionPluginManagerInterface $selection_plugin_manager, IdentityChannelManagerInterface $identity_channel_manager, RngConfigurationInterface $rng_configuration, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager, ActionManager $action_manager, EntityInterface $entity) {
     $this->entityManager = $entity_manager;
+    $this->bundleInfo = $bundle_info;
     $this->configFactory = $config_factory;
     $this->selectionPluginManager = $selection_plugin_manager;
     $this->identityChannelManager = $identity_channel_manager;
     $this->rngConfiguration = $rng_configuration;
     $this->eventManager = $event_manager;
+    $this->courier_manager = $courier_manager;
+    $this->action_manager = $action_manager;
     $this->entity = $entity;
   }
 
@@ -98,12 +131,15 @@ class EventMeta implements EventMetaInterface {
    */
   public static function createInstance(ContainerInterface $container, EntityInterface $entity) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info'),
       $container->get('config.factory'),
       $container->get('plugin.manager.entity_reference_selection'),
       $container->get('plugin.manager.identity_channel'),
       $container->get('rng.configuration'),
       $container->get('rng.event_manager'),
+      $container->get('courier.manager'),
+      $container->get('plugin.manager.action'),
       $entity
     );
   }
@@ -148,7 +184,7 @@ class EventMeta implements EventMetaInterface {
    */
   public function getRegistrationTypeIds() {
     return array_map(function ($element) {
-      return $element['target_id'];
+      return isset($element['target_id']) ? $element['target_id'] : [];
     }, $this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_TYPE}->getValue());
   }
 
@@ -197,8 +233,8 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCapacity() {
-    $capacity = (int) $this->getEvent()->{EventManagerInterface::FIELD_CAPACITY}->value;
+  public function getRegistrantCapacity() {
+    $capacity = (int) $this->getEvent()->{EventManagerInterface::FIELD_REGISTRANTS_CAPACITY}->value;
     if ($capacity != '' && is_numeric($capacity) && $capacity >= 0) {
       return $capacity;
     }
@@ -208,35 +244,28 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  public function remainingCapacity() {
-    $capacity = $this->getCapacity();
+  public function remainingRegistrantCapacity() {
+    $capacity = $this->getRegistrantCapacity();
     if ($capacity == EventMetaInterface::CAPACITY_UNLIMITED) {
       return $capacity;
     }
-    $remaining = $capacity - $this->countRegistrations();
+    $remaining = $capacity - $this->countRegistrants();
     return $remaining > 0 ? $remaining : 0;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getRegistrantsMinimum() {
-    if (isset($this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM})) {
-      $field = $this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM};
-      $minimum = $field->value;
-      if ($minimum !== '' && is_numeric($minimum) && $minimum >= 0) {
-        return $minimum;
-      }
-    }
-    return 1;
+  public function allowWaitList() {
+    return (bool) $this->getEvent()->{EventManagerInterface::FIELD_WAIT_LIST}->value;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getRegistrantsMaximum() {
-    if (isset($this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM})) {
-      $field = $this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM};
+    if (isset($this->getEvent()->{EventManagerInterface::FIELD_REGISTRANTS_CAPACITY})) {
+      $field = $this->getEvent()->{EventManagerInterface::FIELD_REGISTRANTS_CAPACITY};
       $maximum = $field->value;
       if ($maximum !== '' && is_numeric($maximum) && $maximum >= 0) {
         return $maximum;
@@ -248,7 +277,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function getDefaultGroups() {
+  public function getDefaultGroups() {
     $groups = [];
     foreach ($this->getEvent()->{EventManagerInterface::FIELD_REGISTRATION_GROUPS} as $group) {
       $groups[] = $group->entity;
@@ -259,7 +288,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildQuery($entity_type) {
+  public function buildQuery($entity_type) {
     return $this->entityManager->getStorage($entity_type)->getQuery('AND')
       ->condition('event__target_type', $this->getEvent()->getEntityTypeId(), '=')
       ->condition('event__target_id', $this->getEvent()->id(), '=');
@@ -268,14 +297,28 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildRegistrationQuery() {
+  public function buildEventRegistrantQuery() {
+    $query = \Drupal::database()->select('registrant', 'ant');
+    $query->join('registration', 'ion', 'ion.id = ant.registration');
+    $query->join('registration_field_data', 'rfd', 'ion.id = rfd.id');
+    $query->fields('ant', ['id']);
+    $query->condition('rfd.event__target_type', $this->getEvent()->getEntityTypeId(), '=');
+    $query->condition('rfd.event__target_id', $this->getEvent()->id(), '=');
+
+    return $query;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildRegistrationQuery() {
     return $this->buildQuery('registration');
   }
 
   /**
    * {@inheritdoc}
    */
-  function getRegistrations() {
+  public function getRegistrations() {
     $query = $this->buildRegistrationQuery();
     return $this->entityManager->getStorage('registration')->loadMultiple($query->execute());
   }
@@ -283,21 +326,28 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function countRegistrations() {
+  public function countRegistrants() {
+    return $this->buildEventRegistrantQuery()->countQuery()->execute()->fetchField();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function countRegistrations() {
     return $this->buildRegistrationQuery()->count()->execute();
   }
 
   /**
    * {@inheritdoc}
    */
-  function buildRuleQuery() {
+  public function buildRuleQuery() {
     return $this->buildQuery('rng_rule');
   }
 
   /**
    * {@inheritdoc}
    */
-  function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE) {
+  public function getRules($trigger = NULL, $defaults = FALSE, $is_active = TRUE) {
     $query = $this->buildRuleQuery();
 
     if ($trigger) {
@@ -328,9 +378,9 @@ class EventMeta implements EventMetaInterface {
       return $rules;
     }
 
-    /** @var \Drupal\rng\EventTypeRuleInterface[] $default_rules */
+    /** @var \Drupal\rng\Entity\EventTypeRuleInterface[] $default_rules */
     $default_rules = $this
-      ->entityManager
+      ->entityTypeManager
       ->getStorage('rng_event_type_rule')
       ->loadByProperties([
         'entity_type' => $this->getEvent()->getEntityTypeId(),
@@ -340,7 +390,7 @@ class EventMeta implements EventMetaInterface {
 
     foreach ($default_rules as $default_rule) {
       $rule = Rule::create([
-        'event' => array('entity' => $this->getEvent()),
+        'event' => ['entity' => $this->getEvent()],
         'trigger_id' => $trigger,
         'status' => TRUE,
       ]);
@@ -372,14 +422,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function isDefaultRules($trigger) {
+  public function isDefaultRules($trigger) {
     return (boolean) !$this->getRules($trigger);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function trigger($trigger, $context = array()) {
+  public function trigger($trigger, $context = []) {
     $context['event'] = $this->getEvent();
     foreach ($this->getRules($trigger) as $rule) {
       if ($rule->evaluateConditions()) {
@@ -393,14 +443,14 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function buildGroupQuery() {
+  public function buildGroupQuery() {
     return $this->buildQuery('registration_group');
   }
 
   /**
    * {@inheritdoc}
    */
-  function getGroups() {
+  public function getGroups() {
     $query = $this->buildGroupQuery();
     return $this->entityManager->getStorage('registration_group')->loadMultiple($query->execute());
   }
@@ -489,7 +539,7 @@ class EventMeta implements EventMetaInterface {
    * @param array $bundles
    *   (optional) An array of bundles.
    *
-   * @return integer
+   * @return int
    *   The number of referencable entities.
    */
   protected function countRngReferenceableEntities($entity_type_id, $bundles = []) {
@@ -527,7 +577,7 @@ class EventMeta implements EventMetaInterface {
     $result = [];
     $identity_types_available = $this->rngConfiguration->getIdentityTypes();
     foreach ($identity_types_available as $entity_type_id) {
-      $bundles = $this->entityManager->getBundleInfo($entity_type_id);
+      $bundles = $this->bundleInfo->getBundleInfo($entity_type_id);
       foreach ($bundles as $bundle => $info) {
         if ($event_type->canIdentityTypeReference($entity_type_id, $bundle)) {
           $result[$entity_type_id][] = $bundle;
@@ -547,7 +597,7 @@ class EventMeta implements EventMetaInterface {
     $result = [];
     $identity_types_available = $this->rngConfiguration->getIdentityTypes();
     foreach ($identity_types_available as $entity_type_id) {
-      $bundles = $this->entityManager->getBundleInfo($entity_type_id);
+      $bundles = $this->bundleInfo->getBundleInfo($entity_type_id);
       foreach ($bundles as $bundle => $info) {
         if ($event_type->canIdentityTypeCreate($entity_type_id, $bundle)) {
           $result[$entity_type_id][] = $bundle;
@@ -587,7 +637,7 @@ class EventMeta implements EventMetaInterface {
   /**
    * {@inheritdoc}
    */
-  function addDefaultAccess() {
+  public function addDefaultAccess() {
     $rules = $this->getDefaultRules('rng_event.register');
     foreach ($rules as $rule) {
       $rule->save();
@@ -600,7 +650,7 @@ class EventMeta implements EventMetaInterface {
    * @param string $entity_type_id
    *   An entity type Id.
    *
-   * @return boolean
+   * @return bool
    *   Whether an entity type uses a separate bundle entity type.
    */
   protected function entityTypeHasBundles($entity_type_id) {
@@ -608,4 +658,109 @@ class EventMeta implements EventMetaInterface {
     return ($entity_type->getBundleEntityType() !== NULL);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function createDefaultEventMessages() {
+    // Get Default messages for this Event type.
+    $default_messages = $this->getEventType()->getDefaultMessages();
+    if ($default_messages) {
+      foreach ($default_messages as $default_message) {
+        // Create Event Messages from Default Messages.
+        $template_collection = TemplateCollection::create();
+        $template_collection->save();
+        $this->courier_manager->addTemplates($template_collection);
+        $template_collection->setOwner($this->getEvent());
+        $template_collection->save();
+
+        $templates = $template_collection->getTemplates();
+        /** @var \Drupal\courier\EmailInterface $courier_email */
+        $courier_email = $templates[0];
+        $courier_email->setSubject($default_message['subject']);
+        $courier_email->setBody($default_message['body']);
+        $courier_email->save();
+
+        $rule = Rule::create([
+          'event' => ['entity' => $this->getEvent()],
+          'trigger_id' => $default_message['trigger'],
+        ]);
+        $rule->setIsActive($default_message['status']);
+
+        $actionPlugin = $this->action_manager->createInstance('rng_courier_message');
+        $configuration = $actionPlugin->getConfiguration();
+        $configuration['template_collection'] = $template_collection->id();
+        $action = RuleComponent::create([])
+          ->setPluginId($actionPlugin->getPluginId())
+          ->setConfiguration($configuration)
+          ->setType('action');
+        $rule->addComponent($action);
+        $rule->save();
+
+        // Handle custom date trigger.
+        if ($default_message['trigger'] == 'rng:custom:date') {
+          $rule_component = RuleComponent::create()
+            ->setRule($rule)
+            ->setType('condition')
+            ->setPluginId('rng_rule_scheduler');
+          $rule_component->save();
+          // Save the ID into config.
+          $rule_component->setConfiguration([
+            'rng_rule_component' => $rule_component->id(),
+          ]);
+          $rule_component->save();
+        }
+      }
+    }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getDateString() {
+    $event_type = $this->getEventType();
+    $start_field = $event_type->getEventStartDateField();
+    $end_field = $event_type->getEventEndDateField();
+    $event = $this->getEvent();
+    $start = $event->get($start_field)->value;
+    $count = $event->get($end_field)->count();
+    $end_value = $event->get($end_field)->get($count - 1);
+    if (!empty($end_value->end_value)) {
+      $end = $end_value->end_value;
+    }
+    else {
+      $end = $end_value->value;
+    }
+    $start_date = date('F j, Y', strtotime($start));
+    $end_date = date('F j, Y', strtotime($end));
+    if ($start_date == $end_date) {
+      return $start_date;
+    }
+    return date('F j', strtotime($start)) . ' - ' . date('j, Y', strtotime($end));
+
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function isPastEvent($use_end_date = FALSE) {
+    $event_type = $this->getEventType();
+    $event = $this->getEvent();
+    if ($use_end_date) {
+      $end_field = $event_type->getEventEndDateField();
+      $count = $event->get($end_field)->count();
+      $end_value = $event->get($end_field)->get($count - 1);
+      if (!empty($end_value->end_value)) {
+        $compare_date = $end_value->end_value;
+      }
+      else {
+        $compare_date = $end_value->value;
+      }
+    }
+    else {
+      $start_field = $event_type->getEventStartDateField();
+      $compare_date = $event->get($start_field)->value;
+    }
+    return strtotime($compare_date) < time();
+
+  }
 }

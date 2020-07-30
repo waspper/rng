@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\rng\Plugin\Condition\CurrentTime;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\rng\RuleInterface;
+use Drupal\rng\Entity\RuleInterface;
 
 /**
  * Creates message list form.
@@ -67,7 +67,7 @@ class MessageListForm extends FormBase {
    * @param \Drupal\Core\Entity\EntityInterface $event
    *   An event entity.
    *
-   * @return \Drupal\rng\RuleInterface[]
+   * @return \Drupal\rng\Entity\RuleInterface[]
    *   An array of rng_rule entities keyed by rule ID.
    */
   protected function getCommunicationRules(EntityInterface $event) {
@@ -181,7 +181,7 @@ class MessageListForm extends FormBase {
       }
     }
 
-    /** @var RuleInterface $rule */
+    /** @var \Drupal\rng\Entity\RuleInterface $rule */
     foreach ($rules as $rule) {
       if (in_array($operation, ['enable', 'disable'])) {
         $operation_active = $operation == 'enable';
@@ -198,16 +198,16 @@ class MessageListForm extends FormBase {
       }
     }
 
-    drupal_set_message($message ? $message : $this->t('No action performed.'));
+    $this->messenger()->addMessage($message ? $message : $this->t('No action performed.'));
   }
 
   /**
    * Gets the template collection from an action on the rule.
    *
-   * @param \Drupal\rng\RuleInterface $rule
+   * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
-   * @return \Drupal\courier\TemplateCollectionInterface|NULL
+   * @return \Drupal\courier\TemplateCollectionInterface|null
    *   A template collection entity, or NULL if no template collection is
    *   associated.
    */
@@ -225,10 +225,10 @@ class MessageListForm extends FormBase {
   /**
    * Gets the condition containing a date instance.
    *
-   * @param \Drupal\rng\RuleInterface $rule
+   * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
-   * @return \Drupal\rng\RuleComponentInterface|NULL
+   * @return \Drupal\rng\Entity\RuleComponentInterface|null
    *   A rule component entity, or NULL if no date condition is associated.
    */
   protected function getDateCondition(RuleInterface $rule) {
@@ -244,7 +244,7 @@ class MessageListForm extends FormBase {
   /**
    * Gets operations for a rule.
    *
-   * @param \Drupal\rng\RuleInterface $rule
+   * @param \Drupal\rng\Entity\RuleInterface $rule
    *   The rule.
    *
    * @return array
@@ -258,7 +258,7 @@ class MessageListForm extends FormBase {
       if ($component->access('edit')) {
         $links['edit-date'] = [
           'title' => $this->t('Edit date'),
-          'url' => $component->urlInfo('edit-form'),
+          'url' => $component->toUrl('edit-form'),
           'query' => $destination,
         ];
       }
@@ -267,7 +267,7 @@ class MessageListForm extends FormBase {
     if ($rule->access('delete')) {
       $links['delete'] = [
         'title' => $this->t('Delete'),
-        'url' => $rule->urlInfo('delete-form'),
+        'url' => $rule->toUrl('delete-form'),
         'query' => $destination,
       ];
     }

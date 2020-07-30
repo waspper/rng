@@ -24,7 +24,7 @@ class RegistrationListBuilder extends EntityListBuilder {
   /**
    * Row Counter.
    *
-   * @var integer
+   * @var int
    */
   protected $row_counter;
 
@@ -54,7 +54,7 @@ class RegistrationListBuilder extends EntityListBuilder {
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('rng.event_manager')
     );
   }
@@ -90,11 +90,11 @@ class RegistrationListBuilder extends EntityListBuilder {
   protected function getDefaultOperations(EntityInterface $entity) {
     $operations = parent::getDefaultOperations($entity);
     if ($entity->access('view') && $entity->hasLinkTemplate('canonical')) {
-      $operations['view'] = array(
+      $operations['view'] = [
         'title' => $this->t('View'),
         'weight' => 0,
-        'url' => $entity->urlInfo('canonical'),
-      );
+        'url' => $entity->toUrl('canonical'),
+      ];
     }
     return $operations;
   }
@@ -113,19 +113,19 @@ class RegistrationListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\RegistrationInterface $entity
+   * @param \Drupal\rng\Entity\RegistrationInterface $entity
    *   A registration entity.
    */
   public function buildRow(EntityInterface $entity) {
     $row['counter'] = ++$this->row_counter;
-    $bundle = entity_load($this->entityType->getBundleEntityType(), $entity->bundle());
+    $bundle = $this->storage->load($entity->bundle());
     $row['type'] = $bundle ? $bundle->label() : '';
 
-    $row['groups']['data'] = array(
+    $row['groups']['data'] = [
       '#theme' => 'item_list',
       '#items' => [],
       '#attributes' => ['class' => ['inline']],
-    );
+    ];
     foreach ($entity->getGroups() as $group) {
       $text = '@group_label';
       $t_args = ['@group_id' => $group->id(), '@group_label' => $group->label()];
@@ -137,7 +137,7 @@ class RegistrationListBuilder extends EntityListBuilder {
       );
     }
 
-    $row['created'] = format_date($entity->created->value);
+    $row['created'] = \Drupal::service('date.formatter')->format($entity->created->value);
     return $row + parent::buildRow($entity);
   }
 

@@ -4,12 +4,12 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form for deleting a rng rule.
  */
 class RuleDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -39,7 +39,7 @@ class RuleDeleteForm extends ContentEntityConfirmFormBase {
     $rule->delete();
     $event = $rule->getEvent();
 
-    drupal_set_message(t('Rule deleted.'));
+    $this->messenger()->addMessage(t('Rule deleted.'));
 
     if ($urlInfo = $event->urlInfo()) {
       $form_state->setRedirectUrl($urlInfo);

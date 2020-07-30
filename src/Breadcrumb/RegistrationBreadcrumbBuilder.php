@@ -5,7 +5,7 @@ namespace Drupal\rng\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\rng\RegistrationInterface;
+use Drupal\rng\Entity\RegistrationInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 
@@ -28,7 +28,7 @@ class RegistrationBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function build(RouteMatchInterface $route_match) {
-    $links = array(Link::createFromRoute($this->t('Home'), '<front>'));
+    $links = [Link::createFromRoute($this->t('Home'), '<front>')];
     $registration = $route_match->getParameter('registration');
 
     if ($event = $registration->getEvent()) {

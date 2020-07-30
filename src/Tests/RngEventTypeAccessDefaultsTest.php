@@ -3,11 +3,6 @@
 namespace Drupal\rng\Tests;
 
 use Drupal\Core\Url;
-use Drupal\entity_test\Entity\EntityTest;
-use Drupal\rng\EventManagerInterface;
-use Drupal\rng\Entity\Rule;
-use Drupal\rng\Entity\RuleComponent;
-use Drupal\rng\Entity\EventTypeRule;
 
 /**
  * Tests event type access defaults.
@@ -31,15 +26,15 @@ class RngEventTypeAccessDefaultsTest extends RngWebTestBase {
   /**
    * Test access defaults.
    */
-  function testAccessDefaults() {
+  public function testAccessDefaults() {
     $edit = [
       'bundle' => 'entity_test.entity_test',
       'registrants[registrant_type]' => 'registrant',
     ];
-    $this->drupalPostForm(Url::fromRoute('entity.event_type.add'), $edit, t('Save'));
+    $this->drupalPostForm(Url::fromRoute('entity.rng_event_type.add'), $edit, t('Save'));
 
-    $defaults_route = Url::fromRoute('entity.event_type.access_defaults', [
-      'event_type' => 'entity_test.entity_test',
+    $defaults_route = Url::fromRoute('entity.rng_event_type.access_defaults', [
+      'rng_event_type' => 'entity_test.entity_test',
     ]);
     $this->drupalGet($defaults_route);
 
@@ -53,7 +48,6 @@ class RngEventTypeAccessDefaultsTest extends RngWebTestBase {
     $this->assertFieldChecked('edit-actions-operations-registrant-view');
     $this->assertFieldChecked('edit-actions-operations-registrant-update');
     $this->assertNoFieldChecked('edit-actions-operations-registrant-delete');
-
 
     $this->assertFieldChecked('edit-actions-operations-user-role-create');
     $this->assertNoFieldChecked('edit-actions-operations-user-role-view');

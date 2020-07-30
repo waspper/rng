@@ -1,6 +1,7 @@
 <?php
 
-namespace Drupal\rng;
+namespace Drupal\rng\Entity;
+
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
@@ -14,7 +15,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @return string
    *   An entity type ID.
    */
-  function getEventEntityTypeId();
+  public function getEventEntityTypeId();
 
   /**
    * Sets the event entity type ID.
@@ -22,7 +23,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @param string $entity_type
    *   An entity type ID.
    */
-  function setEventEntityTypeId($entity_type);
+  public function setEventEntityTypeId($entity_type);
 
   /**
    * Get event bundle.
@@ -30,7 +31,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @return string
    *   A bundle name.
    */
-  function getEventBundle();
+  public function getEventBundle();
 
   /**
    * Sets the event bundle.
@@ -38,12 +39,12 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @param string $bundle
    *   A bundle name.
    */
-  function setEventBundle($bundle);
+  public function setEventBundle($bundle);
 
   /**
    * Gets which permission on event entity grants 'event manage' permission.
    */
-  function getEventManageOperation();
+  public function getEventManageOperation();
 
   /**
    * Sets operation to mirror from the event entity.
@@ -54,35 +55,158 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @return static
    *   Return this event type for chaining.
    */
-  function setEventManageOperation($permission);
+  public function setEventManageOperation($permission);
+
+  /**
+   * Gets whether anonymous registrants should be created/used.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getAllowAnonRegistrants();
+
+  /**
+   * Set whether or not to allow anonymous registrants.
+   *
+   * @param bool $allow_anon_registrants
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setAllowAnonRegistrants($allow_anon_registrants);
+
+  /**
+   * Gets whether registrants should automatically sync with their identities.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getAutoSyncRegistrants();
+
+  /**
+   * Set whether or not to automatically sync identity data with registrant data.
+   *
+   * @param bool $auto_sync_registrants
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setAutoSyncRegistrants($auto_sync_registrants);
+
+  /**
+   * Gets whether existing users should be added as identities when email matches.
+   *
+   * @return bool
+   *   The setting.
+   */
+  public function getAutoAttachUsers();
+
+  /**
+   * Set whether or not to automatically add user identities that match by email.
+   *
+   * @param bool $auto_attach_users
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setAutoAttachUsers($auto_attach_users);
+
+  /**
+   * Gets the machine name of field containing email on registrant to use for sync.
+   *
+   * @return string
+   *   The setting.
+   */
+  public function getRegistrantEmailField();
+
+  /**
+   * Set the machine name of an email field on the registrant to use for sync.
+   *
+   * @param string $registrant_email_field
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setRegistrantEmailField($registrant_email_field);
+
+  /**
+   * Gets the machine name of the field containing the event start date on the ewent entity.
+   *
+   * @return string|bppl
+   *   The start date field.
+   */
+  public function getEventStartDateField();
+
+  /**
+   * Set the machine name of the start date field.
+   *
+   * @param string $event_start_date_field
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setEventStartDateField($event_start_date_field);
+
+  /**
+   * Gets the machine name of the field containing the event end date on the event entity.
+   *
+   * @return string|bool
+   *   The end date field.
+   */
+  public function getEventEndDateField();
+
+  /**
+   * Set the machine name of the end date field. Uses end_value if daterange.
+   *
+   * @param string $event_end_date_field
+   *
+   * @return static
+   *   Return this event type for chaining.
+   */
+  public function setEventEndDateField($event_end_date_field);
 
   /**
    * Whether to allow event managers to customize default rules.
    *
-   * @return boolean
+   * @return bool
    *   Whether event managers are allowed to customize default rules.
    */
-  function getAllowCustomRules();
+  public function getAllowCustomRules();
 
   /**
    * Set whether event managers can customize default rules.
    *
-   * @param boolean $allow
+   * @param bool $allow
    *   Whether event managers are allowed to customize default rules.
    *
    * @return $this
    *   Return this event type for chaining.
    */
-  function setAllowCustomRules($allow);
+  public function setAllowCustomRules($allow);
 
   /**
    * Registrant type for new registrants associated with this event type.
    *
-   * @return string|NULL
+   * @return string|null
    *   The Registrant type used for new registrants associated with this event
    *   type.
    */
-  function getDefaultRegistrantType();
+  public function getDefaultRegistrantType();
+
+  /**
+   * Default messages configured for this event type.
+   *
+   * @return array
+   */
+  public function getDefaultMessages();
+
+  /**
+   * Set default messages for this event type.
+   *
+   * @param array $messages
+   *   Default messages array.
+   */
+  public function setDefaultMessages($messages);
 
   /**
    * Whether a identity type can be created.
@@ -92,7 +216,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @param string $bundle
    *   The identity bundle.
    *
-   * @return boolean
+   * @return bool
    *   Whether a identity type can be created.
    */
   public function canIdentityTypeCreate($entity_type, $bundle);
@@ -104,7 +228,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    *   The identity entity type ID.
    * @param string $bundle
    *   The identity bundle.
-   * @param boolean $enabled
+   * @param bool $enabled
    *   Whether the identity type can be created.
    *
    * @return $this
@@ -156,7 +280,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @param string $bundle
    *   The identity bundle.
    *
-   * @return boolean
+   * @return bool
    *   Whether an existing identity type can be referenced.
    */
   public function canIdentityTypeReference($entity_type, $bundle);
@@ -168,7 +292,7 @@ interface EventTypeInterface extends ConfigEntityInterface {
    *   The identity entity type ID.
    * @param string $bundle
    *   The identity bundle.
-   * @param boolean $enabled
+   * @param bool $enabled
    *   Whether existing identity type can be referenced.
    *
    * @return $this
@@ -179,14 +303,14 @@ interface EventTypeInterface extends ConfigEntityInterface {
   /**
    * Set registrant type for new registrants associated with this event type.
    *
-   * @param string|NULL $registrant_type_id
+   * @param string|null $registrant_type_id
    *   The Registrant type used for new registrants associated with this event
    *   type.
    *
    * @return $this
    *   Return this event type for chaining.
    */
-  function setDefaultRegistrantType($registrant_type_id);
+  public function setDefaultRegistrantType($registrant_type_id);
 
   /**
    * Create or clean up courier_context if none exist for an entity type.
@@ -196,6 +320,6 @@ interface EventTypeInterface extends ConfigEntityInterface {
    * @param string $operation
    *   An operation: 'create' or 'delete'.
    */
-  static function courierContextCC($entity_type, $operation);
+  public static function courierContextCC($entity_type, $operation);
 
 }

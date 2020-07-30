@@ -2,11 +2,12 @@
 
 namespace Drupal\rng\Plugin\Condition;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\RuleInterface;
+use Drupal\rng\Entity\RuleInterface;
 use Drupal\rng\Entity\RuleSchedule;
 use Drupal\rng\Entity\RuleComponent;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -21,6 +22,8 @@ use Drupal\Core\Datetime\DrupalDateTime;
  */
 class RuleScheduler extends CurrentTime implements ContainerFactoryPluginInterface {
 
+  use MessengerTrait;
+
   protected $schedulerStorage;
 
   /**
@@ -33,7 +36,7 @@ class RuleScheduler extends CurrentTime implements ContainerFactoryPluginInterfa
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->schedulerStorage = $entity_manager->getStorage('rng_rule_scheduler');
   }
@@ -43,7 +46,7 @@ class RuleScheduler extends CurrentTime implements ContainerFactoryPluginInterfa
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -79,7 +82,7 @@ class RuleScheduler extends CurrentTime implements ContainerFactoryPluginInterfa
   /**
    * Gets the rule scheduler entity.
    *
-   * @return \Drupal\rng\RuleScheduleInterface
+   * @return \Drupal\rng\Entity\RuleScheduleInterface
    */
   public function getRuleScheduler() {
     if (isset($this->configuration['rng_rule_scheduler'])) {
@@ -98,7 +101,7 @@ class RuleScheduler extends CurrentTime implements ContainerFactoryPluginInterfa
     $rule_scheduler = $this->getRuleScheduler();
     if ($rule_scheduler) {
       if ($rule_scheduler->getInQueue()) {
-        drupal_set_message($this->t('This message is queued for execution.'));
+        $this->messenger()->addMessage($this->t('This message is queued for execution.'));
         $form['date']['#disabled'] = TRUE;
       }
     }

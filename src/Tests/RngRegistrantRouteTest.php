@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\rng\Tests;
 
 use Drupal\Component\Utility\Unicode;
@@ -8,7 +7,6 @@ use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\rng\Entity\Registrant;
-use Drupal\rng\Entity\Registration;
 
 /**
  * Tests registrant routes.
@@ -25,30 +23,30 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * The registration type for testing.
    *
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
-  var $registrationType;
+  public $registrationType;
 
   /**
    * The event type for testing.
    *
-   * @var \Drupal\rng\EventTypeInterface
+   * @var \Drupal\rng\Entity\EventTypeInterface
    */
-  var $eventType;
+  public $eventType;
 
   /**
    * The registrant for testing.
    *
-   * @var \Drupal\rng\RegistrantInterface
+   * @var \Drupal\rng\Entity\RegistrantInterface
    */
-  var $registrant;
+  public $registrant;
 
   /**
    * Name of the test field attached to registrant entity.
    *
    * @var string
    */
-  var $registrantTestField;
+  public $registrantTestField;
 
   /**
    * {@inheritdoc}
@@ -73,7 +71,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
     $registrant_id = reset($registrant_ids);
     $this->registrant = Registrant::load($registrant_id);
 
-    $field_name = Unicode::strtolower($this->randomMachineName());
+    $field_name = mb_strtolower($this->randomMachineName());
     FieldStorageConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'registrant',
@@ -86,14 +84,14 @@ class RngRegistrantRouteTest extends RngWebTestBase {
       'bundle' => 'registrant',
     ])->save();
 
-    $form_display = entity_get_form_display('registrant', 'registrant', 'default');
+    $form_display = \Drupal::service('entity_display.repository')->getFormDisplay('registrant', 'registrant', 'default');
     $form_display->setComponent($field_name, [
       'type' => 'text_textfield',
       'weight' => 1,
     ]);
     $form_display->save();
 
-    $display = entity_get_display('registrant', 'registrant', 'default');
+    $display = \Drupal::service('entity_display.repository')->getViewDisplay('registrant', 'registrant', 'default');
     $display->setComponent($field_name, [
       'type' => 'text_default',
       'weight' => 1,
@@ -109,7 +107,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access registrant canonical route.
    */
-  function testRegistrantCanonicalRoute() {
+  public function testRegistrantCanonicalRoute() {
     $admin = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($admin);
 
@@ -130,7 +128,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access registrant canonical route.
    */
-  function testRegistrantCanonicalNoAccess() {
+  public function testRegistrantCanonicalNoAccess() {
     $admin = $this->drupalCreateUser();
     $this->drupalLogin($admin);
 
@@ -143,7 +141,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access edit registrant form.
    */
-  function testRegistrantEditRoute() {
+  public function testRegistrantEditRoute() {
     $admin = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($admin);
 
@@ -163,7 +161,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access edit registrant form with no permission.
    */
-  function testRegistrantEditRouteNoAccess() {
+  public function testRegistrantEditRouteNoAccess() {
     $admin = $this->drupalCreateUser();
     $this->drupalLogin($admin);
 
@@ -176,7 +174,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access registrant delete form.
    */
-  function testRegistrantDeleteRoute() {
+  public function testRegistrantDeleteRoute() {
     $admin = $this->drupalCreateUser(['administer rng']);
     $this->drupalLogin($admin);
 
@@ -196,7 +194,7 @@ class RngRegistrantRouteTest extends RngWebTestBase {
   /**
    * Test access delete registrant form with no permission.
    */
-  function testRegistrantDeleteRouteNoAccess() {
+  public function testRegistrantDeleteRouteNoAccess() {
     $admin = $this->drupalCreateUser();
     $this->drupalLogin($admin);
 

@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
-use Drupal\rng\RegistrantTypeInterface;
 
 /**
  * Defines the registrant type configuration entity.
@@ -37,6 +36,12 @@ use Drupal\rng\RegistrantTypeInterface;
  *     "edit-form" = "/admin/structure/rng/registrant_types/manage/{registrant_type}",
  *     "admin-form" = "/admin/structure/rng/registrant_types/manage/{registrant_type}",
  *     "collection" = "/admin/structure/rng/registrant_types"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "description",
+ *     "label_pattern",
  *   }
  * )
  */
@@ -63,4 +68,10 @@ class RegistrantType extends ConfigEntityBundleBase implements RegistrantTypeInt
    */
   public $description;
 
+  /**
+   * A token-based pattern to use for the entity label if no identity
+   *
+   * @var string
+   */
+  public $label_pattern;
 }

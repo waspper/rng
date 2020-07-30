@@ -8,7 +8,7 @@ use Drupal\rng\EventManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Drupal\rng\RegistrationTypeInterface;
+use Drupal\rng\Entity\RegistrationTypeInterface;
 use Drupal\rng\Entity\Registration;
 
 /**
@@ -47,13 +47,15 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The matched route.
-   *
    * @param string $event
    *   The parameter to find the event entity.
    *
-   * @return array A registration form.
+   * @return array
+   *   A registration form.
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\rng\Exception\InvalidEventException
    */
-  public function RegistrationAddPage(RouteMatchInterface $route_match, $event) {
+  public function registrationAddPage(RouteMatchInterface $route_match, $event) {
     $event_entity = $route_match->getParameter($event);
     $render = [];
     $registration_types = $this->eventManager->getMeta($event_entity)->getRegistrationTypes();
@@ -67,13 +69,13 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
     else {
       $label = \Drupal::entityTypeManager()->getDefinition('registration_type')
         ->getLabel();
-      $render['links'] = array(
+      $render['links'] = [
         '#title' => $this->t('Select @entity_type', [
           '@entity_type' => $label,
         ]),
         '#theme' => 'item_list',
         '#items' => [],
-      );
+      ];
     }
 
     foreach ($registration_types as $registration_type) {
@@ -103,35 +105,34 @@ class RegistrationController extends ControllerBase implements ContainerInjectio
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The matched route.
-   *
    * @param string $event
    *   The parameter to find the event entity.
-   *
-   * @param \Drupal\rng\RegistrationTypeInterface $registration_type
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   The type of registration.
    *
-   * @return array A registration form.
+   * @return array
+   *   A registration form.
    */
-  public function RegistrationAdd(RouteMatchInterface $route_match, $event, RegistrationTypeInterface $registration_type) {
+  public function registrationAdd(RouteMatchInterface $route_match, $event, RegistrationTypeInterface $registration_type) {
     $event_entity = $route_match->getParameter($event);
     $registration = Registration::create([
       'type' => $registration_type->id(),
     ]);
     $registration->setEvent($event_entity);
-    return $this->entityFormBuilder()->getForm($registration, 'add', array($event_entity));
+    return $this->entityFormBuilder()->getForm($registration, 'add', [$event_entity]);
   }
 
   /**
    * Title callback for registration.event.*.register.
    *
-   * @param \Drupal\rng\RegistrationTypeInterface
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   The registration type.
    *
    * @return string
    *   The page title.
    */
   public function addPageTitle(RegistrationTypeInterface $registration_type) {
-    return $this->t('Create @label', array('@label' => $registration_type->label()));
+    return $this->t('Create @label', ['@label' => $registration_type->label()]);
   }
 
 }

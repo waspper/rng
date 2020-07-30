@@ -2,7 +2,6 @@
 
 namespace Drupal\rng;
 
-use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -11,7 +10,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 class Permissions {
 
   use StringTranslationTrait;
-  use UrlGeneratorTrait;
 
   /**
    * Define permissions for proxy registrations by role.

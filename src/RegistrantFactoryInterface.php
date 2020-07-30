@@ -17,7 +17,7 @@ interface RegistrantFactoryInterface {
    *    - identity_bundle: Bundle of the identity.
    *    - identity: A identity entity.
    *
-   * @return \Drupal\rng\RegistrantInterface
+   * @return \Drupal\rng\Entity\RegistrantInterface
    *   A registrant entity.
    *
    * @throws \InvalidArgumentException

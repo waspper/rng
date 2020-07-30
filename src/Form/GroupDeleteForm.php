@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Form for deleting a registration group.
  */
 class GroupDeleteForm extends ContentEntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -38,11 +39,11 @@ class GroupDeleteForm extends ContentEntityConfirmFormBase {
     $group->delete();
     $event = $group->getEvent();
 
-    drupal_set_message(t('Group deleted.'));
+    $this->messenger()->addMessage(t('Group deleted.'));
 
     $form_state->setRedirect(
       'rng.event.' . $event->getEntityTypeId() . '.group.list',
-      array($event->getEntityTypeId() => $event->id())
+      [$event->getEntityTypeId() => $event->id()]
     );
   }
 

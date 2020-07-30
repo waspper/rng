@@ -17,7 +17,7 @@ class ComponentTypeConverter implements ParamConverterInterface {
     if ($definition['type'] == 'rng_component_type') {
       return in_array($value, ['condition', 'action']) ? $value : NULL;
     }
-    else if ($definition['type'] == 'rng_component_id') {
+    elseif ($definition['type'] == 'rng_component_id') {
       $event_type_rule = $defaults['rng_event_type_rule'];
       $component_type = $defaults['component_type'];
 
@@ -25,7 +25,7 @@ class ComponentTypeConverter implements ParamConverterInterface {
       if ($component_type == 'condition') {
         $components = $event_type_rule->getConditions();
       }
-      else if ($component_type == 'action') {
+      elseif ($component_type == 'action') {
         $components = $event_type_rule->getActions();
       }
 

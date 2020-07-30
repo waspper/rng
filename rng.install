@@ -5,8 +5,13 @@
  * Contains install and update functions for RNG.
  */
 
+use Drupal\Core\Config\Entity\ConfigEntityType;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\rng\Entity\RegistrantType;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\rng\Entity\EventType;
 use Drupal\rng\Entity\EventTypeRule;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Add default rules to event types.
@@ -44,7 +49,7 @@ function rng_update_8001() {
       ]);
       $rule->save();
 
-      // Registrant
+      // Registrant.
       $rule = EventTypeRule::create([
         'trigger' => 'rng_event.register',
         'entity_type' => $entity_type_id,
@@ -93,7 +98,7 @@ function rng_update_8001() {
 }
 
 /**
- * Convert registrant entity to one with bundles
+ * Convert registrant entity to one with bundles.
  */
 function rng_update_8002() {
   $entity_manager = \Drupal::entityTypeManager();
@@ -109,7 +114,7 @@ function rng_update_8002() {
   \Drupal::service('config.typed')->clearCachedDefinitions();
 
   // Install 'type' field.
-  $field_definition = \Drupal\Core\Field\BaseFieldDefinition::create('entity_reference')
+  $field_definition = BaseFieldDefinition::create('entity_reference')
     ->setLabel('Registrant type')
     ->setSetting('target_type', 'registrant_type');
   $update_manager->installFieldStorageDefinition('type', 'registrant', 'registrant', $field_definition);
@@ -117,7 +122,7 @@ function rng_update_8002() {
   // Create the first registrant_type entity which will re-capture any
   // pre-existing fields from the formerly bundle-less entity.
   $default_registrant_type_id = 'registrant';
-  $registrant_type = \Drupal\rng\Entity\RegistrantType::create([
+  $registrant_type = RegistrantType::create([
     'id' => $default_registrant_type_id,
     'label' => 'Registrant',
   ]);
@@ -126,9 +131,9 @@ function rng_update_8002() {
   // Re-calculate dependencies by re-saving fields.
   $config_names = $config_factory->listAll('field.field.registrant.registrant.');
   foreach ($config_names as $name) {
-    // Remove prefix
+    // Remove prefix.
     $id = str_replace('field.field.', '', $name);
-    $entity = \Drupal\field\Entity\FieldConfig::load($id);
+    $entity = FieldConfig::load($id);
     $entity->save();
   }
 }
@@ -179,4 +184,139 @@ function rng_update_8003() {
 
     $config->save();
   }
+}
+
+/**
+ * Replace event_type config entity with rng_event_type entity.
+ */
+function rng_update_8004(&$sandbox) {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $rng_event_type = $updateManager->getEntityType('rng_event_type');
+  if (empty($rng_event_type)) {
+    $rng_event_type = new ConfigEntityType([
+      'id' => 'rng_event_type',
+      'label' => new TranslatableMarkup('Event type'),
+      'config_prefix' => 'rng_event_type',
+      'admin_permission' => 'administer event types',
+      'entity_keys' => [
+        'id' => 'id',
+        'label' => 'label',
+      ],
+    ]);
+    $updateManager->installEntityType($rng_event_type);
+  }
+  $config_factory = \Drupal::configFactory();
+  // Rename existing configs.
+  foreach ($config_factory->listAll('rng.event_type.') as $event_type) {
+    $new_config = str_replace('rng.event_type.', 'rng.rng_event_type.', $event_type);
+    $config_factory->rename($event_type, $new_config);
+    // Rule plugins depend on rng.event_type configs.
+    foreach ($config_factory->listAll('rng.rule.') as $rng_rule) {
+      $config = $config_factory->getEditable($rng_rule);
+      $config_dependencies = $config->get('dependencies.config') ?: [];
+      $indx = array_search($event_type, $config_dependencies);
+      if ($indx !== FALSE) {
+        $config_dependencies[$indx] = $new_config;
+        $config->set('dependencies.config', $config_dependencies);
+      }
+      $config->save();
+    }
+  }
+
+  // Remove old type.
+  $old_event_type = $updateManager->getEntityType('event_type');
+  if (!empty($old_event_type)) {
+    $updateManager->uninstallEntityType($old_event_type);
+  }
+}
+
+/**
+ * Add a registrant_qty field to registrations.
+ */
+function rng_update_8201() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+
+  $registrant_qty_field = BaseFieldDefinition::create('integer')
+    ->setLabel(t('Registrant Qty'))
+    ->setDescription(t('Number of registrants on this registration'))
+    ->setDefaultValue(0)
+    ->setTranslatable(TRUE)
+    ->setRevisionable(TRUE);
+
+  $definition_manager->installFieldStorageDefinition('registrant_qty', 'registration', 'registration', $registrant_qty_field);
+}
+
+/**
+ * Add a UID field to registration.
+ */
+function rng_update_8202() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+  $user_field = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Owner'))
+    ->setDescription(t('The owner of the registration.'))
+    ->setSetting('target_type', 'user')
+    ->setSetting('handler', 'default')
+    ->setDefaultValueCallback('Drupal\rng\Entity\Registration::getCurrentUserId')
+    ->setTranslatable(TRUE)
+    ->setDisplayConfigurable('view', TRUE)
+    ->setDisplayOptions('form', [
+      'type' => 'entity_reference_autocomplete',
+      'weight' => 5,
+    ])
+    ->setDisplayConfigurable('form', TRUE);
+
+  $definition_manager->installFieldStorageDefinition('uid', 'registration', 'registration', $user_field);
+}
+
+/**
+ * Add status field to registrations.
+ */
+function rng_update_8203() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+  $status = BaseFieldDefinition::create('boolean')
+    ->setLabel(new TranslatableMarkup('Confirmed'))
+    ->setRevisionable(TRUE)
+    ->setTranslatable(TRUE)
+    ->setDefaultValue(TRUE)
+    ->setDisplayOptions('form', [
+      'type' => 'boolean_checkbox',
+      'settings' => [
+        'display_label' => TRUE,
+      ],
+      'weight' => 90,
+    ])
+    ->setDisplayConfigurable('form', TRUE);
+  $definition_manager->installFieldStorageDefinition('status', 'registration', 'registration', $status);
+}
+
+/**
+ * Add Event dynamic entity reference to registrant.
+ */
+function rng_update_8204() {
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+  $event = BaseFieldDefinition::create('dynamic_entity_reference')
+    ->setLabel(t('Event'))
+    ->setDescription(t('The event for the registrant.'))
+    ->setSetting('exclude_entity_types', 'true')
+    ->setSetting('entity_type_ids', ['registrant', 'registration'])
+    ->setDescription(t('The relationship between this registrant and an event.'))
+    ->setRevisionable(TRUE)
+    ->setReadOnly(TRUE);
+
+  $definition_manager->installFieldStorageDefinition('event', 'registrant', 'registrant', $event);
+}
+
+/**
+ * Resave all registrants to populate event links.
+ */
+function rng_update_8205() {
+  $storage = \Drupal::entityTypeManager()->getStorage('registrant');
+    $registrants = $storage->loadMultiple(NULL);
+    foreach ($registrants as $registrant) {
+      if ($registrant->id() < 73) {
+        $registrant->delete();
+      }
+      $registrant->save();
+    }
+
 }

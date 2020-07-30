@@ -15,7 +15,7 @@ class RegistrationGroupSiblingValidator extends ConstraintValidator {
    */
   public function validate($items, Constraint $constraint) {
     /** @var $items \Drupal\Core\Field\EntityReferenceFieldItemList */
-    /** @var \Drupal\rng\GroupInterface $groups */
+    /** @var \Drupal\rng\Entity\GroupInterface $groups */
     $groups = $items->referencedEntities();
     foreach ($groups as $k => $group) {
       $t_args = ['@group' => $group->label()];

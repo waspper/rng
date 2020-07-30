@@ -45,7 +45,7 @@ class RngRequestSubscriber implements EventSubscriberInterface {
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RngEntityModelInterface $rng_entity_model,  EventManagerInterface $event_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RngEntityModelInterface $rng_entity_model, EventManagerInterface $event_manager) {
     $this->entityTypeManager = $entity_type_manager;
     $this->rngEntityModel = $rng_entity_model;
     $this->eventManager = $event_manager;
@@ -61,7 +61,7 @@ class RngRequestSubscriber implements EventSubscriberInterface {
     $operation_records = $this->rngEntityModel->getOperationRecords();
     foreach ($operation_records as $operation_record) {
       if ($operation_record->getEntityTypeId() == 'registration') {
-        /** @var \Drupal\rng\RegistrationInterface $registration */
+        /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
         $registration = $this->entityTypeManager
           ->getStorage('registration')
           ->load($operation_record->getEntityId());
@@ -76,6 +76,7 @@ class RngRequestSubscriber implements EventSubscriberInterface {
           case 'insert':
             $trigger_id = 'entity:registration:new';
             break;
+
           case 'update':
             $trigger_id = 'entity:registration:update';
             break;

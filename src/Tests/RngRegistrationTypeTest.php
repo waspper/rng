@@ -32,7 +32,7 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
     $this->drupalLogin($account);
 
     $this->event = $this->createEntity($this->event_bundle, [
-      'uid' => \Drupal::currentUser()->id()
+      'uid' => \Drupal::currentUser()->id(),
     ]);
 
     $this->drupalPlaceBlock('local_tasks_block');
@@ -42,7 +42,7 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
   /**
    * Test registration types in UI.
    */
-  function testRegistrationTypes() {
+  public function testRegistrationTypes() {
     $web_user = $this->drupalCreateUser(['administer registration types', 'access administration pages']);
     $this->drupalLogin($web_user);
 
@@ -51,11 +51,11 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
     $this->registration_type->delete();
 
     // Administration.
-    $this->drupalGet('admin/structure');
+    $this->drupalGet('admin/structure/rng');
     $this->assertLinkByHref(Url::fromRoute('rng.registration_type.overview')->toString());
 
     $this->drupalGet('admin/structure/rng/registration_types');
-    $this->assertRaw('No registration types found.', 'Registration type list is empty');
+    $this->assertSession()->responseContains('No registration types found.');
     $this->assertEqual(0, count(RegistrationType::loadMultiple()));
 
     // Local action.
@@ -68,8 +68,8 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
     $this->assertEqual(1, count(RegistrationType::loadMultiple()));
 
     // Registration type list.
-    $this->assertUrl(Url::fromRoute('rng.registration_type.overview', [], ['absolute' => TRUE])->toString(), []);
-    $this->assertRaw('<td>Foobar1</td>', 'New registration type shows in list.');
+    $this->assertSession()->addressEquals(Url::fromRoute('rng.registration_type.overview', [], ['absolute' => TRUE])->toString());
+    $this->assertSession()->responseContains('<td>Foobar1</td>');
 
     // Edit.
     $edit = ['label' => 'Foobar2'];
@@ -102,7 +102,7 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
   /**
    * Test registration type deletion.
    */
-  function testRegistrationTypeAPIDelete() {
+  public function testRegistrationTypeAPIDelete() {
     // Associate event with registration type.
     $this->event->{EventManagerInterface::FIELD_REGISTRATION_TYPE}
       ->appendItem(['target_id' => $this->registration_type->id()]);
@@ -132,7 +132,7 @@ class RngRegistrationTypeTest extends RngSiteTestBase {
    * @return int
    *   Number of references.
    */
-  function countEventRegistrationTypeReferences($entity_type, $registration_type) {
+  public function countEventRegistrationTypeReferences($entity_type, $registration_type) {
     return \Drupal::entityTypeManager()->getStorage($entity_type)
       ->getQuery()
       ->condition(EventManagerInterface::FIELD_REGISTRATION_TYPE, $registration_type)

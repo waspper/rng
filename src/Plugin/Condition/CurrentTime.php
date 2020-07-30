@@ -29,6 +29,7 @@ class CurrentTime extends ConditionPluginBase {
   public function defaultConfiguration() {
     return [
       'date' => NULL,
+      'enable' => FALSE,
     ] + parent::defaultConfiguration();
   }
 
@@ -46,16 +47,22 @@ class CurrentTime extends ConditionPluginBase {
     }
 
     // Add administrative comment publishing options.
-    $form['date'] = array(
+    $form['date'] = [
       '#type' => 'datetime',
       '#date_date_element' => 'date',
       '#title' => $this->t('Date'),
       '#default_value' => $date,
       '#size' => 20,
       '#weight' => 50,
-    );
+    ];
 
-    $form['negate'] = array(
+    $form['enable'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable this condition?'),
+      '#default_value' => $this->getConfiguration()['enable'],
+    ];
+
+    $form['negate'] = [
       '#type' => 'radios',
       '#title' => $this->t('Timing'),
       '#description' => $this->t('Condition will be true if the time when evaluating this condition is before or after the date.'),
@@ -65,7 +72,7 @@ class CurrentTime extends ConditionPluginBase {
       ],
       '#default_value' => (int) $this->isNegated(),
       '#weight' => 100,
-    );
+    ];
 
     return $form;
   }
@@ -74,13 +81,15 @@ class CurrentTime extends ConditionPluginBase {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    // Disable saving this plugin if it is not actively enabled.
+    $enabled = $form_state->getValue('enable');
+    if (!$enabled) {
+      return;
+    }
+    $this->setConfig('enable', $enabled);
+    $this->setConfig('date', $form_state->getValue('date')->format('U'));
     parent::submitConfigurationForm($form, $form_state);
-    if ($date = $form_state->getValue('date')) {
-      $this->configuration['date'] = $date->format('U');
-    }
-    else {
-      $this->configuration['date'] = NULL;
-    }
+
   }
 
   /**
@@ -99,14 +108,14 @@ class CurrentTime extends ConditionPluginBase {
   /**
    * Gets the date in configuration.
    */
-  function getDate() {
+  public function getDate() {
     return $this->configuration['date'];
   }
 
   /**
    * Formats the date for display.
    */
-  function getDateFormatted() {
+  public function getDateFormatted() {
     return is_numeric($this->getDate()) ? DrupalDateTime::createFromTimestamp($this->getDate()) : $this->t('Not configured');
   }
 

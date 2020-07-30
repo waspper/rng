@@ -3,6 +3,7 @@
 namespace Drupal\rng;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\rng\Entity\EventTypeInterface;
 
 /**
  * Event manager for RNG.
@@ -35,10 +36,26 @@ interface EventManagerInterface {
   /**
    * ID of an `integer` field attached to an event bundle.
    *
-   * The absolute maximum number of registrations that can be created
+   * The absolute maximum number of registrants that can be signed up
    * for an event. A negative or missing value indicates unlimited capacity.
    */
-  const FIELD_CAPACITY = 'rng_capacity';
+  const FIELD_REGISTRANTS_CAPACITY = 'rng_registrants_capacity';
+
+  /**
+   * ID of a 'boolean' field attached to an event bundle.
+   *
+   * Whether FIELD_REGISTRANTS_CAPACITY include
+   * confirmed registrations only (TRUE) or all registrations, including
+   * unconfirmed (FALSE).
+   */
+  const FIELD_CAPACITY_CONFIRMED_ONLY = 'rng_capacity_confirmed_only';
+
+  /**
+   * ID of an `boolean` field attached to an event bundle.
+   *
+   * Whether an event allows a wait list.
+   */
+  const FIELD_WAIT_LIST = 'rng_wait_list';
 
   /**
    * ID of an `email` field attached to an event bundle.
@@ -56,26 +73,12 @@ interface EventManagerInterface {
   const FIELD_ALLOW_DUPLICATE_REGISTRANTS = 'rng_registrants_duplicate';
 
   /**
-   * ID of an `integer` field attached to an event bundle.
-   *
-   * The minimum number of registrants per registration associated.
-   */
-  const FIELD_REGISTRATION_REGISTRANTS_MINIMUM = 'rng_registrants_minimum';
-
-  /**
-   * ID of an `integer` field attached to an event bundle.
-   *
-   * The maximum number of registrants per registration associated.
-   */
-  const FIELD_REGISTRATION_REGISTRANTS_MAXIMUM = 'rng_registrants_maximum';
-
-  /**
    * Get the meta instance for an event.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An event entity.
    *
-   * @return \Drupal\rng\EventMetaInterface|NULL
+   * @return \Drupal\rng\EventMetaInterface|null
    *   An event meta object.
    *
    * @throws \Drupal\rng\Exception\InvalidEventException
@@ -89,7 +92,7 @@ interface EventManagerInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An event entity.
    *
-   * @return boolean
+   * @return bool
    *   Whether the entity is an event.
    */
   public function isEvent(EntityInterface $entity);
@@ -104,9 +107,9 @@ interface EventManagerInterface {
    * @param string $bundle
    *   A bundle ID.
    *
-   * @return \Drupal\rng\EventTypeInterface|null
+   * @return \Drupal\rng\Entity\EventTypeInterface|null
    */
-  function eventType($entity_type, $bundle);
+  public function eventType($entity_type, $bundle);
 
   /**
    * Gets all event types associated with an entity type.
@@ -114,10 +117,10 @@ interface EventManagerInterface {
    * @param string $entity_type
    *   An entity type ID.
    *
-   * @return \Drupal\rng\EventTypeInterface[]
+   * @return \Drupal\rng\Entity\EventTypeInterface[]
    *   An array of event type config entities
    */
-  function eventTypeWithEntityType($entity_type);
+  public function eventTypeWithEntityType($entity_type);
 
   /**
    * Get all event types configuration entities.
@@ -125,18 +128,19 @@ interface EventManagerInterface {
    * @return array
    *   A multidimensional array: [event_entity_type][event_bundle] = $event_type
    */
-  function getEventTypes();
+  public function getEventTypes();
 
   /**
    * Invalidate cache for events types.
    */
-  function invalidateEventTypes();
+  public function invalidateEventTypes();
 
   /**
    * Invalidate cache for an event type.
    *
-   * @param \Drupal\rng\EventTypeInterface $event_type
+   * @param \Drupal\rng\Entity\EventTypeInterface $event_type
    *   An event type.
    */
-  function invalidateEventType(EventTypeInterface $event_type);
+  public function invalidateEventType(EventTypeInterface $event_type);
+
 }

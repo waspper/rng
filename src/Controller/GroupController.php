@@ -21,7 +21,7 @@ class GroupController extends ControllerBase implements ContainerInjectionInterf
    * @return array
    *   A registration form.
    */
-  public function GroupAdd(EntityInterface $rng_event) {
+  public function groupAdd(EntityInterface $rng_event) {
     $group = Group::create()
       ->setEvent($rng_event);
     return $this->entityFormBuilder()

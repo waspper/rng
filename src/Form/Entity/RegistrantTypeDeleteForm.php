@@ -9,15 +9,15 @@ use Drupal\Core\Url;
 /**
  * Form controller to delete a registrant type.
  */
-class RegistrantTypeDeleteForm extends EntityDeleteForm  {
+class RegistrantTypeDeleteForm extends EntityDeleteForm {
 
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete registrant type %label?', array(
+    return $this->t('Are you sure you want to delete registrant type %label?', [
       '%label' => $this->entity->label(),
-    ));
+    ]);
   }
 
   /**
@@ -45,7 +45,7 @@ class RegistrantTypeDeleteForm extends EntityDeleteForm  {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrantTypeInterface $registrant_type */
+    /** @var \Drupal\rng\Entity\RegistrantTypeInterface $registrant_type */
     $registrant_type = &$this->entity;
 
     $count = $this->entityTypeManager
@@ -56,7 +56,7 @@ class RegistrantTypeDeleteForm extends EntityDeleteForm  {
       ->execute();
 
     if ($count > 0) {
-      drupal_set_message($this->t('Cannot delete registrant type.'), 'warning');
+      $this->messenger()->addMessage($this->t('Cannot delete registrant type.'), 'warning');
 
       $form['#title'] = $this->getQuestion();
       $form['description'] = [

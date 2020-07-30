@@ -5,6 +5,9 @@ namespace Drupal\rng;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\Entity\Registrant;
+use Drupal\rng\Entity\RegistrationInterface;
+use Drupal\rng\Entity\RuleComponentInterface;
+use Drupal\rng\Entity\RuleInterface;
 use Drupal\rng\Plugin\Action\CourierTemplateCollection;
 use Drupal\courier\Service\IdentityChannelManagerInterface;
 
@@ -88,7 +91,7 @@ class RngEntityModel implements RngEntityModelInterface {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity object for the entity that is already saved.
-   * @param boolean $update
+   * @param bool $update
    *   Whether this entity is new.
    *
    * @see _rng_entity_postsave();
@@ -105,6 +108,10 @@ class RngEntityModel implements RngEntityModelInterface {
         ->setEntityTypeId($entity->getEntityTypeId())
         ->setEntityId($entity->id());
       $this->operationRecords[] = $operation_record;
+    }
+    if ($this->eventManager->isEvent($entity) && $update == FALSE) {
+      $event = $this->eventManager->getMeta($entity);
+      $event->createDefaultEventMessages();
     }
   }
 
@@ -147,7 +154,7 @@ class RngEntityModel implements RngEntityModelInterface {
     // Remove registrant references to this identity.
     $registrant_ids = Registrant::getRegistrantsIdsForIdentity($entity);
     foreach ($this->registrantStorage->loadMultiple($registrant_ids) as $registrant) {
-      /** @var \Drupal\rng\RegistrantInterface $registrant */
+      /** @var \Drupal\rng\Entity\RegistrantInterface $registrant */
       $registrant->clearIdentity();
       $registrant->save();
     }
@@ -183,7 +190,7 @@ class RngEntityModel implements RngEntityModelInterface {
   /**
    * Update rule scheduler after a rule entity is saved.
    *
-   * @param \Drupal\rng\RuleInterface $entity
+   * @param \Drupal\rng\Entity\RuleInterface $entity
    *   An RNG rule entity.
    */
   protected function postSaveRngRule(RuleInterface $entity) {
@@ -212,7 +219,7 @@ class RngEntityModel implements RngEntityModelInterface {
   /**
    * Delete related entities when a rule component entity is deleted.
    *
-   * @param \Drupal\rng\RuleComponentInterface $entity
+   * @param \Drupal\rng\Entity\RuleComponentInterface $entity
    *   An RNG rule component entity.
    */
   protected function deleteRngRuleComponent(RuleComponentInterface $entity) {

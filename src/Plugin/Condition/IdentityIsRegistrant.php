@@ -3,7 +3,6 @@
 namespace Drupal\rng\Plugin\Condition;
 
 use Drupal\Core\Condition\ConditionPluginBase;
-use Drupal\rng\RNGConditionInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -49,7 +48,7 @@ class IdentityIsRegistrant extends ConditionPluginBase {
   public function evaluate() {
     /* @var \Drupal\user\UserInterface $user */
     $user = $this->getContextValue('user');
-    /* @var \Drupal\rng\RegistrationInterface $registration */
+    /* @var \Drupal\rng\Entity\RegistrationInterface $registration */
     $registration = $this->getContextValue('registration');
 
     // Does not support new registrations ('create' operation).

@@ -6,7 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\rng\RuleInterface;
+use Drupal\rng\Entity\RuleInterface;
 
 /**
  * Access controller for the rules and rule components.
@@ -20,7 +20,7 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
     $account = $this->prepareUser($account);
     $child = $entity instanceof RuleInterface ? $entity : $entity->getRule();
     if ($child instanceof EntityInterface) {
-      /** @var $child RuleInterface|\Drupal\rng\RuleComponentInterface */
+      /** @var $child RuleInterface|\Drupal\rng\Entity\RuleComponentInterface */
       return $child
         ->getEvent()
         ->access('manage event', $account, TRUE);

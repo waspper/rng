@@ -17,22 +17,22 @@ class EventTypeFieldMappingForm extends EntityForm {
    *
    * @var array
    */
-  var $fields = [
+  public $fields = [
     EventManagerInterface::FIELD_REGISTRATION_TYPE,
     EventManagerInterface::FIELD_REGISTRATION_GROUPS,
     EventManagerInterface::FIELD_STATUS,
-    EventManagerInterface::FIELD_CAPACITY,
+    EventManagerInterface::FIELD_WAIT_LIST,
+    EventManagerInterface::FIELD_REGISTRANTS_CAPACITY,
+    EventManagerInterface::FIELD_CAPACITY_CONFIRMED_ONLY,
     EventManagerInterface::FIELD_EMAIL_REPLY_TO,
     EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS,
-    EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM,
-    EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM,
   ];
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $this->entity;
 
     $form = parent::buildForm($form, $form_state);
@@ -86,7 +86,7 @@ class EventTypeFieldMappingForm extends EntityForm {
    *   The current state of the form.
    */
   public static function createField(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\EventTypeInterface $event_type */
+    /** @var \Drupal\rng\Entity\EventTypeInterface $event_type */
     $event_type = $form_state->getFormObject()->getEntity();
 
     $trigger = $form_state->getTriggeringElement();
@@ -97,12 +97,12 @@ class EventTypeFieldMappingForm extends EntityForm {
     // Create the field.
     rng_add_event_field_storage($field_name, $entity_type);
     $field_config = rng_add_event_field_config($field_name, $entity_type, $bundle);
-    drupal_set_message(t('Field %field_name added.', [
+    \Drupal::messenger()->addMessage(t('Field %field_name added.', [
       '%field_name' => $field_config->label(),
     ]));
 
     // Make the field visible on the edit form.
-    $display = entity_get_form_display($entity_type, $bundle, 'rng_event');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay($entity_type, $bundle, 'rng_event');
     rng_add_event_form_display_defaults($display, $field_name);
     $component = $display->getComponent($field_name);
     $component['weight'] = 9999;

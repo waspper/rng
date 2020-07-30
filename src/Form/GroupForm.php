@@ -4,7 +4,7 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\GroupInterface;
+use Drupal\rng\Entity\GroupInterface;
 
 /**
  * Form controller for registration groups.
@@ -12,7 +12,7 @@ use Drupal\rng\GroupInterface;
 class GroupForm extends ContentEntityForm {
 
   /**
-   * @var \Drupal\rng\GroupInterface
+   * @var \Drupal\rng\Entity\GroupInterface
    */
   protected $entity;
 
@@ -24,9 +24,9 @@ class GroupForm extends ContentEntityForm {
 
     if (!$group->isNew()) {
       $form['#title'] = $this->t('Edit group %label',
-        array(
+        [
           '%label' => $group->label(),
-        )
+        ]
       );
     }
 
@@ -45,17 +45,17 @@ class GroupForm extends ContentEntityForm {
     $is_new = $group->isNew();
     $group->save();
 
-    $t_args = array('%label' => $group->label());
+    $t_args = ['%label' => $group->label()];
     if ($is_new) {
-      drupal_set_message(t('Group %label has been created.', $t_args));
+      $this->messenger()->addMessage(t('Group %label has been created.', $t_args));
     }
     else {
-      drupal_set_message(t('Group %label was updated.', $t_args));
+      $this->messenger()->addMessage(t('Group %label was updated.', $t_args));
     }
 
     $form_state->setRedirect(
       'rng.event.' . $event->getEntityTypeId() . '.group.list',
-      array($event->getEntityTypeId() => $event->id())
+      [$event->getEntityTypeId() => $event->id()]
     );
   }
 

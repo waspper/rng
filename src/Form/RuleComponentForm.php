@@ -2,7 +2,7 @@
 
 namespace Drupal\rng\Form;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Condition\ConditionManager;
@@ -18,7 +18,7 @@ class RuleComponentForm extends ContentEntityForm {
   /**
    * The action entity.
    *
-   * @var \Drupal\rng\RuleComponentInterface
+   * @var \Drupal\rng\Entity\RuleComponentInterface
    */
   protected $entity;
 
@@ -48,15 +48,15 @@ class RuleComponentForm extends ContentEntityForm {
   /**
    * Constructs a new action form.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity manager.
    * @param \Drupal\Core\Action\ActionManager $action_manager
    *   The action manager.
    * @param \Drupal\Core\Condition\ConditionManager $condition_manager
    *   The condition manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ActionManager $action_manager, ConditionManager $condition_manager) {
-    parent::__construct($entity_manager);
+  public function __construct(EntityRepositoryInterface $entity_repository, ActionManager $action_manager, ConditionManager $condition_manager) {
+    parent::__construct($entity_repository);
     $this->actionManager = $action_manager;
     $this->conditionManager = $condition_manager;
   }
@@ -66,7 +66,7 @@ class RuleComponentForm extends ContentEntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity.repository'),
       $container->get('plugin.manager.action'),
       $container->get('plugin.manager.condition')
     );
@@ -90,9 +90,9 @@ class RuleComponentForm extends ContentEntityForm {
 
     if (!$action->isNew()) {
       $form['#title'] = $this->t('Edit @type',
-        array(
+        [
           '@type' => $action->getType(),
-        )
+        ]
       );
     }
     $form = $this->plugin->buildConfigurationForm($form, $form_state);
@@ -116,7 +116,7 @@ class RuleComponentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RuleComponentInterface $component */
+    /** @var \Drupal\rng\Entity\RuleComponentInterface $component */
     $component = $this->getEntity();
     $is_new = $component->isNew();
     $plugin_configuration = $this->plugin->getConfiguration();
@@ -129,10 +129,10 @@ class RuleComponentForm extends ContentEntityForm {
     $t_args = ['@type' => isset($types[$type]) ? $types[$type] : $this->t('Component')];
 
     if ($is_new) {
-      drupal_set_message(t('@type created.', $t_args));
+      $this->messenger()->addMessage(t('@type created.', $t_args));
     }
     else {
-      drupal_set_message(t('@type updated.', $t_args));
+      $this->messenger()->addMessage(t('@type updated.', $t_args));
     }
   }
 

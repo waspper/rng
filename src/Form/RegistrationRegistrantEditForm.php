@@ -4,13 +4,15 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\RegistrationInterface;
+use Drupal\Core\Link;
+use Drupal\rng\Entity\RegistrationInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Configure registrant settings.
  */
 class RegistrationRegistrantEditForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */
@@ -24,32 +26,32 @@ class RegistrationRegistrantEditForm extends ContentEntityForm {
   public function buildForm(array $form, FormStateInterface $form_state, RegistrationInterface $registration = NULL) {
     $form['#title'] = $this->t(
       'Edit identities',
-      array('@label' => $registration->label())
+      ['@label' => $registration->label()]
     );
 
     $registrants = $registration->getRegistrants();
 
-    $rows = array();
+    $rows = [];
     foreach ($registrants as $registrant) {
-      $row = array();
+      $row = [];
+      $row[] = $registrant->id();
       $identity = $registrant->getIdentity();
       if ($identity instanceof EntityInterface) {
-        $url = $identity->urlInfo();
-        $row[] = $this->l($identity->label(), $url);
+        $url = $identity->toUrl();
+        $row[] = Link::fromTextAndUrl($identity->label(), $url);
       }
       else {
-        $row[] = t('<em>Deleted</em>');
+        $row[] = $registrant->label();
       }
-      $row[] = $registrant->id();
       $rows[] = $row;
     }
 
-    $form['registrants'] = array(
+    $form['registrants'] = [
       '#type' => 'table',
-      '#header' => array($this->t('Identity'), $this->t('Registrant ID')),
+      '#header' => [$this->t('Registrant ID'), $this->t('Identity')],
       '#rows' => $rows,
       '#empty' => $this->t('No identities associated with this registration.'),
-    );
+    ];
 
     return $form;
   }

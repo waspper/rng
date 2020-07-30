@@ -3,7 +3,6 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\rng\EventTypeRuleInterface;
 
 /**
  * Defines the event type entity.
@@ -16,6 +15,19 @@ use Drupal\rng\EventTypeRuleInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id"
+ *   },
+ *   config_export = {
+ *     "entity_type",
+ *     "bundle",
+ *     "machine_name",
+ *     "trigger",
+ *     "conditions",
+ *     "actions",
+ *     "client",
+ *     "format",
+ *     "pager_settings",
+ *     "api_key_settings",
+ *     "parameters",
  *   }
  * )
  */
@@ -160,7 +172,7 @@ class EventTypeRule extends ConfigEntityBase implements EventTypeRuleInterface {
   public function calculateDependencies() {
     parent::calculateDependencies();
 
-    if ($event_type = EventType::load($this->getEventEntityTypeId() . '.' . $this->getEventBundle())) {
+    if ($event_type = RngEventType::load($this->getEventEntityTypeId() . '.' . $this->getEventBundle())) {
       $this->addDependency('config', $event_type->getConfigDependencyName());
     }
 

@@ -4,19 +4,22 @@ namespace Drupal\rng\Tests;
 
 use Drupal\rng\Entity\RegistrationType;
 use Drupal\entity_test\Entity\EntityTest;
-use Drupal\rng\RegistrationTypeInterface;
-use Drupal\rng\Entity\EventType;
+use Drupal\rng\Entity\RegistrationTypeInterface;
+use Drupal\rng\Entity\RngEventType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rng\Entity\Registration;
 use Drupal\rng\EventManagerInterface;
 use Drupal\rng\Entity\EventTypeRule;
 
+/**
+ *
+ */
 trait RngTestTrait {
 
   /**
    * Create and save a registration type entity.
    *
-   * @return \Drupal\rng\RegistrationTypeInterface
+   * @return \Drupal\rng\Entity\RegistrationTypeInterface
    *   A registration type entity
    */
   protected function createRegistrationType() {
@@ -33,17 +36,17 @@ trait RngTestTrait {
    * Creates an event type config.
    *
    * @param string $entity_type_id
-   *   An entity type ID
+   *   An entity type ID.
    * @param string $bundle
    *   An entity type bundle.
    * @param array $values
    *   Optional values for the event type.
    *
-   * @return \Drupal\rng\EventTypeInterface
+   * @return \Drupal\rng\Entity\EventTypeInterface
    *   An event type config.
    */
   protected function createEventType($entity_type_id, $bundle, $values = []) {
-    $event_type = EventType::create($values + [
+    $event_type = RngEventType::create($values + [
       'label' => 'Event Type A',
       'entity_type' => $entity_type_id,
       'bundle' => $bundle,
@@ -62,10 +65,10 @@ trait RngTestTrait {
    */
   protected function createEvent($values = []) {
     $event = EntityTest::create($values + [
-        EventManagerInterface::FIELD_REGISTRATION_TYPE => $this->registrationType->id(),
-        EventManagerInterface::FIELD_STATUS => TRUE,
-        EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS => 0,
-      ]);
+      EventManagerInterface::FIELD_REGISTRATION_TYPE => $this->registrationType->id(),
+      EventManagerInterface::FIELD_STATUS => TRUE,
+      EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS => 0,
+    ]);
     $event->save();
     return $this->eventManager->getMeta($event);
   }
@@ -74,13 +77,13 @@ trait RngTestTrait {
    * Create a registration and add an identity as a registrant.
    *
    * @param \Drupal\Core\Entity\EntityInterface $event
-   *   An event entity
-   * @param \Drupal\rng\RegistrationTypeInterface $registration_type
+   *   An event entity.
+   * @param \Drupal\rng\Entity\RegistrationTypeInterface $registration_type
    *   A registration type.
    * @param \Drupal\Core\Entity\EntityInterface[] $identities
    *   An array of identities.
    *
-   * @return \Drupal\rng\RegistrationInterface
+   * @return \Drupal\rng\Entity\RegistrationInterface
    *   A saved registration
    */
   protected function createRegistration(EntityInterface $event, RegistrationTypeInterface $registration_type, array $identities) {

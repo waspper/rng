@@ -35,11 +35,11 @@ class RegistrantDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\rng\RegistrantInterface $registrant */
+    /** @var \Drupal\rng\Entity\RegistrantInterface $registrant */
     $registrant = $this->entity;
     $registrant->delete();
 
-    drupal_set_message($this->t('Registrant deleted.'));
+    $this->messenger()->addMessage($this->t('Registrant deleted.'));
 
     $registration = $registrant->getRegistration();
     if ($url = $registration->toUrl()) {

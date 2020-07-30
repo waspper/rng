@@ -10,28 +10,28 @@ class RngOperationRecord {
   /**
    * The operation executed on this entity.
    *
-   * @var string|NULL
+   * @var string|null
    */
   protected $operation;
 
   /**
    * The entity type ID.
    *
-   * @var string|NULL
+   * @var string|null
    */
   protected $entityTypeId;
 
   /**
    * The entity ID.
    *
-   * @var string|NULL
+   * @var string|null
    */
   protected $entityId;
 
   /**
    * Gets the operation executed on this entity.
    *
-   * @return string|NULL
+   * @return string|null
    *   The operation executed on this entity, or NULL if not set.
    */
   public function getOperation() {
@@ -55,7 +55,7 @@ class RngOperationRecord {
   /**
    * Get the entity type ID.
    *
-   * @return string|NULL
+   * @return string|null
    *   Gets the entity type ID, or NULL if not set.
    */
   public function getEntityTypeId() {
@@ -79,7 +79,7 @@ class RngOperationRecord {
   /**
    * Get the entity ID.
    *
-   * @return string|NULL
+   * @return string|null
    *   Get the entity ID, or NULL if not set.
    */
   public function getEntityId() {

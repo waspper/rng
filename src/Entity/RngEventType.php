@@ -3,19 +3,17 @@
 namespace Drupal\rng\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\rng\EventTypeInterface;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\courier\Entity\CourierContext;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\Entity\EntityFormMode;
-use Drupal\rng\RegistrantTypeInterface;
 
 /**
  * Defines the event type entity.
  *
  * @ConfigEntityType(
- *   id = "event_type",
+ *   id = "rng_event_type",
  *   label = @Translation("Event type"),
  *   handlers = {
  *     "list_builder" = "\Drupal\rng\Lists\EventTypeListBuilder",
@@ -24,24 +22,42 @@ use Drupal\rng\RegistrantTypeInterface;
  *       "edit" = "Drupal\rng\Form\EventTypeForm",
  *       "delete" = "Drupal\rng\Form\EventTypeDeleteForm",
  *       "event_access_defaults" = "Drupal\rng\Form\EventTypeAccessDefaultsForm",
+ *       "event_default_messages" = "Drupal\rng\Form\EventTypeDefaultMessagesListForm",
  *       "field_mapping" = "Drupal\rng\Form\EventTypeFieldMappingForm",
  *     }
  *   },
  *   admin_permission = "administer event types",
- *   config_prefix = "event_type",
+ *   config_prefix = "rng_event_type",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "id"
  *   },
  *   links = {
- *     "edit-form" = "/admin/structure/rng/event_types/manage/{event_type}/edit",
- *     "delete-form" = "/admin/structure/rng/event_types/manage/{event_type}/delete",
- *     "event-access-defaults" = "/admin/structure/rng/event_types/manage/{event_type}/access_defaults",
- *     "field-mapping" = "/admin/structure/rng/event_types/manage/{event_type}/field_mapping",
+ *     "edit-form" = "/admin/structure/rng/event_types/manage/{rng_event_type}/edit",
+ *     "delete-form" = "/admin/structure/rng/event_types/manage/{rng_event_type}/delete",
+ *     "event-access-defaults" = "/admin/structure/rng/event_types/manage/{rng_event_type}/access_defaults",
+ *     "field-mapping" = "/admin/structure/rng/event_types/manage/{rng_event_type}/field_mapping",
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "entity_type",
+ *     "bundle",
+ *     "mirror_operation_to_event_manage",
+ *     "custom_rules",
+ *     "default_registrant",
+ *     "allow_anon_registrants",
+ *     "auto_sync_registrants",
+ *     "auto_attach_users",
+ *     "registrant_email_field",
+ *     "event_start_date_field",
+ *     "event_end_date_field",
+ *     "people_types",
+ *     "default_messages",
+ *     "fields",
  *   }
  * )
  */
-class EventType extends ConfigEntityBase implements EventTypeInterface {
+class RngEventType extends ConfigEntityBase implements EventTypeInterface {
 
   /**
    * The machine name of this event config.
@@ -88,7 +104,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * Allow event managers to customize default rules.
    *
-   * @var boolean
+   * @var bool
    */
   public $custom_rules = TRUE;
 
@@ -100,6 +116,40 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   protected $default_registrant;
 
   /**
+   * Whether or not registrants should be allowed to be added registrations
+   * without any other identity entity.
+   *
+   * @var bool
+   */
+  protected $allow_anon_registrants;
+
+  /**
+   * Whether or not matching field data should be sync'd with identities when
+   * a registrant is saved.
+   *
+   * @var bool
+   */
+  protected $auto_sync_registrants;
+
+  /**
+   * Whether or not to automatically attach registrants to user identities by
+   * email.
+   *
+   * @var bool
+   */
+  protected $auto_attach_users;
+
+  /**
+   * An email field on the registrant to use to sync to users.
+   *
+   * @var string
+   */
+  protected $registrant_email_field;
+
+  protected $event_start_date_field;
+
+  protected $event_end_date_field;
+  /**
    * Types of people types allowed to be associated with this event type.
    *
    * @var array
@@ -107,32 +157,39 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   protected $people_types = [];
 
   /**
+   * Default messages configured for this event type.
+   *
+   * @var array
+   */
+  protected $default_messages = [];
+
+  /**
    * Fields to add to event bundles.
    *
    * @var array
    */
-  var $fields = [
+  public $fields = [
     EventManagerInterface::FIELD_REGISTRATION_TYPE,
     EventManagerInterface::FIELD_REGISTRATION_GROUPS,
     EventManagerInterface::FIELD_STATUS,
-    EventManagerInterface::FIELD_CAPACITY,
+    EventManagerInterface::FIELD_WAIT_LIST,
+    EventManagerInterface::FIELD_REGISTRANTS_CAPACITY,
+    EventManagerInterface::FIELD_CAPACITY_CONFIRMED_ONLY,
     EventManagerInterface::FIELD_EMAIL_REPLY_TO,
     EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS,
-    EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM,
-    EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM,
   ];
 
   /**
    * {@inheritdoc}
    */
-  function getEventEntityTypeId() {
+  public function getEventEntityTypeId() {
     return $this->entity_type;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setEventEntityTypeId($entity_type) {
+  public function setEventEntityTypeId($entity_type) {
     $this->entity_type = $entity_type;
     return $this;
   }
@@ -140,14 +197,14 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventBundle() {
+  public function getEventBundle() {
     return $this->bundle;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setEventBundle($bundle) {
+  public function setEventBundle($bundle) {
     $this->bundle = $bundle;
     return $this;
   }
@@ -155,14 +212,14 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getEventManageOperation() {
+  public function getEventManageOperation() {
     return $this->mirror_operation_to_event_manage;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setEventManageOperation($permission) {
+  public function setEventManageOperation($permission) {
     $this->mirror_operation_to_event_manage = $permission;
     return $this;
   }
@@ -170,14 +227,14 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getAllowCustomRules() {
+  public function getAllowCustomRules() {
     return $this->custom_rules;
   }
 
   /**
    * {@inheritdoc}
    */
-  function setAllowCustomRules($allow) {
+  public function setAllowCustomRules($allow) {
     $this->custom_rules = $allow;
     return $this;
   }
@@ -185,8 +242,23 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function getDefaultRegistrantType() {
+  public function getDefaultRegistrantType() {
     return $this->default_registrant;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultMessages() {
+    return $this->default_messages;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDefaultMessages($messages) {
+    $this->default_messages = $messages;
+    return $this;
   }
 
   /**
@@ -211,7 +283,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
    */
   public function getIdentityTypeEntityFormMode($entity_type, $bundle) {
     $key = $this->getIdentityTypeKey($entity_type, $bundle);
-    return !empty($this->people_types[$key]['entity_form_mode']);
+    return !empty($this->people_types[$key]['entity_form_mode']) ? $this->people_types[$key]['entity_form_mode'] : 'default';
   }
 
   /**
@@ -264,10 +336,10 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
    *   The identity entity type ID.
    * @param string $bundle
    *   The identity bundle.
-   * @param boolean $create_key
+   * @param bool $create_key
    *   Will initialise the array key.
    *
-   * @return int|FALSE
+   * @return int|false
    *   The array key, or FALSE if it does not exist.
    */
   protected function getIdentityTypeKey($entity_type, $bundle, $create_key = TRUE) {
@@ -296,7 +368,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  function setDefaultRegistrantType($registrant_type_id) {
+  public function setDefaultRegistrantType($registrant_type_id) {
     $this->default_registrant = $registrant_type_id;
     return $this;
   }
@@ -311,7 +383,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
   /**
    * {@inheritdoc}
    */
-  static function courierContextCC($entity_type, $operation) {
+  public static function courierContextCC($entity_type, $operation) {
     $event_types = \Drupal::service('rng.event_manager')
       ->eventTypeWithEntityType($entity_type);
 
@@ -329,7 +401,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
           $courier_context = CourierContext::create([
             'label' => t('Event (@entity_type): Registration', ['@entity_type' => $entity_type_info->getLabel()]),
             'id' => 'rng_registration_' . $entity_type,
-            'tokens' => [$entity_type, 'registration']
+            'tokens' => [$entity_type, 'registration'],
           ]);
           $courier_context->save();
         }
@@ -372,7 +444,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
       }
     }
 
-    $display = entity_get_form_display($this->entity_type, $this->bundle, 'rng_event');
+    $display = \Drupal::service('entity_display.repository')->getFormDisplay($this->entity_type, $this->bundle, 'rng_event');
     if ($display->isNew()) {
       // EntityDisplayBase::init() adds default fields. Remove them.
       foreach (array_keys($display->getComponents()) as $name) {
@@ -385,12 +457,11 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
       $field_weights = [
         EventManagerInterface::FIELD_STATUS,
         EventManagerInterface::FIELD_ALLOW_DUPLICATE_REGISTRANTS,
-        EventManagerInterface::FIELD_CAPACITY,
+        EventManagerInterface::FIELD_WAIT_LIST,
+        EventManagerInterface::FIELD_REGISTRANTS_CAPACITY,
         EventManagerInterface::FIELD_EMAIL_REPLY_TO,
         EventManagerInterface::FIELD_REGISTRATION_TYPE,
         EventManagerInterface::FIELD_REGISTRATION_GROUPS,
-        EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MINIMUM,
-        EventManagerInterface::FIELD_REGISTRATION_REGISTRANTS_MAXIMUM,
       ];
 
       module_load_include('inc', 'rng', 'rng.field.defaults');
@@ -422,7 +493,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
         $field->delete();
       }
 
-      $display = entity_get_form_display($this->entity_type, $this->bundle, 'rng_event');
+      $display = \Drupal::service('entity_display.repository')->getFormDisplay($this->entity_type, $this->bundle, 'rng_event');
       if (!$display->isNew()) {
         $display->delete();
       }
@@ -437,7 +508,7 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
     parent::postDelete($storage, $entities);
 
     if ($event_type = reset($entities)) {
-      EventType::courierContextCC($event_type->entity_type, 'delete');
+      RngEventType::courierContextCC($event_type->entity_type, 'delete');
     }
 
     // Rebuild routes and local tasks.
@@ -501,4 +572,93 @@ class EventType extends ConfigEntityBase implements EventTypeInterface {
     return $changed;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getAllowAnonRegistrants() {
+    return $this->allow_anon_registrants;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setAllowAnonRegistrants($allow_anon_registrants) {
+    $this->allow_anon_registrants = $allow_anon_registrants;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getAutoSyncRegistrants() {
+    return $this->auto_sync_registrants;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setAutoSyncRegistrants($auto_sync_registrants) {
+    $this->auto_sync_registrants = $auto_sync_registrants;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getAutoAttachUsers() {
+    return $this->auto_attach_users;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setAutoAttachUsers($auto_attach_users) {
+    $this->auto_attach_users = $auto_attach_users;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getRegistrantEmailField() {
+    return $this->registrant_email_field;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setRegistrantEmailField($registrant_email_field) {
+    $this->registrant_email_field = $registrant_email_field;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEventStartDateField() {
+    return $this->event_start_date_field;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setEventStartDateField($event_start_date_field) {
+    $this->event_start_date_field = $event_start_date_field;
+    return $this;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEventEndDateField() {
+    return $this->event_end_date_field;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function setEventEndDateField($event_end_date_field) {
+    $this->event_end_date_field = $event_end_date_field;
+    return $this;
+  }
 }

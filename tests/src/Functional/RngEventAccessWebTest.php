@@ -20,7 +20,7 @@ class RngEventAccessWebTest extends RngBrowserTestBase {
   /**
    * A registration type for testing.
    *
-   * @var \Drupal\rng\RegistrationTypeInterface
+   * @var \Drupal\rng\Entity\RegistrationTypeInterface
    */
   protected $registrationType;
 

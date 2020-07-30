@@ -2,6 +2,8 @@
 
 namespace Drupal\rng;
 
+use Drupal\rng\Entity\RuleInterface;
+
 /**
  * Defines a trait for working with 'registration operation' actions.
  */

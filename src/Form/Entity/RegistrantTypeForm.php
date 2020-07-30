@@ -4,7 +4,7 @@ namespace Drupal\rng\Form\Entity;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rng\RegistrantTypeInterface;
+use Drupal\rng\Entity\RegistrantTypeInterface;
 use Drupal\rng\Entity\RegistrantType;
 
 /**
@@ -41,12 +41,18 @@ class RegistrantTypeForm extends EntityForm {
       ],
     ];
 
-    $form['description'] = array(
+    $form['description'] = [
       '#type' => 'textarea',
       '#title' => t('Description'),
       '#default_value' => $registrant_type->description,
-    );
+    ];
 
+    $form['label_pattern'] = [
+      '#type' => 'textfield',
+      '#title' => t('Label Pattern'),
+      '#default_value' => $registrant_type->label_pattern,
+      '#description' => t('For anonymous registrants, provide a pattern here to use as its label. Only used if the registrant does not have another identify in the system. Can use tokens - e.g. <b>[registrant:field_first_name] [registrant:field_last_name]</b>')
+    ];
     return $form;
   }
 
@@ -68,11 +74,11 @@ class RegistrantTypeForm extends EntityForm {
 
     if ($status === SAVED_NEW) {
       $this->logger('rng')->notice('%label registrant type was added.', $t_args);
-      drupal_set_message($this->t('%label registrant type was added.', $t_args));
+      $this->messenger()->addMessage($this->t('%label registrant type was added.', $t_args));
     }
     else {
       $this->logger('rng')->notice('%label registrant type has been updated.', $t_args);
-      drupal_set_message($this->t('%label registrant type has been updated.', $t_args));
+      $this->messenger()->addMessage($this->t('%label registrant type has been updated.', $t_args));
     }
 
     $form_state->setRedirect('entity.registrant_type.collection');

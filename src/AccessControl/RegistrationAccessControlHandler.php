@@ -5,6 +5,8 @@ namespace Drupal\rng\AccessControl;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\rng\Entity\RegistrationType;
+use Drupal\rng\Event\RegistrationAccessEvent;
+use Drupal\rng\Event\RegistrationEvents;
 use Drupal\rng\RuleGrantsOperationTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -28,17 +30,25 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
   protected $eventManager;
 
   /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(EntityTypeInterface $entity_type) {
     parent::__construct($entity_type);
     $this->eventManager = \Drupal::service('rng.event_manager');
+    $this->eventDispatcher = \Drupal::service('event_dispatcher');
   }
 
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\RegistrationInterface $entity
+   * @param \Drupal\rng\Entity\RegistrationInterface $entity
    *   A registration entity.
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
@@ -73,10 +83,9 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    */
-  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = array(), $return_as_object = FALSE) {
+  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = [], $return_as_object = FALSE) {
     // $entity_bundle: A registration type, or NULL if it is a registration type
     // listing.
-
     if (!isset($context['event'])) {
       throw new AccessException('Requires event context.');
     }
@@ -89,7 +98,12 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
     $account = $this->prepareUser($account);
 
     try {
-      $event_meta = $this->eventManager->getMeta($event);
+      $event = new RegistrationAccessEvent($entity_bundle, $account, $context);
+      $this->eventDispatcher->dispatch(RegistrationEvents::REGISTRATION_CREATE_ACCESS, $event);
+      if (!$event->isAccessAllowed()) {
+        return $fail;
+      }
+      $event_meta = $this->eventManager->getMeta($context['event']);
 
       // $entity_bundle is omitted for registration type list at
       // $event_path/register
@@ -107,7 +121,7 @@ class RegistrationAccessControlHandler extends EntityAccessControlHandler {
         return $fail;
       }
 
-      if ($event_meta->remainingCapacity() == 0) {
+      if ($event_meta->remainingRegistrantCapacity() == 0) {
         return $fail;
       }
 

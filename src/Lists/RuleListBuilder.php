@@ -58,7 +58,7 @@ class RuleListBuilder extends EntityListBuilder {
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('rng.event_manager'),
       $container->get('redirect.destination')
     );
@@ -74,7 +74,7 @@ class RuleListBuilder extends EntityListBuilder {
     if (isset($rng_event)) {
       $this->event = $rng_event;
     }
-    drupal_set_message($this->t('This rule list is for advanced users. Take care when committing any actions from this page.'), 'warning');
+    $this->messenger()->addMessage($this->t('This rule list is for advanced users. Take care when committing any actions from this page.'), 'warning');
     $render = parent::render();
     $render['table']['#empty'] = t('No rules found for this event.');
     return $render;
@@ -116,37 +116,37 @@ class RuleListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\RuleInterface $entity
+   * @param \Drupal\rng\Entity\RuleInterface $entity
    *   A rule entity.
    */
   public function buildRow(EntityInterface $entity) {
     $row['id'] = $entity->id();
     $row['trigger'] = $entity->getTriggerID();
 
-    $row['conditions']['data'] = array(
+    $row['conditions']['data'] = [
       '#theme' => 'links',
       '#links' => [],
       '#attributes' => ['class' => ['links', 'inline']],
-    );
+    ];
     foreach ($entity->getConditions() as $condition) {
-      $row['conditions']['data']['#links'][] = array(
+      $row['conditions']['data']['#links'][] = [
         'title' => $this->t('Edit', ['@condition_id' => $condition->id(), '@condition' => $condition->getPluginId()]),
         'url' => $condition->urlInfo('edit-form'),
         'query' => $this->redirectDestination->getAsArray(),
-      );
+      ];
     }
 
-    $row['actions']['data'] = array(
+    $row['actions']['data'] = [
       '#theme' => 'links',
       '#links' => [],
       '#attributes' => ['class' => ['links', 'inline']],
-    );
+    ];
     foreach ($entity->getActions() as $action) {
-      $row['actions']['data']['#links'][] = array(
+      $row['actions']['data']['#links'][] = [
         'title' => $this->t('Edit', ['@action_id' => $action->id(), '@action' => $action->getPluginId()]),
         'url' => $action->urlInfo('edit-form'),
         'query' => $this->redirectDestination->getAsArray(),
-      );
+      ];
     }
 
     $row['status'] = $entity->isActive() ? $this->t('Active') : $this->t('Inactive');

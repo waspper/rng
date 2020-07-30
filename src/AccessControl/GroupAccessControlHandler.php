@@ -15,7 +15,7 @@ class GroupAccessControlHandler extends EntityAccessControlHandler {
   /**
    * {@inheritdoc}
    *
-   * @param \Drupal\rng\GroupInterface $entity
+   * @param \Drupal\rng\Entity\GroupInterface $entity
    *   A group entity.
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {

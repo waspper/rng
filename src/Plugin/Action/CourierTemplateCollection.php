@@ -3,7 +3,7 @@
 namespace Drupal\rng\Plugin\Action;
 
 use Drupal\Core\Action\ConfigurableActionBase;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rng\EventManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -27,9 +27,9 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
   /**
    * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * The RNG event manager.
@@ -54,16 +54,16 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\rng\EventManagerInterface $event_manager
    *   The RNG event manager.
    * @param \Drupal\courier\Service\CourierManagerInterface $courier_manager
    *   The courier manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EventManagerInterface $event_manager, CourierManagerInterface $courier_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->eventManager = $event_manager;
     $this->courierManager = $courier_manager;
   }
@@ -73,7 +73,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('rng.event_manager'),
       $container->get('courier.manager')
     );
@@ -87,9 +87,9 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
    *     entity. Automatically filled after first submission.
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'template_collection' => NULL,
-    );
+    ];
   }
 
   /**
@@ -100,9 +100,8 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
       $form['template_collection']['#markup'] = $this->t('Template collection #@id', ['@id' => $template_collection->id()]);
     }
     else {
-      drupal_set_message('No template collection entity found.', 'warning');
+      $this->messenger()->addMessage('No template collection entity found.', 'warning');
     }
-
 
     return $form;
   }
@@ -144,7 +143,7 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
     if ($collection_original = $this->getTemplateCollection()) {
       foreach ($context['registrations'] as $registration) {
         $options = [];
-        /** @var \Drupal\rng\RegistrationInterface $registration */
+        /** @var \Drupal\rng\Entity\RegistrationInterface $registration */
         if (($event = $registration->getEvent()) instanceof EntityInterface) {
           $event_meta = $this->eventManager->getMeta($event);
           $options['channels']['courier_email']['reply_to'] = $event_meta->getReplyTo();
@@ -154,7 +153,9 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
         $collection->setTokenValue('registration', $registration);
         foreach ($registration->getRegistrants() as $registrant) {
           $identity = $registrant->getIdentity();
-          $this->courierManager->sendMessage($collection, $identity, $options);
+          if ($identity) {
+            $this->courierManager->sendMessage($collection, $identity, $options);
+          }
         }
       }
     }
@@ -170,12 +171,12 @@ class CourierTemplateCollection extends ConfigurableActionBase implements Contai
   /**
    * Get the courier_template_collection object associated with this action.
    *
-   * @return \Drupal\courier\TemplateCollectionInterface|NULL
+   * @return \Drupal\courier\TemplateCollectionInterface|null
    *   A courier_template_collection object. NULL if it has not been created.
    */
   public function getTemplateCollection() {
     if (isset($this->configuration['template_collection'])) {
-      return $this->entityManager
+      return $this->entityTypeManager
         ->getStorage('courier_template_collection')
         ->load($this->configuration['template_collection']);
     }

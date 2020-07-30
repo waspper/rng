@@ -4,7 +4,8 @@ namespace Drupal\rng\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Link;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -12,22 +13,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RegistrationTypeForm extends EntityForm {
   /**
-   * @var \Drupal\Core\Entity\Query\QueryFactory
+   * An instance of the entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityQueryFactory;
+  protected $entityTypeManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(QueryFactory $query_factory) {
-    $this->entityQueryFactory = $query_factory;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.query'));
+    return new static(
+      $container->get('entity_type.manager')
+    );
   }
 
   /**
@@ -38,37 +43,37 @@ class RegistrationTypeForm extends EntityForm {
     $registration_type = $this->entity;
 
     if (!$registration_type->isNew()) {
-      $form['#title'] = $this->t('Edit registration type %label', array(
+      $form['#title'] = $this->t('Edit registration type %label', [
         '%label' => $registration_type->label(),
-      ));
+      ]);
     }
 
     // Build the form.
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $registration_type->label(),
       '#required' => TRUE,
-    );
-    $form['id'] = array(
+    ];
+    $form['id'] = [
       '#type' => 'machine_name',
       '#title' => $this->t('Machine name'),
       '#default_value' => $registration_type->id(),
-      '#machine_name' => array(
-        'exists' => array($this, 'exists'),
+      '#machine_name' => [
+        'exists' => [$this, 'exists'],
         'replace_pattern' => '([^a-z0-9_]+)|(^custom$)',
         'error' => 'The machine-readable name must be unique, and can only contain lowercase letters, numbers, and underscores.',
-      ),
+      ],
       '#disabled' => !$registration_type->isNew(),
-    );
+    ];
 
-    $form['description'] = array(
+    $form['description'] = [
       '#type' => 'textarea',
       '#title' => t('Description'),
       '#default_value' => $registration_type->description,
       '#description' => t('Description will be displayed when a user is choosing which registration type to use for an event.'),
-    );
+    ];
 
     return $form;
   }
@@ -79,7 +84,7 @@ class RegistrationTypeForm extends EntityForm {
    * Callback for `id` form element in RegistrationTypeForm->buildForm.
    */
   public function exists($entity_id, array $element, FormStateInterface $form_state) {
-    $query = $this->entityQueryFactory->get('registration_type');
+    $query = $this->entityTypeManager->getStorage('registration_type')->getQuery();
     return (bool) $query->condition('id', $entity_id)->execute();
   }
 
@@ -91,10 +96,10 @@ class RegistrationTypeForm extends EntityForm {
     $status = $registration_type->save();
 
     $message = ($status == SAVED_UPDATED) ? '%label registration type was updated.' : '%label registration type was added.';
-    $url = $registration_type->urlInfo();
-    $t_args = ['%label' => $registration_type->label(), 'link' => $this->l(t('Edit'), $url)];
+    $url = $registration_type->toUrl();
+    $t_args = ['%label' => $registration_type->label(), 'link' => Link::fromTextAndUrl(t('Edit'), $url)];
 
-    drupal_set_message($this->t($message, $t_args));
+    $this->messenger()->addMessage($this->t($message, $t_args));
     $this->logger('rng')->notice($message, $t_args);
 
     $form_state->setRedirect('rng.registration_type.overview');
