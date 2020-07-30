@@ -380,7 +380,7 @@ class EventMeta implements EventMetaInterface {
 
     /** @var \Drupal\rng\Entity\EventTypeRuleInterface[] $default_rules */
     $default_rules = $this
-      ->entityManager
+      ->entityTypeManager
       ->getStorage('rng_event_type_rule')
       ->loadByProperties([
         'entity_type' => $this->getEvent()->getEntityTypeId(),
