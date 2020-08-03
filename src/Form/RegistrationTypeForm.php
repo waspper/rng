@@ -97,7 +97,7 @@ class RegistrationTypeForm extends EntityForm {
 
     $message = ($status == SAVED_UPDATED) ? '%label registration type was updated.' : '%label registration type was added.';
     $url = $registration_type->toUrl();
-    $t_args = ['%label' => $registration_type->label(), 'link' => Link::fromTextAndUrl(t('Edit'), $url)];
+    $t_args = ['%label' => $registration_type->label(), 'link' => (Link::fromTextAndUrl($this->t('Edit'), $url))->toString()];
 
     $this->messenger()->addMessage($this->t($message, $t_args));
     $this->logger('rng')->notice($message, $t_args);
